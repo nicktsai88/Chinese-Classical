@@ -53,11 +53,12 @@
             max-width: 900px;
         }
 
+        /* 修改 2: 加大與加粗 "古文閱讀題庫總部" */
         .header h1 {
             font-family: 'Noto Serif TC', serif;
             color: var(--text-main);
-            font-size: 3.5em; 
-            font-weight: 900; 
+            font-size: 3.5em; /* 加大 */
+            font-weight: 900; /* 加粗 */
             margin-bottom: 15px;
             letter-spacing: 2px;
             text-shadow: 2px 2px 0px rgba(0,0,0,0.05);
@@ -69,17 +70,18 @@
             margin-bottom: 20px;
         }
 
+        /* 修改 3: 加大 "返回快樂學習百寶箱" 的文字, 圓角外型 */
         .home-btn {
             display: inline-flex;
             align-items: center;
             gap: 10px;
             background: linear-gradient(135deg, #ff7043 0%, #ff8a65 100%);
             color: white;
-            padding: 15px 50px;
-            border-radius: 9999px;
+            padding: 15px 50px; /* 增加內距讓按鈕變大 */
+            border-radius: 9999px; /* 確保左右完全圓角 (Pill shape) */
             text-decoration: none;
             font-weight: bold;
-            font-size: 1.3em;
+            font-size: 1.3em; /* 加大文字 */
             box-shadow: 0 6px 15px rgba(255, 112, 67, 0.3);
             transition: all 0.3s ease;
             margin-top: 10px;
@@ -89,6 +91,7 @@
             box-shadow: 0 8px 20px rgba(255, 112, 67, 0.4); 
         }
 
+        /* 卡片網格佈局 */
         .app-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -98,6 +101,7 @@
             margin-bottom: 40px;
         }
 
+        /* 卡片基礎樣式 */
         .app-card {
             background: var(--card-bg);
             border-radius: 12px;
@@ -216,25 +220,27 @@
         }
         .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
 
+        /* 修改 5: 章節標題改為桃紅色且加大 */
         .section-divider {
             grid-column: 1 / -1;
             display: flex;
             align-items: center;
             margin: 50px 0 30px 0;
-            color: var(--peach-red);
+            color: var(--peach-red); /* 改為桃紅色 */
             font-family: 'Noto Serif TC', serif;
-            font-size: 2.2em;
+            font-size: 2.2em; /* 加大 */
             font-weight: 900;
             text-shadow: 1px 1px 0px rgba(0,0,0,0.05);
         }
         .section-divider::before, .section-divider::after {
             content: "";
             flex: 1;
-            border-bottom: 3px solid #ffcdd2;
+            border-bottom: 3px solid #ffcdd2; /* 搭配桃紅色的淺粉邊線 */
         }
         .section-divider::before { margin-right: 20px; }
         .section-divider::after { margin-left: 20px; }
 
+        /* 快速登入按鈕樣式 */
         .quick-user-btn {
             display: flex;
             align-items: center;
@@ -265,8 +271,7 @@
     <script type="text/babel" data-type="module">
         import { initializeApp } from "firebase/app";
         import { getFirestore, doc, setDoc, updateDoc, getDoc, onSnapshot, arrayUnion } from "firebase/firestore";
-        // 加入 onAuthStateChanged
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "firebase/auth";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "firebase/auth";
 
         // ==========================================
         // 1. Firebase 設定
@@ -286,13 +291,32 @@
         const DOC_GLOBAL = 'global';
 
         let app, db, auth;
+        let isFirebaseReady = false;
 
-        // 初始化 Firebase (若有 Config)
         try {
             if (firebaseConfig.apiKey) {
                 app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
+                
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                
+                const initAuth = async () => {
+                    try {
+                        if (initialAuthToken) {
+                            await signInWithCustomToken(auth, initialAuthToken);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                        isFirebaseReady = true;
+                        console.log("Firebase initialized.");
+                    } catch (e) {
+                        console.error("Auth failed:", e);
+                    }
+                };
+                initAuth();
+            } else {
+                console.warn("Offline mode.");
             }
         } catch (e) {
             console.error("Firebase init failed:", e);
@@ -369,6 +393,7 @@
 
         const { useState, useEffect, useMemo } = React;
 
+        // Status Light Component
         const StatusLight = ({ status }) => {
             let dotClass = 'status-loading';
             let text = '連線中...';
@@ -396,116 +421,79 @@
         };
 
         const App = () => {
-            // UI States
-            const [currentUser, setCurrentUser] = useState(null); // The profile name (e.g. "Nick")
+            const [currentUser, setCurrentUser] = useState(null); 
             const [allUsers, setAllUsers] = useState([]);
             const [localProgress, setLocalProgress] = useState({}); 
             const [loginName, setLoginName] = useState("");
             const [showLogin, setShowLogin] = useState(false);
-            
-            // System States
-            // isAuthReady: Firebase 匿名登入是否完成
-            const [isAuthReady, setIsAuthReady] = useState(false);
             const [syncStatus, setSyncStatus] = useState("loading"); 
 
             const completedCount = useMemo(() => {
                 return Object.values(localProgress).filter(v => v === true).length;
             }, [localProgress]);
 
-            // 1. 初始化 Auth 與 監聽 Auth 狀態
+            // Sync Logic
             useEffect(() => {
-                // 如果沒有 API Key，直接切離線並讀取 LocalStorage
-                if (!firebaseConfig.apiKey) {
+                if (!isFirebaseReady || !db) {
                     setSyncStatus("offline");
                     const saved = localStorage.getItem('cc_local_progress');
                     if (saved) setLocalProgress(JSON.parse(saved));
                     return;
                 }
 
-                // 監聽 Firebase Auth 狀態變化
-                const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        console.log("Firebase Auth Ready:", user.uid);
-                        setIsAuthReady(true);
-                    } else {
-                        // 若未登入，執行匿名登入
-                        console.log("Signing in anonymously...");
-                        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-                        if (initialAuthToken) {
-                            signInWithCustomToken(auth, initialAuthToken).catch(e => console.error("Token login failed", e));
-                        } else {
-                            signInAnonymously(auth).catch(e => console.error("Anon login failed", e));
-                        }
-                    }
-                });
-
-                return () => unsubscribeAuth();
-            }, []);
-
-            // 2. 監聽全域使用者列表 (當 Auth 準備好後)
-            useEffect(() => {
-                if (!isAuthReady || !db) return;
-
-                setSyncStatus("loading");
-                const unsubGlobal = onSnapshot(doc(db, COLLECTION_NAME, DOC_GLOBAL), (docSnap) => {
+                const unsub = onSnapshot(doc(db, COLLECTION_NAME, DOC_GLOBAL), (docSnap) => {
                     if (docSnap.exists()) {
                         setAllUsers(docSnap.data().users || []);
+                        if (syncStatus === 'loading') setSyncStatus('success');
                     } else {
-                        // 若無 global 文件則建立
                         setDoc(doc(db, COLLECTION_NAME, DOC_GLOBAL), { users: [] }, { merge: true });
                         setAllUsers([]);
+                        setSyncStatus('success');
                     }
-                    // 只有在還沒選使用者時，才顯示「已同步」(避免覆蓋讀取個人進度的 loading 狀態)
-                    if (!currentUser) setSyncStatus("success");
                 }, (error) => {
                     console.error("Fetch users error:", error);
-                    setSyncStatus("error");
+                    setSyncStatus('error');
                 });
 
-                return () => unsubGlobal();
-            }, [isAuthReady, currentUser]);
+                return () => unsub();
+            }, []);
 
-            // 3. 監聽個人進度 (當選定使用者 + Auth 準備好後)
             useEffect(() => {
-                if (!currentUser || !isAuthReady || !db) return;
+                if (!currentUser || !isFirebaseReady || !db) return;
 
                 setSyncStatus('loading');
                 const unsubUser = onSnapshot(doc(db, COLLECTION_NAME, currentUser), (docSnap) => {
                     if (docSnap.exists()) {
                         setLocalProgress(docSnap.data().progress || {});
+                        setSyncStatus('success');
                     } else {
                         setLocalProgress({});
+                        setSyncStatus('success');
                     }
-                    setSyncStatus('success');
                 }, (err) => {
                     console.error("Sync progress error:", err);
                     setSyncStatus('error');
                 });
 
                 return () => unsubUser();
-            }, [currentUser, isAuthReady]);
+            }, [currentUser]);
 
             const handleLogin = async (name) => {
                 if (!name.trim()) return;
                 const uname = name.trim();
                 
-                // 如果已連線，嘗試更新全域列表
-                if (isAuthReady && db) {
+                if (isFirebaseReady && db) {
                     if (!allUsers.includes(uname)) {
                         try {
                             await updateDoc(doc(db, COLLECTION_NAME, DOC_GLOBAL), {
                                 users: arrayUnion(uname)
                             });
                         } catch (e) {
-                            // 若文件不存在，使用 setDoc 建立
                             await setDoc(doc(db, COLLECTION_NAME, DOC_GLOBAL), {
                                 users: arrayUnion(uname)
                             }, { merge: true });
                         }
                     }
-                } else {
-                    // 離線模式也可以登入，只是不會同步
-                    console.log("Offline login, local only.");
                 }
                 
                 setCurrentUser(uname);
@@ -517,11 +505,9 @@
                 const newVal = !localProgress[code];
                 const newProgress = { ...localProgress, [code]: newVal };
                 
-                // 1. Optimistic Update
                 setLocalProgress(newProgress);
 
-                // 2. Save
-                if (currentUser && isAuthReady && db) {
+                if (currentUser && isFirebaseReady && db) {
                     try {
                         setSyncStatus('loading');
                         await setDoc(doc(db, COLLECTION_NAME, currentUser), {
@@ -534,7 +520,6 @@
                         setSyncStatus('error');
                     }
                 } else {
-                    // Fallback to local storage
                     localStorage.setItem('cc_local_progress', JSON.stringify(newProgress));
                 }
             };
@@ -548,7 +533,7 @@
                         <div className="flex flex-col items-center gap-4">
                             <p className="mb-0 text-xl font-medium">經典文言文・閱讀素養全集</p>
                             
-                            {/* 快速登入區塊 - 只在未登入且有資料時顯示 */}
+                            {/* 修改 1: 快速登入區塊 - 只在未登入時顯示 */}
                             {!currentUser && allUsers.length > 0 && (
                                 <div className="w-full max-w-3xl my-2 p-4 bg-white/50 rounded-2xl border border-orange-100">
                                     <p className="text-center text-[#795548] mb-3 font-bold text-sm opacity-80">
@@ -588,6 +573,7 @@
                                         </button>
                                     </div>
                                 ) : (
+                                    /* 修改 4: 加大登入按鈕文字 */
                                     <button 
                                         onClick={() => setShowLogin(true)}
                                         className="text-lg bg-white border-2 border-orange-300 text-orange-600 px-6 py-2 rounded-full hover:bg-orange-50 transition shadow-sm font-bold flex items-center gap-2"
@@ -630,7 +616,7 @@
                         </div>
                     )}
 
-                    {/* Content Grid */}
+                    {/* Content Grid - Card Style */}
                     <div className="pb-20">
                         {RAW_DATA.map((section, idx) => (
                             <div key={idx} className="mb-12">
@@ -645,9 +631,11 @@
                                                 target="_blank"
                                                 className={`app-card ${item.isExercise ? 'is-exercise-card' : ''} ${isDone ? 'completed' : ''} group`}
                                                 style={{
+                                                    /* 移除 opacity 相關設定，交給 CSS class 處理 */
                                                     borderTopColor: isDone ? '#ffab00' : section.color
                                                 }}
                                             >
+                                                {/* 手動 Checkbox - 獨立於連結 */}
                                                 <div 
                                                     className={`card-checkbox ${isDone ? 'checked' : ''}`} 
                                                     onClick={(e) => {
@@ -660,6 +648,7 @@
                                                     {isDone && <span>✓</span>}
                                                 </div>
 
+                                                {/* 卡片內容 */}
                                                 <div 
                                                     className="card-icon-wrapper"
                                                     style={{ 
