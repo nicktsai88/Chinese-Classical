@@ -7,17 +7,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* 背景維持米白暖色 */
-            --bg: #fffaf5;
-            /* 主文字改為深暖棕色 */
-            --text-main: #4e342e;
+            --bg: #f9f7f2;
+            --text-main: #2c2c2c;
         }
 
         body {
             font-family: 'Noto Sans TC', sans-serif;
             background-color: var(--bg);
-            /* 紋理改為淡淡的暖橙色 */
-            background-image: radial-gradient(#fbe9e7 1px, transparent 1px);
+            background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
             background-size: 20px 20px;
             margin: 0;
             padding: 20px;
@@ -43,7 +40,7 @@
         }
 
         .header p {
-            color: #795548;
+            color: #5d4037;
             font-size: 1em;
             margin-bottom: 20px;
         }
@@ -52,22 +49,22 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            /* 返回按鈕改為暖橘漸層 */
-            background: linear-gradient(135deg, #ff7043 0%, #ff8a65 100%);
+            background: linear-gradient(135deg, #512da8 0%, #673ab7 100%);
             color: white;
             padding: 8px 25px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: bold;
             font-size: 0.95em;
-            box-shadow: 0 4px 10px rgba(255, 112, 67, 0.3);
+            box-shadow: 0 4px 10px rgba(103, 58, 183, 0.3);
             transition: all 0.3s ease;
         }
-        .home-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(255, 112, 67, 0.4); }
+        .home-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(103, 58, 183, 0.4); }
 
         /* 密集型網格佈局 */
         .compact-grid {
             display: grid;
+            /* 自動填滿，最小寬度 190px，適合顯示標題 */
             grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
             gap: 10px;
             width: 100%;
@@ -75,23 +72,28 @@
             margin-bottom: 30px;
         }
 
-        /* 小型卡片通用結構 */
+        /* 小型卡片樣式 */
         .mini-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-left-width: 5px; /* 左側色條 */
+            border-left-style: solid;
             border-radius: 6px;
             padding: 10px 12px;
             text-decoration: none;
+            color: #333;
             transition: all 0.2s ease;
             display: flex;
             flex-direction: column;
             justify-content: center;
             min-height: 60px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-            border: 1px solid transparent; 
         }
 
         .mini-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+            background-color: #fafafa;
         }
 
         .mini-title {
@@ -99,69 +101,35 @@
             font-weight: 700;
             line-height: 1.3;
             margin-bottom: 4px;
+            color: #444;
         }
 
         .mini-code {
             font-size: 0.75rem;
+            color: #999;
             font-family: monospace;
             text-align: right;
         }
 
-        /* === 本文 (Article) 樣式：淡暖色背景，深色文字 === */
-        /* 因為背景變淡，文字改用深棕色以利閱讀 */
-        .mini-card:not(.is-exercise) .mini-title { color: #3e2723; }
-        .mini-card:not(.is-exercise) .mini-code { color: #6d4c41; }
-        .mini-card:not(.is-exercise):hover { filter: brightness(98%); }
+        /* 練習題特別標示 */
+        .is-exercise .mini-title { color: #555; font-weight: 500; }
+        .is-exercise { background-color: #fcfcfc; }
 
-        /* === 暖色系主題定義 (背景色) === */
-        
-        /* 第一輯上 - 柔和粉紅 (原本是藍) */
-        .theme-blue { background-color: #ffccbc; } /* Deep Orange 100 */
-        
-        /* 第一輯下 - 溫暖鵝黃 (原本是青) */
-        .theme-teal { background-color: #fff176; } /* Yellow 300 */
-        
-        /* 第二輯 - 柔和杏橘 (原本是橙) */
-        .theme-orange { background-color: #ffe0b2; } /* Orange 100 */
-        
-        /* 推與敲 - 乾燥玫瑰 (原本是紫) */
-        .theme-purple { background-color: #f8bbd0; } /* Pink 100 */
-        
-        /* 素養攻略 - 暖卡其/灰褐 (原本是褐) */
-        .theme-brown { background-color: #d7ccc8; } /* Brown 100 */
-
-
-        /* === 練習題 (Exercise) 樣式：白底，暖色邊條 === */
-        .mini-card.is-exercise {
-            background-color: #ffffff;
-            color: #4e342e;
-            border: 1px solid #efebe9;
-            border-left-width: 5px;
-            border-left-style: solid;
-        }
-
-        .mini-card.is-exercise:hover {
-            background-color: #fffbf0;
-        }
-
-        .mini-card.is-exercise .mini-title { color: #5d4037; font-weight: 500; }
-        .mini-card.is-exercise .mini-code { color: #a1887f; }
-
-        /* 練習題邊條顏色 - 對應上方的淡色背景，稍微加深一點點以利辨識 */
-        .theme-blue.is-exercise { border-left-color: #ffab91; }
-        .theme-teal.is-exercise { border-left-color: #ffee58; }
-        .theme-orange.is-exercise { border-left-color: #ffcc80; }
-        .theme-purple.is-exercise { border-left-color: #f48fb1; }
-        .theme-brown.is-exercise { border-left-color: #bcaaa4; }
+        /* 主題色系定義 */
+        .theme-blue { border-left-color: #3949ab; }   /* 第一輯上 */
+        .theme-teal { border-left-color: #00897b; }   /* 第一輯下 */
+        .theme-orange { border-left-color: #f57c00; } /* 第二輯 */
+        .theme-purple { border-left-color: #7b1fa2; } /* 推與敲 */
+        .theme-brown { border-left-color: #795548; }  /* 素養攻略 */
 
         .section-title {
             grid-column: 1 / -1;
-            margin: 35px 0 15px 0;
+            margin: 30px 0 15px 0;
             padding-bottom: 10px;
-            border-bottom: 2px solid #e0e0e0;
+            border-bottom: 2px solid #ddd;
             font-family: 'Noto Serif TC', serif;
             font-size: 1.4em;
-            color: #5d4037; /* 暖棕色標題 */
+            color: #444;
             font-weight: bold;
         }
     </style>
@@ -176,7 +144,7 @@
 
     <div class="compact-grid">
 
-        <!-- 吳敏男-第一輯上冊 (Theme: Soft Pink) -->
+        <!-- 吳敏男-第一輯上冊 (Theme: Blue) -->
         <div class="section-title">吳敏男 - 第一輯上冊</div>
         
         <a href="Chinese-Classical-1.html" class="mini-card theme-blue"><div class="mini-title">1孔子與弟子言志(本文)</div><div class="mini-code">CC-1</div></a>
@@ -260,7 +228,7 @@
         <a href="Chinese-Classical-79.html" class="mini-card theme-blue"><div class="mini-title">40狄青(本文)</div><div class="mini-code">CC-79</div></a>
         <a href="Chinese-Classical-80.html" class="mini-card theme-blue is-exercise"><div class="mini-title">40狄青(練習題)</div><div class="mini-code">CC-80</div></a>
 
-        <!-- 吳敏男-第一輯下冊 (Theme: Warm Yellow) -->
+        <!-- 吳敏男-第一輯下冊 (Theme: Teal) -->
         <div class="section-title">吳敏男 - 第一輯下冊</div>
 
         <a href="Chinese-Classical-81.html" class="mini-card theme-teal"><div class="mini-title">1逾淮為枳(本文)</div><div class="mini-code">CC-81</div></a>
@@ -352,7 +320,7 @@
         <a href="Chinese-Classical-167.html" class="mini-card theme-teal"><div class="mini-title">44偽病(本文)</div><div class="mini-code">CC-167</div></a>
         <a href="Chinese-Classical-168.html" class="mini-card theme-teal is-exercise"><div class="mini-title">44偽病(練習題)</div><div class="mini-code">CC-168</div></a>
 
-        <!-- 吳敏男-第二輯 (Theme: Soft Apricot) -->
+        <!-- 吳敏男-第二輯 (Theme: Orange) -->
         <div class="section-title">吳敏男 - 第二輯</div>
         
         <a href="Chinese-Classical-169.html" class="mini-card theme-orange"><div class="mini-title">1不食嗟來食(本文)</div><div class="mini-code">CC-169</div></a>
@@ -480,7 +448,7 @@
         <a href="Chinese-Classical-291.html" class="mini-card theme-orange"><div class="mini-title">62元日(本文)</div><div class="mini-code">CC-291</div></a>
         <a href="Chinese-Classical-292.html" class="mini-card theme-orange is-exercise"><div class="mini-title">62元日(練習題)</div><div class="mini-code">CC-292</div></a>
 
-        <!-- 文言文推與敲 (Theme: Soft Pink) -->
+        <!-- 文言文推與敲 (Theme: Purple) -->
         <div class="section-title">文言文推與敲</div>
         
         <a href="Chinese-Classical-293.html" class="mini-card theme-purple"><div class="mini-title">1覆水難收(本文)</div><div class="mini-code">CC-293</div></a>
@@ -640,7 +608,7 @@
         <a href="Chinese-Classical-447.html" class="mini-card theme-purple"><div class="mini-title">78台灣三字經序(本文)</div><div class="mini-code">CC-447</div></a>
         <a href="Chinese-Classical-448.html" class="mini-card theme-purple is-exercise"><div class="mini-title">78台灣三字經序(練習題)</div><div class="mini-code">CC-448</div></a>
 
-        <!-- 古文素養攻略 (Theme: Warm Taupe) -->
+        <!-- 古文素養攻略 (Theme: Brown) -->
         <div class="section-title">古文素養攻略</div>
 
         <a href="Chinese-Classical-449.html" class="mini-card theme-brown"><div class="mini-title">1牛山嘆(本文)</div><div class="mini-code">CC-449</div></a>
