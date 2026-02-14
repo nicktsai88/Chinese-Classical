@@ -46,9 +46,10 @@
 
         h1, h2, .font-serif { font-family: 'Noto Serif TC', serif; }
 
-        /* 卡片網格佈局 */
+        /* 卡片網格佈局 - 回歸原本較寬鬆的卡片排列 */
         .app-grid {
             display: grid;
+            /* 讓卡片寬度保持在 260px 以上，自動填滿 */
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 25px;
             width: 100%;
@@ -56,7 +57,7 @@
             margin-bottom: 40px;
         }
 
-        /* 卡片基礎樣式 */
+        /* 卡片基礎樣式 - 模仿原本的設計 */
         .app-card {
             background: var(--card-bg);
             border-radius: 12px;
@@ -64,33 +65,20 @@
             text-decoration: none;
             color: #333;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border-top: 6px solid #ccc;
+            transition: transform 0.3s, box-shadow 0.3s, opacity 0.3s, filter 0.3s;
+            border-top: 6px solid #ccc; /* 預設顏色，會被 JS 覆蓋 */
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            position: relative;
-            border: 1px solid rgba(0,0,0,0.05); /* 預設細邊框 */
-            min-height: 180px;
+            position: relative; /* 為了讓 Checkbox 絕對定位 */
+            border: 1px solid rgba(0,0,0,0.05);
+            min-height: 180px; /* 確保卡片高度一致 */
         }
 
         .app-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 12px 30px rgba(0,0,0,0.1);
-        }
-
-        /* ★★★ 重點修改：已完成的卡片樣式 (螢光外框) ★★★ */
-        .app-card.completed {
-            /* 強制覆蓋邊框樣式 */
-            border: 4px solid #ffab00 !important; /* 螢光琥珀色 */
-            border-top: 6px solid #ffab00 !important; /* 頂部也統一顏色或保持原色 */
-            /* 螢光光暈效果 */
-            box-shadow: 0 0 20px rgba(255, 171, 0, 0.5) !important;
-            /* 微微放大，增加存在感 */
-            transform: scale(1.02);
-            /* 確保背景稍微暖一點 */
-            background-color: #fff8e1; 
         }
 
         /* 圖示區塊 */
@@ -103,7 +91,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f5f5f5;
+            background: #f5f5f5; /* 預設背景 */
         }
 
         /* 標題 */
@@ -114,7 +102,7 @@
             margin-bottom: 8px;
             line-height: 1.4;
             color: #444;
-            flex-grow: 1;
+            flex-grow: 1; /* 讓標題佔據中間空間 */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -128,10 +116,10 @@
             padding: 4px 10px;
             border-radius: 20px;
             font-family: monospace;
-            margin-top: auto;
+            margin-top: auto; /* 推到底部 */
         }
 
-        /* 手動 Checkbox */
+        /* 手動 Checkbox - 定位在右上角 */
         .card-checkbox {
             position: absolute;
             top: 12px;
@@ -146,29 +134,28 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
-            z-index: 10;
+            z-index: 10; /* 確保在連結之上 */
         }
         
         .card-checkbox:hover {
-            border-color: #ffab00; /* Hover 時也顯示螢光色 */
+            border-color: #ff7043;
             transform: scale(1.1);
         }
 
         .card-checkbox.checked {
-            background: #ffab00; /* 核取後也是螢光色 */
-            border-color: #ffab00;
+            background: #ff7043;
+            border-color: #ff7043;
             color: white;
             font-weight: bold;
             font-size: 18px;
-            box-shadow: 0 0 8px rgba(255, 171, 0, 0.6);
         }
 
         /* 練習題特別標示 */
         .is-exercise-card {
-            background-color: #fffbf5;
+            background-color: #fffbf5; /* 微微的暖黃底色 */
         }
 
-        /* 主題樣式 */
+        /* 主題樣式 (Inject via Style Prop usually, but keeping classes for structure) */
         .theme-blue { --theme-color: #3949ab; --theme-light: #e8eaf6; }
         .theme-teal { --theme-color: #00897b; --theme-light: #e0f2f1; }
         .theme-orange { --theme-color: #f57c00; --theme-light: #fff3e0; }
@@ -235,12 +222,12 @@
         
         // ★★★ 請在此處填入您的 Firebase Config ★★★
         const firebaseConfig = {
-            apiKey: "AIzaSyAxQFt76ZPXE7d0i1XeNZ1yiiD2WYNIfHs",
-            authDomain: "chinese-learning-47f4d.firebaseapp.com",
-            projectId: "chinese-learning-47f4d",
-            storageBucket: "chinese-learning-47f4d.firebasestorage.app",
-            messagingSenderId: "76289812052",
-            appId: "1:76289812052:web:898384a916f9f341f62fc1"
+            apiKey: "",
+            authDomain: "",
+            projectId: "",
+            storageBucket: "",
+            messagingSenderId: "",
+            appId: ""
         };
 
         const COLLECTION_NAME = 'Chinese-Classical';
@@ -282,6 +269,7 @@
         // 2. 資料結構 (Raw Data)
         // ==========================================
         const generateRawData = () => {
+            // 為每個章節指定顏色代碼與圖示
             const sections = [
                 { name: "吳敏男 - 第一輯上冊", themeClass: "theme-blue", color: "#3949ab", lightColor: "#e8eaf6", icon: "📜", range: [1, 80], 
                   titles: ["孔子與弟子言志", "論廉恥", "暴虎馮河", "論忠信", "仁哉管仲", "問一得三", "顏回好學", "割雞焉用牛刀", "苛政猛於虎", "開宗明義章", "奕喻", "揠苗助長", "鄭人買履", "美醜之論", "濫竽充數", "守株待兔", "畫鬼最易", "晉文公攻原得衛", "唇亡齒寒", "不死之道", "曾子殺彘", "不死之藥", "齊王射箭", "亡鈇意鄰", "刻舟求劍", "絕句", "雜詩", "逢入京使", "遊子吟", "憫農詩", "一笑", "毛遂自薦", "將心比心", "彌子瑕", "唐詩", "慎始", "列異不可惑", "搜神靈犬", "顧炎武", "狄青"] },
@@ -580,10 +568,11 @@
                                                 key={item.code}
                                                 href={item.href}
                                                 target="_blank"
-                                                className={`app-card ${item.isExercise ? 'is-exercise-card' : ''} ${isDone ? 'completed' : ''} group`}
+                                                className={`app-card ${item.isExercise ? 'is-exercise-card' : ''} group`}
                                                 style={{
-                                                    /* 移除 opacity 相關設定，交給 CSS class 處理 */
-                                                    borderTopColor: isDone ? '#ffab00' : section.color
+                                                    borderTopColor: section.color,
+                                                    opacity: isDone ? 0.75 : 1,
+                                                    filter: isDone ? 'grayscale(30%)' : 'none'
                                                 }}
                                             >
                                                 {/* 手動 Checkbox - 獨立於連結 */}
