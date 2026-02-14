@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>古文閱讀題庫總部</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f9f7f2;
+            --text-main: #2c2c2c;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 800px;
+        }
+
+        .header h1 {
+            font-family: 'Noto Serif TC', serif;
+            color: var(--text-main);
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            color: #5d4037;
+            font-size: 1em;
+            margin-bottom: 20px;
+        }
+
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #512da8 0%, #673ab7 100%);
+            color: white;
+            padding: 8px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.95em;
+            box-shadow: 0 4px 10px rgba(103, 58, 183, 0.3);
+            transition: all 0.3s ease;
+        }
+        .home-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(103, 58, 183, 0.4); }
+
+        /* 密集型網格佈局 */
+        .compact-grid {
+            display: grid;
+            /* 自動填滿，最小寬度 190px，適合顯示標題 */
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 10px;
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 30px;
+        }
+
+        /* 小型卡片樣式 */
+        .mini-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-left-width: 5px; /* 左側色條 */
+            border-left-style: solid;
+            border-radius: 6px;
+            padding: 10px 12px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 60px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .mini-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+            background-color: #fafafa;
+        }
+
+        .mini-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 4px;
+            color: #444;
+        }
+
+        .mini-code {
+            font-size: 0.75rem;
+            color: #999;
+            font-family: monospace;
+            text-align: right;
+        }
+
+        /* 練習題特別標示 */
+        .is-exercise .mini-title { color: #555; font-weight: 500; }
+        .is-exercise { background-color: #fcfcfc; }
+
+        /* 主題色系定義 */
+        .theme-blue { border-left-color: #3949ab; }   /* 第一輯上 */
+        .theme-teal { border-left-color: #00897b; }   /* 第一輯下 */
+        .theme-orange { border-left-color: #f57c00; } /* 第二輯 */
+        .theme-purple { border-left-color: #7b1fa2; } /* 推與敲 */
+        .theme-brown { border-left-color: #795548; }  /* 素養攻略 */
+
+        .section-title {
+            grid-column: 1 / -1;
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ddd;
+            font-family: 'Noto Serif TC', serif;
+            font-size: 1.4em;
+            color: #444;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>📜 古文閱讀題庫總部</h1>
+        <p>經典文言文・閱讀素養全集</p>
+        <a href="https://nicktsai88.github.io/List/" class="home-btn">🎁 返回快樂學習百寶箱</a>
+    </div>
+
+    <div class="compact-grid">
+
+        <!-- 吳敏男-第一輯上冊 (Theme: Blue) -->
+        <div class="section-title">吳敏男 - 第一輯上冊</div>
+        
+        <a href="Chinese-Classical-1.html" class="mini-card theme-blue"><div class="mini-title">1孔子與弟子言志(本文)</div><div class="mini-code">CC-1</div></a>
+        <a href="Chinese-Classical-2.html" class="mini-card theme-blue is-exercise"><div class="mini-title">1孔子與弟子言志(練習題)</div><div class="mini-code">CC-2</div></a>
+        <a href="Chinese-Classical-3.html" class="mini-card theme-blue"><div class="mini-title">2論廉恥(本文)</div><div class="mini-code">CC-3</div></a>
+        <a href="Chinese-Classical-4.html" class="mini-card theme-blue is-exercise"><div class="mini-title">2論廉恥(練習題)</div><div class="mini-code">CC-4</div></a>
+        <a href="Chinese-Classical-5.html" class="mini-card theme-blue"><div class="mini-title">3暴虎馮河(本文)</div><div class="mini-code">CC-5</div></a>
+        <a href="Chinese-Classical-6.html" class="mini-card theme-blue is-exercise"><div class="mini-title">3暴虎馮河(練習題)</div><div class="mini-code">CC-6</div></a>
+        <a href="Chinese-Classical-7.html" class="mini-card theme-blue"><div class="mini-title">4論忠信(本文)</div><div class="mini-code">CC-7</div></a>
+        <a href="Chinese-Classical-8.html" class="mini-card theme-blue is-exercise"><div class="mini-title">4論忠信(練習題)</div><div class="mini-code">CC-8</div></a>
+        <a href="Chinese-Classical-9.html" class="mini-card theme-blue"><div class="mini-title">5仁哉管仲(本文)</div><div class="mini-code">CC-9</div></a>
+        <a href="Chinese-Classical-10.html" class="mini-card theme-blue is-exercise"><div class="mini-title">5仁哉管仲(練習題)</div><div class="mini-code">CC-10</div></a>
+        <a href="Chinese-Classical-11.html" class="mini-card theme-blue"><div class="mini-title">6問一得三(本文)</div><div class="mini-code">CC-11</div></a>
+        <a href="Chinese-Classical-12.html" class="mini-card theme-blue is-exercise"><div class="mini-title">6問一得三(練習題)</div><div class="mini-code">CC-12</div></a>
+        <a href="Chinese-Classical-13.html" class="mini-card theme-blue"><div class="mini-title">7顏回好學(本文)</div><div class="mini-code">CC-13</div></a>
+        <a href="Chinese-Classical-14.html" class="mini-card theme-blue is-exercise"><div class="mini-title">7顏回好學(練習題)</div><div class="mini-code">CC-14</div></a>
+        <a href="Chinese-Classical-15.html" class="mini-card theme-blue"><div class="mini-title">8割雞焉用牛刀(本文)</div><div class="mini-code">CC-15</div></a>
+        <a href="Chinese-Classical-16.html" class="mini-card theme-blue is-exercise"><div class="mini-title">8割雞焉用牛刀(練習題)</div><div class="mini-code">CC-16</div></a>
+        <a href="Chinese-Classical-17.html" class="mini-card theme-blue"><div class="mini-title">9苛政猛於虎(本文)</div><div class="mini-code">CC-17</div></a>
+        <a href="Chinese-Classical-18.html" class="mini-card theme-blue is-exercise"><div class="mini-title">9苛政猛於虎(練習題)</div><div class="mini-code">CC-18</div></a>
+        <a href="Chinese-Classical-19.html" class="mini-card theme-blue"><div class="mini-title">10開宗明義章(本文)</div><div class="mini-code">CC-19</div></a>
+        <a href="Chinese-Classical-20.html" class="mini-card theme-blue is-exercise"><div class="mini-title">10開宗明義章(練習題)</div><div class="mini-code">CC-20</div></a>
+        <a href="Chinese-Classical-21.html" class="mini-card theme-blue"><div class="mini-title">11奕喻(本文)</div><div class="mini-code">CC-21</div></a>
+        <a href="Chinese-Classical-22.html" class="mini-card theme-blue is-exercise"><div class="mini-title">11奕喻(練習題)</div><div class="mini-code">CC-22</div></a>
+        <a href="Chinese-Classical-23.html" class="mini-card theme-blue"><div class="mini-title">12揠苗助長(本文)</div><div class="mini-code">CC-23</div></a>
+        <a href="Chinese-Classical-24.html" class="mini-card theme-blue is-exercise"><div class="mini-title">12揠苗助長(練習題)</div><div class="mini-code">CC-24</div></a>
+        <a href="Chinese-Classical-25.html" class="mini-card theme-blue"><div class="mini-title">13鄭人買履(本文)</div><div class="mini-code">CC-25</div></a>
+        <a href="Chinese-Classical-26.html" class="mini-card theme-blue is-exercise"><div class="mini-title">13鄭人買履(練習題)</div><div class="mini-code">CC-26</div></a>
+        <a href="Chinese-Classical-27.html" class="mini-card theme-blue"><div class="mini-title">14美醜之論(本文)</div><div class="mini-code">CC-27</div></a>
+        <a href="Chinese-Classical-28.html" class="mini-card theme-blue is-exercise"><div class="mini-title">14美醜之論(練習題)</div><div class="mini-code">CC-28</div></a>
+        <a href="Chinese-Classical-29.html" class="mini-card theme-blue"><div class="mini-title">15濫竽充數(本文)</div><div class="mini-code">CC-29</div></a>
+        <a href="Chinese-Classical-30.html" class="mini-card theme-blue is-exercise"><div class="mini-title">15濫竽充數(練習題)</div><div class="mini-code">CC-30</div></a>
+        <a href="Chinese-Classical-31.html" class="mini-card theme-blue"><div class="mini-title">16守株待兔(本文)</div><div class="mini-code">CC-31</div></a>
+        <a href="Chinese-Classical-32.html" class="mini-card theme-blue is-exercise"><div class="mini-title">16守株待兔(練習題)</div><div class="mini-code">CC-32</div></a>
+        <a href="Chinese-Classical-33.html" class="mini-card theme-blue"><div class="mini-title">17畫鬼最易(本文)</div><div class="mini-code">CC-33</div></a>
+        <a href="Chinese-Classical-34.html" class="mini-card theme-blue is-exercise"><div class="mini-title">17畫鬼最易(練習題)</div><div class="mini-code">CC-34</div></a>
+        <a href="Chinese-Classical-35.html" class="mini-card theme-blue"><div class="mini-title">18晉文公攻原得衛(本文)</div><div class="mini-code">CC-35</div></a>
+        <a href="Chinese-Classical-36.html" class="mini-card theme-blue is-exercise"><div class="mini-title">18晉文公攻原得衛(練習題)</div><div class="mini-code">CC-36</div></a>
+        <a href="Chinese-Classical-37.html" class="mini-card theme-blue"><div class="mini-title">19唇亡齒寒(本文)</div><div class="mini-code">CC-37</div></a>
+        <a href="Chinese-Classical-38.html" class="mini-card theme-blue is-exercise"><div class="mini-title">19唇亡齒寒(練習題)</div><div class="mini-code">CC-38</div></a>
+        <a href="Chinese-Classical-39.html" class="mini-card theme-blue"><div class="mini-title">20不死之道(本文)</div><div class="mini-code">CC-39</div></a>
+        <a href="Chinese-Classical-40.html" class="mini-card theme-blue is-exercise"><div class="mini-title">20不死之道(練習題)</div><div class="mini-code">CC-40</div></a>
+        <a href="Chinese-Classical-41.html" class="mini-card theme-blue"><div class="mini-title">21曾子殺彘(本文)</div><div class="mini-code">CC-41</div></a>
+        <a href="Chinese-Classical-42.html" class="mini-card theme-blue is-exercise"><div class="mini-title">21曾子殺彘(練習題)</div><div class="mini-code">CC-42</div></a>
+        <a href="Chinese-Classical-43.html" class="mini-card theme-blue"><div class="mini-title">22不死之藥(本文)</div><div class="mini-code">CC-43</div></a>
+        <a href="Chinese-Classical-44.html" class="mini-card theme-blue is-exercise"><div class="mini-title">22不死之藥(練習題)</div><div class="mini-code">CC-44</div></a>
+        <a href="Chinese-Classical-45.html" class="mini-card theme-blue"><div class="mini-title">23齊王射箭(本文)</div><div class="mini-code">CC-45</div></a>
+        <a href="Chinese-Classical-46.html" class="mini-card theme-blue is-exercise"><div class="mini-title">23齊王射箭(練習題)</div><div class="mini-code">CC-46</div></a>
+        <a href="Chinese-Classical-47.html" class="mini-card theme-blue"><div class="mini-title">24亡鈇意鄰(本文)</div><div class="mini-code">CC-47</div></a>
+        <a href="Chinese-Classical-48.html" class="mini-card theme-blue is-exercise"><div class="mini-title">24亡鈇意鄰(練習題)</div><div class="mini-code">CC-48</div></a>
+        <a href="Chinese-Classical-49.html" class="mini-card theme-blue"><div class="mini-title">25刻舟求劍(本文)</div><div class="mini-code">CC-49</div></a>
+        <a href="Chinese-Classical-50.html" class="mini-card theme-blue is-exercise"><div class="mini-title">25刻舟求劍(練習題)</div><div class="mini-code">CC-50</div></a>
+        <a href="Chinese-Classical-51.html" class="mini-card theme-blue"><div class="mini-title">26絕句(本文)</div><div class="mini-code">CC-51</div></a>
+        <a href="Chinese-Classical-52.html" class="mini-card theme-blue is-exercise"><div class="mini-title">26絕句(練習題)</div><div class="mini-code">CC-52</div></a>
+        <a href="Chinese-Classical-53.html" class="mini-card theme-blue"><div class="mini-title">27雜詩(本文)</div><div class="mini-code">CC-53</div></a>
+        <a href="Chinese-Classical-54.html" class="mini-card theme-blue is-exercise"><div class="mini-title">27雜詩(練習題)</div><div class="mini-code">CC-54</div></a>
+        <a href="Chinese-Classical-55.html" class="mini-card theme-blue"><div class="mini-title">28逢入京使(本文)</div><div class="mini-code">CC-55</div></a>
+        <a href="Chinese-Classical-56.html" class="mini-card theme-blue is-exercise"><div class="mini-title">28逢入京使(練習題)</div><div class="mini-code">CC-56</div></a>
+        <a href="Chinese-Classical-57.html" class="mini-card theme-blue"><div class="mini-title">29遊子吟(本文)</div><div class="mini-code">CC-57</div></a>
+        <a href="Chinese-Classical-58.html" class="mini-card theme-blue is-exercise"><div class="mini-title">29遊子吟(練習題)</div><div class="mini-code">CC-58</div></a>
+        <a href="Chinese-Classical-59.html" class="mini-card theme-blue"><div class="mini-title">30憫農詩(本文)</div><div class="mini-code">CC-59</div></a>
+        <a href="Chinese-Classical-60.html" class="mini-card theme-blue is-exercise"><div class="mini-title">30憫農詩(練習題)</div><div class="mini-code">CC-60</div></a>
+        <a href="Chinese-Classical-61.html" class="mini-card theme-blue"><div class="mini-title">31一笑(本文)</div><div class="mini-code">CC-61</div></a>
+        <a href="Chinese-Classical-62.html" class="mini-card theme-blue is-exercise"><div class="mini-title">31一笑(練習題)</div><div class="mini-code">CC-62</div></a>
+        <a href="Chinese-Classical-63.html" class="mini-card theme-blue"><div class="mini-title">32毛遂自薦(本文)</div><div class="mini-code">CC-63</div></a>
+        <a href="Chinese-Classical-64.html" class="mini-card theme-blue is-exercise"><div class="mini-title">32毛遂自薦(練習題)</div><div class="mini-code">CC-64</div></a>
+        <a href="Chinese-Classical-65.html" class="mini-card theme-blue"><div class="mini-title">33將心比心(本文)</div><div class="mini-code">CC-65</div></a>
+        <a href="Chinese-Classical-66.html" class="mini-card theme-blue is-exercise"><div class="mini-title">33將心比心(練習題)</div><div class="mini-code">CC-66</div></a>
+        <a href="Chinese-Classical-67.html" class="mini-card theme-blue"><div class="mini-title">34彌子瑕(本文)</div><div class="mini-code">CC-67</div></a>
+        <a href="Chinese-Classical-68.html" class="mini-card theme-blue is-exercise"><div class="mini-title">34彌子瑕(練習題)</div><div class="mini-code">CC-68</div></a>
+        <a href="Chinese-Classical-69.html" class="mini-card theme-blue"><div class="mini-title">35唐詩(本文)</div><div class="mini-code">CC-69</div></a>
+        <a href="Chinese-Classical-70.html" class="mini-card theme-blue is-exercise"><div class="mini-title">35唐詩(練習題)</div><div class="mini-code">CC-70</div></a>
+        <a href="Chinese-Classical-71.html" class="mini-card theme-blue"><div class="mini-title">36慎始(本文)</div><div class="mini-code">CC-71</div></a>
+        <a href="Chinese-Classical-72.html" class="mini-card theme-blue is-exercise"><div class="mini-title">36慎始(練習題)</div><div class="mini-code">CC-72</div></a>
+        <a href="Chinese-Classical-73.html" class="mini-card theme-blue"><div class="mini-title">37列異不可惑(本文)</div><div class="mini-code">CC-73</div></a>
+        <a href="Chinese-Classical-74.html" class="mini-card theme-blue is-exercise"><div class="mini-title">37列異不可惑(練習題)</div><div class="mini-code">CC-74</div></a>
+        <a href="Chinese-Classical-75.html" class="mini-card theme-blue"><div class="mini-title">38搜神靈犬(本文)</div><div class="mini-code">CC-75</div></a>
+        <a href="Chinese-Classical-76.html" class="mini-card theme-blue is-exercise"><div class="mini-title">38搜神靈犬(練習題)</div><div class="mini-code">CC-76</div></a>
+        <a href="Chinese-Classical-77.html" class="mini-card theme-blue"><div class="mini-title">39顧炎武(本文)</div><div class="mini-code">CC-77</div></a>
+        <a href="Chinese-Classical-78.html" class="mini-card theme-blue is-exercise"><div class="mini-title">39顧炎武(練習題)</div><div class="mini-code">CC-78</div></a>
+        <a href="Chinese-Classical-79.html" class="mini-card theme-blue"><div class="mini-title">40狄青(本文)</div><div class="mini-code">CC-79</div></a>
+        <a href="Chinese-Classical-80.html" class="mini-card theme-blue is-exercise"><div class="mini-title">40狄青(練習題)</div><div class="mini-code">CC-80</div></a>
+
+        <!-- 吳敏男-第一輯下冊 (Theme: Teal) -->
+        <div class="section-title">吳敏男 - 第一輯下冊</div>
+
+        <a href="Chinese-Classical-81.html" class="mini-card theme-teal"><div class="mini-title">1逾淮為枳(本文)</div><div class="mini-code">CC-81</div></a>
+        <a href="Chinese-Classical-82.html" class="mini-card theme-teal is-exercise"><div class="mini-title">1逾淮為枳(練習題)</div><div class="mini-code">CC-82</div></a>
+        <a href="Chinese-Classical-83.html" class="mini-card theme-teal"><div class="mini-title">2晏子使楚(本文)</div><div class="mini-code">CC-83</div></a>
+        <a href="Chinese-Classical-84.html" class="mini-card theme-teal is-exercise"><div class="mini-title">2晏子使楚(練習題)</div><div class="mini-code">CC-84</div></a>
+        <a href="Chinese-Classical-85.html" class="mini-card theme-teal"><div class="mini-title">3曷為不祥(本文)</div><div class="mini-code">CC-85</div></a>
+        <a href="Chinese-Classical-86.html" class="mini-card theme-teal is-exercise"><div class="mini-title">3曷為不祥(練習題)</div><div class="mini-code">CC-86</div></a>
+        <a href="Chinese-Classical-87.html" class="mini-card theme-teal"><div class="mini-title">4曾子殺人(本文)</div><div class="mini-code">CC-87</div></a>
+        <a href="Chinese-Classical-88.html" class="mini-card theme-teal is-exercise"><div class="mini-title">4曾子殺人(練習題)</div><div class="mini-code">CC-88</div></a>
+        <a href="Chinese-Classical-89.html" class="mini-card theme-teal"><div class="mini-title">5狐假虎威(本文)</div><div class="mini-code">CC-89</div></a>
+        <a href="Chinese-Classical-90.html" class="mini-card theme-teal is-exercise"><div class="mini-title">5狐假虎威(練習題)</div><div class="mini-code">CC-90</div></a>
+        <a href="Chinese-Classical-91.html" class="mini-card theme-teal"><div class="mini-title">6鷸蚌相爭(本文)</div><div class="mini-code">CC-91</div></a>
+        <a href="Chinese-Classical-92.html" class="mini-card theme-teal is-exercise"><div class="mini-title">6鷸蚌相爭(練習題)</div><div class="mini-code">CC-92</div></a>
+        <a href="Chinese-Classical-93.html" class="mini-card theme-teal"><div class="mini-title">7畫蛇添足(本文)</div><div class="mini-code">CC-93</div></a>
+        <a href="Chinese-Classical-94.html" class="mini-card theme-teal is-exercise"><div class="mini-title">7畫蛇添足(練習題)</div><div class="mini-code">CC-94</div></a>
+        <a href="Chinese-Classical-95.html" class="mini-card theme-teal"><div class="mini-title">8物類平等(本文)</div><div class="mini-code">CC-95</div></a>
+        <a href="Chinese-Classical-96.html" class="mini-card theme-teal is-exercise"><div class="mini-title">8物類平等(練習題)</div><div class="mini-code">CC-96</div></a>
+        <a href="Chinese-Classical-97.html" class="mini-card theme-teal"><div class="mini-title">9日近日遠(本文)</div><div class="mini-code">CC-97</div></a>
+        <a href="Chinese-Classical-98.html" class="mini-card theme-teal is-exercise"><div class="mini-title">9日近日遠(練習題)</div><div class="mini-code">CC-98</div></a>
+        <a href="Chinese-Classical-99.html" class="mini-card theme-teal"><div class="mini-title">10螳螂捕蟬(本文)</div><div class="mini-code">CC-99</div></a>
+        <a href="Chinese-Classical-100.html" class="mini-card theme-teal is-exercise"><div class="mini-title">10螳螂捕蟬(練習題)</div><div class="mini-code">CC-100</div></a>
+        <a href="Chinese-Classical-101.html" class="mini-card theme-teal"><div class="mini-title">11叔敖埋蛇(本文)</div><div class="mini-code">CC-101</div></a>
+        <a href="Chinese-Classical-102.html" class="mini-card theme-teal is-exercise"><div class="mini-title">11叔敖埋蛇(練習題)</div><div class="mini-code">CC-102</div></a>
+        <a href="Chinese-Classical-103.html" class="mini-card theme-teal"><div class="mini-title">12荀巨伯仗義退賊(本文)</div><div class="mini-code">CC-103</div></a>
+        <a href="Chinese-Classical-104.html" class="mini-card theme-teal is-exercise"><div class="mini-title">12荀巨伯仗義退賊(練習題)</div><div class="mini-code">CC-104</div></a>
+        <a href="Chinese-Classical-105.html" class="mini-card theme-teal"><div class="mini-title">13王藍田忿食雞子(本文)</div><div class="mini-code">CC-105</div></a>
+        <a href="Chinese-Classical-106.html" class="mini-card theme-teal is-exercise"><div class="mini-title">13王藍田忿食雞子(練習題)</div><div class="mini-code">CC-106</div></a>
+        <a href="Chinese-Classical-107.html" class="mini-card theme-teal"><div class="mini-title">14鍾毓、鍾會(本文)</div><div class="mini-code">CC-107</div></a>
+        <a href="Chinese-Classical-108.html" class="mini-card theme-teal is-exercise"><div class="mini-title">14鍾毓、鍾會(練習題)</div><div class="mini-code">CC-108</div></a>
+        <a href="Chinese-Classical-109.html" class="mini-card theme-teal"><div class="mini-title">15王戎不摘路邊李(本文)</div><div class="mini-code">CC-109</div></a>
+        <a href="Chinese-Classical-110.html" class="mini-card theme-teal is-exercise"><div class="mini-title">15王戎不摘路邊李(練習題)</div><div class="mini-code">CC-110</div></a>
+        <a href="Chinese-Classical-111.html" class="mini-card theme-teal"><div class="mini-title">16王祥事後母(本文)</div><div class="mini-code">CC-111</div></a>
+        <a href="Chinese-Classical-112.html" class="mini-card theme-teal is-exercise"><div class="mini-title">16王祥事後母(練習題)</div><div class="mini-code">CC-112</div></a>
+        <a href="Chinese-Classical-113.html" class="mini-card theme-teal"><div class="mini-title">17王恭無長物(本文)</div><div class="mini-code">CC-113</div></a>
+        <a href="Chinese-Classical-114.html" class="mini-card theme-teal is-exercise"><div class="mini-title">17王恭無長物(練習題)</div><div class="mini-code">CC-114</div></a>
+        <a href="Chinese-Classical-115.html" class="mini-card theme-teal"><div class="mini-title">18桓公心地仁厚(本文)</div><div class="mini-code">CC-115</div></a>
+        <a href="Chinese-Classical-116.html" class="mini-card theme-teal is-exercise"><div class="mini-title">18桓公心地仁厚(練習題)</div><div class="mini-code">CC-116</div></a>
+        <a href="Chinese-Classical-117.html" class="mini-card theme-teal"><div class="mini-title">19辨盜鐘(本文)</div><div class="mini-code">CC-117</div></a>
+        <a href="Chinese-Classical-118.html" class="mini-card theme-teal is-exercise"><div class="mini-title">19辨盜鐘(練習題)</div><div class="mini-code">CC-118</div></a>
+        <a href="Chinese-Classical-119.html" class="mini-card theme-teal"><div class="mini-title">20認履(本文)</div><div class="mini-code">CC-119</div></a>
+        <a href="Chinese-Classical-120.html" class="mini-card theme-teal is-exercise"><div class="mini-title">20認履(練習題)</div><div class="mini-code">CC-120</div></a>
+        <a href="Chinese-Classical-121.html" class="mini-card theme-teal"><div class="mini-title">21單衣順母(本文)</div><div class="mini-code">CC-121</div></a>
+        <a href="Chinese-Classical-122.html" class="mini-card theme-teal is-exercise"><div class="mini-title">21單衣順母(練習題)</div><div class="mini-code">CC-122</div></a>
+        <a href="Chinese-Classical-123.html" class="mini-card theme-teal"><div class="mini-title">22扇枕溫衾(本文)</div><div class="mini-code">CC-123</div></a>
+        <a href="Chinese-Classical-124.html" class="mini-card theme-teal is-exercise"><div class="mini-title">22扇枕溫衾(練習題)</div><div class="mini-code">CC-124</div></a>
+        <a href="Chinese-Classical-125.html" class="mini-card theme-teal"><div class="mini-title">23懷橘遺親(本文)</div><div class="mini-code">CC-125</div></a>
+        <a href="Chinese-Classical-126.html" class="mini-card theme-teal is-exercise"><div class="mini-title">23懷橘遺親(練習題)</div><div class="mini-code">CC-126</div></a>
+        <a href="Chinese-Classical-127.html" class="mini-card theme-teal"><div class="mini-title">24金絲猿(本文)</div><div class="mini-code">CC-127</div></a>
+        <a href="Chinese-Classical-128.html" class="mini-card theme-teal is-exercise"><div class="mini-title">24金絲猿(練習題)</div><div class="mini-code">CC-128</div></a>
+        <a href="Chinese-Classical-129.html" class="mini-card theme-teal"><div class="mini-title">25觀刈麥(本文)</div><div class="mini-code">CC-129</div></a>
+        <a href="Chinese-Classical-130.html" class="mini-card theme-teal is-exercise"><div class="mini-title">25觀刈麥(練習題)</div><div class="mini-code">CC-130</div></a>
+        <a href="Chinese-Classical-131.html" class="mini-card theme-teal"><div class="mini-title">26青出於藍(本文)</div><div class="mini-code">CC-131</div></a>
+        <a href="Chinese-Classical-132.html" class="mini-card theme-teal is-exercise"><div class="mini-title">26青出於藍(練習題)</div><div class="mini-code">CC-132</div></a>
+        <a href="Chinese-Classical-133.html" class="mini-card theme-teal"><div class="mini-title">27春望(本文)</div><div class="mini-code">CC-133</div></a>
+        <a href="Chinese-Classical-134.html" class="mini-card theme-teal is-exercise"><div class="mini-title">27春望(練習題)</div><div class="mini-code">CC-134</div></a>
+        <a href="Chinese-Classical-135.html" class="mini-card theme-teal"><div class="mini-title">28出塞(本文)</div><div class="mini-code">CC-135</div></a>
+        <a href="Chinese-Classical-136.html" class="mini-card theme-teal is-exercise"><div class="mini-title">28出塞(練習題)</div><div class="mini-code">CC-136</div></a>
+        <a href="Chinese-Classical-137.html" class="mini-card theme-teal"><div class="mini-title">29從軍行(本文)</div><div class="mini-code">CC-137</div></a>
+        <a href="Chinese-Classical-138.html" class="mini-card theme-teal is-exercise"><div class="mini-title">29從軍行(練習題)</div><div class="mini-code">CC-138</div></a>
+        <a href="Chinese-Classical-139.html" class="mini-card theme-teal"><div class="mini-title">30夜雨寄北(本文)</div><div class="mini-code">CC-139</div></a>
+        <a href="Chinese-Classical-140.html" class="mini-card theme-teal is-exercise"><div class="mini-title">30夜雨寄北(練習題)</div><div class="mini-code">CC-140</div></a>
+        <a href="Chinese-Classical-141.html" class="mini-card theme-teal"><div class="mini-title">31花影(本文)</div><div class="mini-code">CC-141</div></a>
+        <a href="Chinese-Classical-142.html" class="mini-card theme-teal is-exercise"><div class="mini-title">31花影(練習題)</div><div class="mini-code">CC-142</div></a>
+        <a href="Chinese-Classical-143.html" class="mini-card theme-teal"><div class="mini-title">32蔡根譚(本文)</div><div class="mini-code">CC-143</div></a>
+        <a href="Chinese-Classical-144.html" class="mini-card theme-teal is-exercise"><div class="mini-title">32蔡根譚(練習題)</div><div class="mini-code">CC-144</div></a>
+        <a href="Chinese-Classical-145.html" class="mini-card theme-teal"><div class="mini-title">33舟(本文)</div><div class="mini-code">CC-145</div></a>
+        <a href="Chinese-Classical-146.html" class="mini-card theme-teal is-exercise"><div class="mini-title">33舟(練習題)</div><div class="mini-code">CC-146</div></a>
+        <a href="Chinese-Classical-147.html" class="mini-card theme-teal"><div class="mini-title">34美景勝概(本文)</div><div class="mini-code">CC-147</div></a>
+        <a href="Chinese-Classical-148.html" class="mini-card theme-teal is-exercise"><div class="mini-title">34美景勝概(練習題)</div><div class="mini-code">CC-148</div></a>
+        <a href="Chinese-Classical-149.html" class="mini-card theme-teal"><div class="mini-title">35南柯夢幻(本文)</div><div class="mini-code">CC-149</div></a>
+        <a href="Chinese-Classical-150.html" class="mini-card theme-teal is-exercise"><div class="mini-title">35南柯夢幻(練習題)</div><div class="mini-code">CC-150</div></a>
+        <a href="Chinese-Classical-151.html" class="mini-card theme-teal"><div class="mini-title">36婁敬不易旃衣(本文)</div><div class="mini-code">CC-151</div></a>
+        <a href="Chinese-Classical-152.html" class="mini-card theme-teal is-exercise"><div class="mini-title">36婁敬不易旃衣(練習題)</div><div class="mini-code">CC-152</div></a>
+        <a href="Chinese-Classical-153.html" class="mini-card theme-teal"><div class="mini-title">37柳敬亭說書(本文)</div><div class="mini-code">CC-153</div></a>
+        <a href="Chinese-Classical-154.html" class="mini-card theme-teal is-exercise"><div class="mini-title">37柳敬亭說書(練習題)</div><div class="mini-code">CC-154</div></a>
+        <a href="Chinese-Classical-155.html" class="mini-card theme-teal"><div class="mini-title">38知足自得(本文)</div><div class="mini-code">CC-155</div></a>
+        <a href="Chinese-Classical-156.html" class="mini-card theme-teal is-exercise"><div class="mini-title">38知足自得(練習題)</div><div class="mini-code">CC-156</div></a>
+        <a href="Chinese-Classical-157.html" class="mini-card theme-teal"><div class="mini-title">39却要(本文)</div><div class="mini-code">CC-157</div></a>
+        <a href="Chinese-Classical-158.html" class="mini-card theme-teal is-exercise"><div class="mini-title">39却要(練習題)</div><div class="mini-code">CC-158</div></a>
+        <a href="Chinese-Classical-159.html" class="mini-card theme-teal"><div class="mini-title">40天論(本文)</div><div class="mini-code">CC-159</div></a>
+        <a href="Chinese-Classical-160.html" class="mini-card theme-teal is-exercise"><div class="mini-title">40天論(練習題)</div><div class="mini-code">CC-160</div></a>
+        <a href="Chinese-Classical-161.html" class="mini-card theme-teal"><div class="mini-title">41猶疑不決(本文)</div><div class="mini-code">CC-161</div></a>
+        <a href="Chinese-Classical-162.html" class="mini-card theme-teal is-exercise"><div class="mini-title">41猶疑不決(練習題)</div><div class="mini-code">CC-162</div></a>
+        <a href="Chinese-Classical-163.html" class="mini-card theme-teal"><div class="mini-title">42鵲踏枝(本文)</div><div class="mini-code">CC-163</div></a>
+        <a href="Chinese-Classical-164.html" class="mini-card theme-teal is-exercise"><div class="mini-title">42鵲踏枝(練習題)</div><div class="mini-code">CC-164</div></a>
+        <a href="Chinese-Classical-165.html" class="mini-card theme-teal"><div class="mini-title">43貴德(本文)</div><div class="mini-code">CC-165</div></a>
+        <a href="Chinese-Classical-166.html" class="mini-card theme-teal is-exercise"><div class="mini-title">43貴德(練習題)</div><div class="mini-code">CC-166</div></a>
+        <a href="Chinese-Classical-167.html" class="mini-card theme-teal"><div class="mini-title">44偽病(本文)</div><div class="mini-code">CC-167</div></a>
+        <a href="Chinese-Classical-168.html" class="mini-card theme-teal is-exercise"><div class="mini-title">44偽病(練習題)</div><div class="mini-code">CC-168</div></a>
+
+        <!-- 吳敏男-第二輯 (Theme: Orange) -->
+        <div class="section-title">吳敏男 - 第二輯</div>
+        
+        <a href="Chinese-Classical-169.html" class="mini-card theme-orange"><div class="mini-title">1不食嗟來食(本文)</div><div class="mini-code">CC-169</div></a>
+        <a href="Chinese-Classical-170.html" class="mini-card theme-orange is-exercise"><div class="mini-title">1不食嗟來食(練習題)</div><div class="mini-code">CC-170</div></a>
+        <a href="Chinese-Classical-171.html" class="mini-card theme-orange"><div class="mini-title">2子夏喪明(本文)</div><div class="mini-code">CC-171</div></a>
+        <a href="Chinese-Classical-172.html" class="mini-card theme-orange is-exercise"><div class="mini-title">2子夏喪明(練習題)</div><div class="mini-code">CC-172</div></a>
+        <a href="Chinese-Classical-173.html" class="mini-card theme-orange"><div class="mini-title">3三人成虎(本文)</div><div class="mini-code">CC-173</div></a>
+        <a href="Chinese-Classical-174.html" class="mini-card theme-orange is-exercise"><div class="mini-title">3三人成虎(練習題)</div><div class="mini-code">CC-174</div></a>
+        <a href="Chinese-Classical-175.html" class="mini-card theme-orange"><div class="mini-title">4和氏璧(本文)</div><div class="mini-code">CC-175</div></a>
+        <a href="Chinese-Classical-176.html" class="mini-card theme-orange is-exercise"><div class="mini-title">4和氏璧(練習題)</div><div class="mini-code">CC-176</div></a>
+        <a href="Chinese-Classical-177.html" class="mini-card theme-orange"><div class="mini-title">5齊桓公好服紫(本文)</div><div class="mini-code">CC-177</div></a>
+        <a href="Chinese-Classical-178.html" class="mini-card theme-orange is-exercise"><div class="mini-title">5齊桓公好服紫(練習題)</div><div class="mini-code">CC-178</div></a>
+        <a href="Chinese-Classical-179.html" class="mini-card theme-orange"><div class="mini-title">6郢書燕說(本文)</div><div class="mini-code">CC-179</div></a>
+        <a href="Chinese-Classical-180.html" class="mini-card theme-orange is-exercise"><div class="mini-title">6郢書燕說(練習題)</div><div class="mini-code">CC-180</div></a>
+        <a href="Chinese-Classical-181.html" class="mini-card theme-orange"><div class="mini-title">7衛女多私被休(本文)</div><div class="mini-code">CC-181</div></a>
+        <a href="Chinese-Classical-182.html" class="mini-card theme-orange is-exercise"><div class="mini-title">7衛女多私被休(練習題)</div><div class="mini-code">CC-182</div></a>
+        <a href="Chinese-Classical-183.html" class="mini-card theme-orange"><div class="mini-title">8此一地，彼一地(本文)</div><div class="mini-code">CC-183</div></a>
+        <a href="Chinese-Classical-184.html" class="mini-card theme-orange is-exercise"><div class="mini-title">8此一地，彼一地(練習題)</div><div class="mini-code">CC-184</div></a>
+        <a href="Chinese-Classical-185.html" class="mini-card theme-orange"><div class="mini-title">9行罰救火(本文)</div><div class="mini-code">CC-185</div></a>
+        <a href="Chinese-Classical-186.html" class="mini-card theme-orange is-exercise"><div class="mini-title">9行罰救火(練習題)</div><div class="mini-code">CC-186</div></a>
+        <a href="Chinese-Classical-187.html" class="mini-card theme-orange"><div class="mini-title">10燕雀偷安(本文)</div><div class="mini-code">CC-187</div></a>
+        <a href="Chinese-Classical-188.html" class="mini-card theme-orange is-exercise"><div class="mini-title">10燕雀偷安(練習題)</div><div class="mini-code">CC-188</div></a>
+        <a href="Chinese-Classical-189.html" class="mini-card theme-orange"><div class="mini-title">11齊之好勇者(本文)</div><div class="mini-code">CC-189</div></a>
+        <a href="Chinese-Classical-190.html" class="mini-card theme-orange is-exercise"><div class="mini-title">11齊之好勇者(練習題)</div><div class="mini-code">CC-190</div></a>
+        <a href="Chinese-Classical-191.html" class="mini-card theme-orange"><div class="mini-title">12大公無私祁黃羊(本文)</div><div class="mini-code">CC-191</div></a>
+        <a href="Chinese-Classical-192.html" class="mini-card theme-orange is-exercise"><div class="mini-title">12大公無私祁黃羊(練習題)</div><div class="mini-code">CC-192</div></a>
+        <a href="Chinese-Classical-193.html" class="mini-card theme-orange"><div class="mini-title">13明大義之腹䵍(本文)</div><div class="mini-code">CC-193</div></a>
+        <a href="Chinese-Classical-194.html" class="mini-card theme-orange is-exercise"><div class="mini-title">13明大義之腹䵍(練習題)</div><div class="mini-code">CC-194</div></a>
+        <a href="Chinese-Classical-195.html" class="mini-card theme-orange"><div class="mini-title">14鄒忌諫齊王(本文)</div><div class="mini-code">CC-195</div></a>
+        <a href="Chinese-Classical-196.html" class="mini-card theme-orange is-exercise"><div class="mini-title">14鄒忌諫齊王(練習題)</div><div class="mini-code">CC-196</div></a>
+        <a href="Chinese-Classical-197.html" class="mini-card theme-orange"><div class="mini-title">15唐睢說信陵君(本文)</div><div class="mini-code">CC-197</div></a>
+        <a href="Chinese-Classical-198.html" class="mini-card theme-orange is-exercise"><div class="mini-title">15唐睢說信陵君(練習題)</div><div class="mini-code">CC-198</div></a>
+        <a href="Chinese-Classical-199.html" class="mini-card theme-orange"><div class="mini-title">16趙王買馬(本文)</div><div class="mini-code">CC-199</div></a>
+        <a href="Chinese-Classical-200.html" class="mini-card theme-orange is-exercise"><div class="mini-title">16趙王買馬(練習題)</div><div class="mini-code">CC-200</div></a>
+        <a href="Chinese-Classical-201.html" class="mini-card theme-orange"><div class="mini-title">17歧路亡羊(本文)</div><div class="mini-code">CC-201</div></a>
+        <a href="Chinese-Classical-202.html" class="mini-card theme-orange is-exercise"><div class="mini-title">17歧路亡羊(練習題)</div><div class="mini-code">CC-202</div></a>
+        <a href="Chinese-Classical-203.html" class="mini-card theme-orange"><div class="mini-title">18晉文公欲伐衛(本文)</div><div class="mini-code">CC-203</div></a>
+        <a href="Chinese-Classical-204.html" class="mini-card theme-orange is-exercise"><div class="mini-title">18晉文公欲伐衛(練習題)</div><div class="mini-code">CC-204</div></a>
+        <a href="Chinese-Classical-205.html" class="mini-card theme-orange"><div class="mini-title">19止盜在明教化(本文)</div><div class="mini-code">CC-205</div></a>
+        <a href="Chinese-Classical-206.html" class="mini-card theme-orange is-exercise"><div class="mini-title">19止盜在明教化(練習題)</div><div class="mini-code">CC-206</div></a>
+        <a href="Chinese-Classical-207.html" class="mini-card theme-orange"><div class="mini-title">20齊人攫金(本文)</div><div class="mini-code">CC-207</div></a>
+        <a href="Chinese-Classical-208.html" class="mini-card theme-orange is-exercise"><div class="mini-title">20齊人攫金(練習題)</div><div class="mini-code">CC-208</div></a>
+        <a href="Chinese-Classical-209.html" class="mini-card theme-orange"><div class="mini-title">21魏公子與乳母(本文)</div><div class="mini-code">CC-209</div></a>
+        <a href="Chinese-Classical-210.html" class="mini-card theme-orange is-exercise"><div class="mini-title">21魏公子與乳母(練習題)</div><div class="mini-code">CC-210</div></a>
+        <a href="Chinese-Classical-211.html" class="mini-card theme-orange"><div class="mini-title">22王者貴天(本文)</div><div class="mini-code">CC-211</div></a>
+        <a href="Chinese-Classical-212.html" class="mini-card theme-orange is-exercise"><div class="mini-title">22王者貴天(練習題)</div><div class="mini-code">CC-212</div></a>
+        <a href="Chinese-Classical-213.html" class="mini-card theme-orange"><div class="mini-title">23齊王嫁女(本文)</div><div class="mini-code">CC-213</div></a>
+        <a href="Chinese-Classical-214.html" class="mini-card theme-orange is-exercise"><div class="mini-title">23齊王嫁女(練習題)</div><div class="mini-code">CC-214</div></a>
+        <a href="Chinese-Classical-215.html" class="mini-card theme-orange"><div class="mini-title">24皋魚之死(本文)</div><div class="mini-code">CC-215</div></a>
+        <a href="Chinese-Classical-216.html" class="mini-card theme-orange is-exercise"><div class="mini-title">24皋魚之死(練習題)</div><div class="mini-code">CC-216</div></a>
+        <a href="Chinese-Classical-217.html" class="mini-card theme-orange"><div class="mini-title">25御者妻(本文)</div><div class="mini-code">CC-217</div></a>
+        <a href="Chinese-Classical-218.html" class="mini-card theme-orange is-exercise"><div class="mini-title">25御者妻(練習題)</div><div class="mini-code">CC-218</div></a>
+        <a href="Chinese-Classical-219.html" class="mini-card theme-orange"><div class="mini-title">26孟嘗君將入秦(本文)</div><div class="mini-code">CC-219</div></a>
+        <a href="Chinese-Classical-220.html" class="mini-card theme-orange is-exercise"><div class="mini-title">26孟嘗君將入秦(練習題)</div><div class="mini-code">CC-220</div></a>
+        <a href="Chinese-Classical-221.html" class="mini-card theme-orange"><div class="mini-title">27鴻門宴(本文)</div><div class="mini-code">CC-221</div></a>
+        <a href="Chinese-Classical-222.html" class="mini-card theme-orange is-exercise"><div class="mini-title">27鴻門宴(練習題)</div><div class="mini-code">CC-222</div></a>
+        <a href="Chinese-Classical-223.html" class="mini-card theme-orange"><div class="mini-title">28孔子世家贊(本文)</div><div class="mini-code">CC-223</div></a>
+        <a href="Chinese-Classical-224.html" class="mini-card theme-orange is-exercise"><div class="mini-title">28孔子世家贊(練習題)</div><div class="mini-code">CC-224</div></a>
+        <a href="Chinese-Classical-225.html" class="mini-card theme-orange"><div class="mini-title">29一鳴驚人(本文)</div><div class="mini-code">CC-225</div></a>
+        <a href="Chinese-Classical-226.html" class="mini-card theme-orange is-exercise"><div class="mini-title">29一鳴驚人(練習題)</div><div class="mini-code">CC-226</div></a>
+        <a href="Chinese-Classical-227.html" class="mini-card theme-orange"><div class="mini-title">30負荊請罪(本文)</div><div class="mini-code">CC-227</div></a>
+        <a href="Chinese-Classical-228.html" class="mini-card theme-orange is-exercise"><div class="mini-title">30負荊請罪(練習題)</div><div class="mini-code">CC-228</div></a>
+        <a href="Chinese-Classical-229.html" class="mini-card theme-orange"><div class="mini-title">31陳涉太息壟上(本文)</div><div class="mini-code">CC-229</div></a>
+        <a href="Chinese-Classical-230.html" class="mini-card theme-orange is-exercise"><div class="mini-title">31陳涉太息壟上(練習題)</div><div class="mini-code">CC-230</div></a>
+        <a href="Chinese-Classical-231.html" class="mini-card theme-orange"><div class="mini-title">32管鮑之交(本文)</div><div class="mini-code">CC-231</div></a>
+        <a href="Chinese-Classical-232.html" class="mini-card theme-orange is-exercise"><div class="mini-title">32管鮑之交(練習題)</div><div class="mini-code">CC-232</div></a>
+        <a href="Chinese-Classical-233.html" class="mini-card theme-orange"><div class="mini-title">33李將軍列傳(本文)</div><div class="mini-code">CC-233</div></a>
+        <a href="Chinese-Classical-234.html" class="mini-card theme-orange is-exercise"><div class="mini-title">33李將軍列傳(練習題)</div><div class="mini-code">CC-234</div></a>
+        <a href="Chinese-Classical-235.html" class="mini-card theme-orange"><div class="mini-title">34梟逢鳩(本文)</div><div class="mini-code">CC-235</div></a>
+        <a href="Chinese-Classical-236.html" class="mini-card theme-orange is-exercise"><div class="mini-title">34梟逢鳩(練習題)</div><div class="mini-code">CC-236</div></a>
+        <a href="Chinese-Classical-237.html" class="mini-card theme-orange"><div class="mini-title">35景公將殺圉人(本文)</div><div class="mini-code">CC-237</div></a>
+        <a href="Chinese-Classical-238.html" class="mini-card theme-orange is-exercise"><div class="mini-title">35景公將殺圉人(練習題)</div><div class="mini-code">CC-238</div></a>
+        <a href="Chinese-Classical-239.html" class="mini-card theme-orange"><div class="mini-title">36毋忘在莒(本文)</div><div class="mini-code">CC-239</div></a>
+        <a href="Chinese-Classical-240.html" class="mini-card theme-orange is-exercise"><div class="mini-title">36毋忘在莒(練習題)</div><div class="mini-code">CC-240</div></a>
+        <a href="Chinese-Classical-241.html" class="mini-card theme-orange"><div class="mini-title">37緹縈救父(本文)</div><div class="mini-code">CC-241</div></a>
+        <a href="Chinese-Classical-242.html" class="mini-card theme-orange is-exercise"><div class="mini-title">37緹縈救父(練習題)</div><div class="mini-code">CC-242</div></a>
+        <a href="Chinese-Classical-243.html" class="mini-card theme-orange"><div class="mini-title">38斷機教子(本文)</div><div class="mini-code">CC-243</div></a>
+        <a href="Chinese-Classical-244.html" class="mini-card theme-orange is-exercise"><div class="mini-title">38斷機教子(練習題)</div><div class="mini-code">CC-244</div></a>
+        <a href="Chinese-Classical-245.html" class="mini-card theme-orange"><div class="mini-title">39曲突徙薪(本文)</div><div class="mini-code">CC-245</div></a>
+        <a href="Chinese-Classical-246.html" class="mini-card theme-orange is-exercise"><div class="mini-title">39曲突徙薪(練習題)</div><div class="mini-code">CC-246</div></a>
+        <a href="Chinese-Classical-247.html" class="mini-card theme-orange"><div class="mini-title">40疏廣答勸買田宅者(本文)</div><div class="mini-code">CC-247</div></a>
+        <a href="Chinese-Classical-248.html" class="mini-card theme-orange is-exercise"><div class="mini-title">40疏廣答勸買田宅者(練習題)</div><div class="mini-code">CC-248</div></a>
+        <a href="Chinese-Classical-249.html" class="mini-card theme-orange"><div class="mini-title">41三世不遇(本文)</div><div class="mini-code">CC-249</div></a>
+        <a href="Chinese-Classical-250.html" class="mini-card theme-orange is-exercise"><div class="mini-title">41三世不遇(練習題)</div><div class="mini-code">CC-250</div></a>
+        <a href="Chinese-Classical-251.html" class="mini-card theme-orange"><div class="mini-title">42吝嗇的老人(本文)</div><div class="mini-code">CC-251</div></a>
+        <a href="Chinese-Classical-252.html" class="mini-card theme-orange is-exercise"><div class="mini-title">42吝嗇的老人(練習題)</div><div class="mini-code">CC-252</div></a>
+        <a href="Chinese-Classical-253.html" class="mini-card theme-orange"><div class="mini-title">43江上丈人(本文)</div><div class="mini-code">CC-253</div></a>
+        <a href="Chinese-Classical-254.html" class="mini-card theme-orange is-exercise"><div class="mini-title">43江上丈人(練習題)</div><div class="mini-code">CC-254</div></a>
+        <a href="Chinese-Classical-255.html" class="mini-card theme-orange"><div class="mini-title">44桃花源記(本文)</div><div class="mini-code">CC-255</div></a>
+        <a href="Chinese-Classical-256.html" class="mini-card theme-orange is-exercise"><div class="mini-title">45桃花源記(練習題)</div><div class="mini-code">CC-256</div></a>
+        <a href="Chinese-Classical-257.html" class="mini-card theme-orange"><div class="mini-title">45班超傳(本文)</div><div class="mini-code">CC-257</div></a>
+        <a href="Chinese-Classical-258.html" class="mini-card theme-orange is-exercise"><div class="mini-title">45班超傳(練習題)</div><div class="mini-code">CC-258</div></a>
+        <a href="Chinese-Classical-259.html" class="mini-card theme-orange"><div class="mini-title">46樂羊子之妻(本文)</div><div class="mini-code">CC-259</div></a>
+        <a href="Chinese-Classical-260.html" class="mini-card theme-orange is-exercise"><div class="mini-title">46樂羊子之妻(練習題)</div><div class="mini-code">CC-260</div></a>
+        <a href="Chinese-Classical-261.html" class="mini-card theme-orange"><div class="mini-title">47漢武帝赦乳母(本文)</div><div class="mini-code">CC-261</div></a>
+        <a href="Chinese-Classical-262.html" class="mini-card theme-orange is-exercise"><div class="mini-title">47漢武帝赦乳母(練習題)</div><div class="mini-code">CC-262</div></a>
+        <a href="Chinese-Classical-263.html" class="mini-card theme-orange"><div class="mini-title">48管寧與華歆(本文)</div><div class="mini-code">CC-263</div></a>
+        <a href="Chinese-Classical-264.html" class="mini-card theme-orange is-exercise"><div class="mini-title">48管寧與華歆(練習題)</div><div class="mini-code">CC-264</div></a>
+        <a href="Chinese-Classical-265.html" class="mini-card theme-orange"><div class="mini-title">49舉目不見長安(本文)</div><div class="mini-code">CC-265</div></a>
+        <a href="Chinese-Classical-266.html" class="mini-card theme-orange is-exercise"><div class="mini-title">49舉目不見長安(練習題)</div><div class="mini-code">CC-266</div></a>
+        <a href="Chinese-Classical-267.html" class="mini-card theme-orange"><div class="mini-title">50新亭對泣(本文)</div><div class="mini-code">CC-267</div></a>
+        <a href="Chinese-Classical-268.html" class="mini-card theme-orange is-exercise"><div class="mini-title">50新亭對泣(練習題)</div><div class="mini-code">CC-268</div></a>
+        <a href="Chinese-Classical-269.html" class="mini-card theme-orange"><div class="mini-title">51小時了了(本文)</div><div class="mini-code">CC-269</div></a>
+        <a href="Chinese-Classical-270.html" class="mini-card theme-orange is-exercise"><div class="mini-title">51小時了了(練習題)</div><div class="mini-code">CC-270</div></a>
+        <a href="Chinese-Classical-271.html" class="mini-card theme-orange"><div class="mini-title">52貧者士之常(本文)</div><div class="mini-code">CC-271</div></a>
+        <a href="Chinese-Classical-272.html" class="mini-card theme-orange is-exercise"><div class="mini-title">52貧者士之常(練習題)</div><div class="mini-code">CC-272</div></a>
+        <a href="Chinese-Classical-273.html" class="mini-card theme-orange"><div class="mini-title">53床頭捉刀人(本文)</div><div class="mini-code">CC-273</div></a>
+        <a href="Chinese-Classical-274.html" class="mini-card theme-orange is-exercise"><div class="mini-title">53床頭捉刀人(練習題)</div><div class="mini-code">CC-274</div></a>
+        <a href="Chinese-Classical-275.html" class="mini-card theme-orange"><div class="mini-title">54人不如木(本文)</div><div class="mini-code">CC-275</div></a>
+        <a href="Chinese-Classical-276.html" class="mini-card theme-orange is-exercise"><div class="mini-title">54人不如木(練習題)</div><div class="mini-code">CC-276</div></a>
+        <a href="Chinese-Classical-277.html" class="mini-card theme-orange"><div class="mini-title">55賈人渡河(本文)</div><div class="mini-code">CC-277</div></a>
+        <a href="Chinese-Classical-278.html" class="mini-card theme-orange is-exercise"><div class="mini-title">55賈人渡河(練習題)</div><div class="mini-code">CC-278</div></a>
+        <a href="Chinese-Classical-279.html" class="mini-card theme-orange"><div class="mini-title">56煮豆燃萁(本文)</div><div class="mini-code">CC-279</div></a>
+        <a href="Chinese-Classical-280.html" class="mini-card theme-orange is-exercise"><div class="mini-title">56煮豆燃萁(練習題)</div><div class="mini-code">CC-280</div></a>
+        <a href="Chinese-Classical-281.html" class="mini-card theme-orange"><div class="mini-title">57旅夜書懷(本文)</div><div class="mini-code">CC-281</div></a>
+        <a href="Chinese-Classical-282.html" class="mini-card theme-orange is-exercise"><div class="mini-title">57旅夜書懷(練習題)</div><div class="mini-code">CC-282</div></a>
+        <a href="Chinese-Classical-283.html" class="mini-card theme-orange"><div class="mini-title">58月夜憶舍弟(本文)</div><div class="mini-code">CC-283</div></a>
+        <a href="Chinese-Classical-284.html" class="mini-card theme-orange is-exercise"><div class="mini-title">58月夜憶舍弟(練習題)</div><div class="mini-code">CC-284</div></a>
+        <a href="Chinese-Classical-285.html" class="mini-card theme-orange"><div class="mini-title">59燕詩示劉叟(本文)</div><div class="mini-code">CC-285</div></a>
+        <a href="Chinese-Classical-286.html" class="mini-card theme-orange is-exercise"><div class="mini-title">59燕詩示劉叟(練習題)</div><div class="mini-code">CC-286</div></a>
+        <a href="Chinese-Classical-287.html" class="mini-card theme-orange"><div class="mini-title">60江南春(本文)</div><div class="mini-code">CC-287</div></a>
+        <a href="Chinese-Classical-288.html" class="mini-card theme-orange is-exercise"><div class="mini-title">60江南春(練習題)</div><div class="mini-code">CC-288</div></a>
+        <a href="Chinese-Classical-289.html" class="mini-card theme-orange"><div class="mini-title">61虞美人(本文)</div><div class="mini-code">CC-289</div></a>
+        <a href="Chinese-Classical-290.html" class="mini-card theme-orange is-exercise"><div class="mini-title">61虞美人(練習題)</div><div class="mini-code">CC-290</div></a>
+        <a href="Chinese-Classical-291.html" class="mini-card theme-orange"><div class="mini-title">62元日(本文)</div><div class="mini-code">CC-291</div></a>
+        <a href="Chinese-Classical-292.html" class="mini-card theme-orange is-exercise"><div class="mini-title">62元日(練習題)</div><div class="mini-code">CC-292</div></a>
+
+        <!-- 文言文推與敲 (Theme: Purple) -->
+        <div class="section-title">文言文推與敲</div>
+        
+        <a href="Chinese-Classical-293.html" class="mini-card theme-purple"><div class="mini-title">1覆水難收(本文)</div><div class="mini-code">CC-293</div></a>
+        <a href="Chinese-Classical-294.html" class="mini-card theme-purple is-exercise"><div class="mini-title">1覆水難收(練習題)</div><div class="mini-code">CC-294</div></a>
+        <a href="Chinese-Classical-295.html" class="mini-card theme-purple"><div class="mini-title">2鳥(本文)</div><div class="mini-code">CC-295</div></a>
+        <a href="Chinese-Classical-296.html" class="mini-card theme-purple is-exercise"><div class="mini-title">2鳥(練習題)</div><div class="mini-code">CC-296</div></a>
+        <a href="Chinese-Classical-297.html" class="mini-card theme-purple"><div class="mini-title">3白娘子永鎮雷峰塔(本文)</div><div class="mini-code">CC-297</div></a>
+        <a href="Chinese-Classical-298.html" class="mini-card theme-purple is-exercise"><div class="mini-title">3白娘子永鎮雷峰塔(練習題)</div><div class="mini-code">CC-298</div></a>
+        <a href="Chinese-Classical-299.html" class="mini-card theme-purple"><div class="mini-title">4懷橘遺親(本文)</div><div class="mini-code">CC-299</div></a>
+        <a href="Chinese-Classical-300.html" class="mini-card theme-purple is-exercise"><div class="mini-title">4懷橘遺親(練習題)</div><div class="mini-code">CC-300</div></a>
+        <a href="Chinese-Classical-301.html" class="mini-card theme-purple"><div class="mini-title">5子罕辭寶(本文)</div><div class="mini-code">CC-301</div></a>
+        <a href="Chinese-Classical-302.html" class="mini-card theme-purple is-exercise"><div class="mini-title">5子罕辭寶(練習題)</div><div class="mini-code">CC-302</div></a>
+        <a href="Chinese-Classical-303.html" class="mini-card theme-purple"><div class="mini-title">6晏子使楚(本文)</div><div class="mini-code">CC-303</div></a>
+        <a href="Chinese-Classical-304.html" class="mini-card theme-purple is-exercise"><div class="mini-title">6晏子使楚(練習題)</div><div class="mini-code">CC-304</div></a>
+        <a href="Chinese-Classical-305.html" class="mini-card theme-purple"><div class="mini-title">7肉脯可充饑(本文)</div><div class="mini-code">CC-305</div></a>
+        <a href="Chinese-Classical-306.html" class="mini-card theme-purple is-exercise"><div class="mini-title">7肉脯可充饑(練習題)</div><div class="mini-code">CC-306</div></a>
+        <a href="Chinese-Classical-307.html" class="mini-card theme-purple"><div class="mini-title">8恍惚(本文)</div><div class="mini-code">CC-307</div></a>
+        <a href="Chinese-Classical-308.html" class="mini-card theme-purple is-exercise"><div class="mini-title">8恍惚(練習題)</div><div class="mini-code">CC-308</div></a>
+        <a href="Chinese-Classical-309.html" class="mini-card theme-purple"><div class="mini-title">9山雞獻楚(本文)</div><div class="mini-code">CC-309</div></a>
+        <a href="Chinese-Classical-310.html" class="mini-card theme-purple is-exercise"><div class="mini-title">9山雞獻楚(練習題)</div><div class="mini-code">CC-310</div></a>
+        <a href="Chinese-Classical-311.html" class="mini-card theme-purple"><div class="mini-title">10選-待人處事(本文)</div><div class="mini-code">CC-311</div></a>
+        <a href="Chinese-Classical-312.html" class="mini-card theme-purple is-exercise"><div class="mini-title">10選-待人處事(練習題)</div><div class="mini-code">CC-312</div></a>
+        <a href="Chinese-Classical-313.html" class="mini-card theme-purple"><div class="mini-title">11各司其職(本文)</div><div class="mini-code">CC-313</div></a>
+        <a href="Chinese-Classical-314.html" class="mini-card theme-purple is-exercise"><div class="mini-title">11各司其職(練習題)</div><div class="mini-code">CC-314</div></a>
+        <a href="Chinese-Classical-315.html" class="mini-card theme-purple"><div class="mini-title">12趙人鼠患(本文)</div><div class="mini-code">CC-315</div></a>
+        <a href="Chinese-Classical-316.html" class="mini-card theme-purple is-exercise"><div class="mini-title">12趙人鼠患(練習題)</div><div class="mini-code">CC-316</div></a>
+        <a href="Chinese-Classical-317.html" class="mini-card theme-purple"><div class="mini-title">13晦翁語錄(本文)</div><div class="mini-code">CC-317</div></a>
+        <a href="Chinese-Classical-318.html" class="mini-card theme-purple is-exercise"><div class="mini-title">13晦翁語錄(練習題)</div><div class="mini-code">CC-318</div></a>
+        <a href="Chinese-Classical-319.html" class="mini-card theme-purple"><div class="mini-title">14三豕涉河(本文)</div><div class="mini-code">CC-319</div></a>
+        <a href="Chinese-Classical-320.html" class="mini-card theme-purple is-exercise"><div class="mini-title">14三豕涉河(練習題)</div><div class="mini-code">CC-320</div></a>
+        <a href="Chinese-Classical-321.html" class="mini-card theme-purple"><div class="mini-title">15寄舍弟墨書(本文)</div><div class="mini-code">CC-321</div></a>
+        <a href="Chinese-Classical-322.html" class="mini-card theme-purple is-exercise"><div class="mini-title">15寄舍弟墨書(練習題)</div><div class="mini-code">CC-322</div></a>
+        <a href="Chinese-Classical-323.html" class="mini-card theme-purple"><div class="mini-title">16孔雀愛尾(本文)</div><div class="mini-code">CC-323</div></a>
+        <a href="Chinese-Classical-324.html" class="mini-card theme-purple is-exercise"><div class="mini-title">16孔雀愛尾(練習題)</div><div class="mini-code">CC-324</div></a>
+        <a href="Chinese-Classical-325.html" class="mini-card theme-purple"><div class="mini-title">17烏賊求全(本文)</div><div class="mini-code">CC-325</div></a>
+        <a href="Chinese-Classical-326.html" class="mini-card theme-purple is-exercise"><div class="mini-title">17烏賊求全(練習題)</div><div class="mini-code">CC-326</div></a>
+        <a href="Chinese-Classical-327.html" class="mini-card theme-purple"><div class="mini-title">18地理(本文)</div><div class="mini-code">CC-327</div></a>
+        <a href="Chinese-Classical-328.html" class="mini-card theme-purple is-exercise"><div class="mini-title">18地理(練習題)</div><div class="mini-code">CC-328</div></a>
+        <a href="Chinese-Classical-329.html" class="mini-card theme-purple"><div class="mini-title">19六一居士傳(本文)</div><div class="mini-code">CC-329</div></a>
+        <a href="Chinese-Classical-330.html" class="mini-card theme-purple is-exercise"><div class="mini-title">19六一居士傳(練習題)</div><div class="mini-code">CC-330</div></a>
+        <a href="Chinese-Classical-331.html" class="mini-card theme-purple"><div class="mini-title">20牡丹與貓眼(本文)</div><div class="mini-code">CC-331</div></a>
+        <a href="Chinese-Classical-332.html" class="mini-card theme-purple is-exercise"><div class="mini-title">20牡丹與貓眼(練習題)</div><div class="mini-code">CC-332</div></a>
+        <a href="Chinese-Classical-333.html" class="mini-card theme-purple"><div class="mini-title">21幽夢影:生活逸趣(本文)</div><div class="mini-code">CC-333</div></a>
+        <a href="Chinese-Classical-334.html" class="mini-card theme-purple is-exercise"><div class="mini-title">21幽夢影:生活逸趣(練習)</div><div class="mini-code">CC-334</div></a>
+        <a href="Chinese-Classical-335.html" class="mini-card theme-purple"><div class="mini-title">22尹綽與赦厥(本文)</div><div class="mini-code">CC-335</div></a>
+        <a href="Chinese-Classical-336.html" class="mini-card theme-purple is-exercise"><div class="mini-title">22尹綽與赦厥(練習題)</div><div class="mini-code">CC-336</div></a>
+        <a href="Chinese-Classical-337.html" class="mini-card theme-purple"><div class="mini-title">23扁鵲投石(本文)</div><div class="mini-code">CC-337</div></a>
+        <a href="Chinese-Classical-338.html" class="mini-card theme-purple is-exercise"><div class="mini-title">23扁鵲投石(練習題)</div><div class="mini-code">CC-338</div></a>
+        <a href="Chinese-Classical-339.html" class="mini-card theme-purple"><div class="mini-title">24治國猶栽樹(本文)</div><div class="mini-code">CC-339</div></a>
+        <a href="Chinese-Classical-340.html" class="mini-card theme-purple is-exercise"><div class="mini-title">24治國猶栽樹(練習題)</div><div class="mini-code">CC-340</div></a>
+        <a href="Chinese-Classical-341.html" class="mini-card theme-purple"><div class="mini-title">25痴人說夢(本文)</div><div class="mini-code">CC-341</div></a>
+        <a href="Chinese-Classical-342.html" class="mini-card theme-purple is-exercise"><div class="mini-title">25痴人說夢(練習題)</div><div class="mini-code">CC-342</div></a>
+        <a href="Chinese-Classical-343.html" class="mini-card theme-purple"><div class="mini-title">26黠鼠賦(本文)</div><div class="mini-code">CC-343</div></a>
+        <a href="Chinese-Classical-344.html" class="mini-card theme-purple is-exercise"><div class="mini-title">26黠鼠賦(練習題)</div><div class="mini-code">CC-344</div></a>
+        <a href="Chinese-Classical-345.html" class="mini-card theme-purple"><div class="mini-title">27貓號(本文)</div><div class="mini-code">CC-345</div></a>
+        <a href="Chinese-Classical-346.html" class="mini-card theme-purple is-exercise"><div class="mini-title">27貓號(練習題)</div><div class="mini-code">CC-346</div></a>
+        <a href="Chinese-Classical-347.html" class="mini-card theme-purple"><div class="mini-title">28王積薪聞棋(本文)</div><div class="mini-code">CC-347</div></a>
+        <a href="Chinese-Classical-348.html" class="mini-card theme-purple is-exercise"><div class="mini-title">28王積薪聞棋(練習題)</div><div class="mini-code">CC-348</div></a>
+        <a href="Chinese-Classical-349.html" class="mini-card theme-purple"><div class="mini-title">29罵鴨(本文)</div><div class="mini-code">CC-349</div></a>
+        <a href="Chinese-Classical-350.html" class="mini-card theme-purple is-exercise"><div class="mini-title">29罵鴨(練習題)</div><div class="mini-code">CC-350</div></a>
+        <a href="Chinese-Classical-351.html" class="mini-card theme-purple"><div class="mini-title">30不氣歌(本文)</div><div class="mini-code">CC-351</div></a>
+        <a href="Chinese-Classical-352.html" class="mini-card theme-purple is-exercise"><div class="mini-title">30不氣歌(練習題)</div><div class="mini-code">CC-352</div></a>
+        <a href="Chinese-Classical-353.html" class="mini-card theme-purple"><div class="mini-title">31齊人攫金(本文)</div><div class="mini-code">CC-353</div></a>
+        <a href="Chinese-Classical-354.html" class="mini-card theme-purple is-exercise"><div class="mini-title">31齊人攫金(練習題)</div><div class="mini-code">CC-354</div></a>
+        <a href="Chinese-Classical-355.html" class="mini-card theme-purple"><div class="mini-title">32某甲(本文)</div><div class="mini-code">CC-355</div></a>
+        <a href="Chinese-Classical-356.html" class="mini-card theme-purple is-exercise"><div class="mini-title">32某甲(練習題)</div><div class="mini-code">CC-356</div></a>
+        <a href="Chinese-Classical-357.html" class="mini-card theme-purple"><div class="mini-title">33菜根譚:待人處事(本文)</div><div class="mini-code">CC-357</div></a>
+        <a href="Chinese-Classical-358.html" class="mini-card theme-purple is-exercise"><div class="mini-title">33菜根譚:待人處事(練習)</div><div class="mini-code">CC-358</div></a>
+        <a href="Chinese-Classical-359.html" class="mini-card theme-purple"><div class="mini-title">34戲題芭蕉(本文)</div><div class="mini-code">CC-359</div></a>
+        <a href="Chinese-Classical-360.html" class="mini-card theme-purple is-exercise"><div class="mini-title">34戲題芭蕉(練習題)</div><div class="mini-code">CC-360</div></a>
+        <a href="Chinese-Classical-361.html" class="mini-card theme-purple"><div class="mini-title">35斫樹取果(本文)</div><div class="mini-code">CC-361</div></a>
+        <a href="Chinese-Classical-362.html" class="mini-card theme-purple is-exercise"><div class="mini-title">35斫樹取果(練習題)</div><div class="mini-code">CC-362</div></a>
+        <a href="Chinese-Classical-363.html" class="mini-card theme-purple"><div class="mini-title">36農夫耕田(本文)</div><div class="mini-code">CC-363</div></a>
+        <a href="Chinese-Classical-364.html" class="mini-card theme-purple is-exercise"><div class="mini-title">36農夫耕田(練習題)</div><div class="mini-code">CC-364</div></a>
+        <a href="Chinese-Classical-365.html" class="mini-card theme-purple"><div class="mini-title">37推敲(本文)</div><div class="mini-code">CC-365</div></a>
+        <a href="Chinese-Classical-366.html" class="mini-card theme-purple is-exercise"><div class="mini-title">37推敲(練習題)</div><div class="mini-code">CC-366</div></a>
+        <a href="Chinese-Classical-367.html" class="mini-card theme-purple"><div class="mini-title">38贈別(本文)</div><div class="mini-code">CC-367</div></a>
+        <a href="Chinese-Classical-368.html" class="mini-card theme-purple is-exercise"><div class="mini-title">38贈別(練習題)</div><div class="mini-code">CC-368</div></a>
+        <a href="Chinese-Classical-369.html" class="mini-card theme-purple"><div class="mini-title">39穿胸國(本文)</div><div class="mini-code">CC-369</div></a>
+        <a href="Chinese-Classical-370.html" class="mini-card theme-purple is-exercise"><div class="mini-title">39穿胸國(練習題)</div><div class="mini-code">CC-370</div></a>
+        <a href="Chinese-Classical-371.html" class="mini-card theme-purple"><div class="mini-title">40只為一堵牆(本文)</div><div class="mini-code">CC-371</div></a>
+        <a href="Chinese-Classical-372.html" class="mini-card theme-purple is-exercise"><div class="mini-title">40只為一堵牆(練習題)</div><div class="mini-code">CC-372</div></a>
+        <a href="Chinese-Classical-373.html" class="mini-card theme-purple"><div class="mini-title">41旅夜書懷(本文)</div><div class="mini-code">CC-373</div></a>
+        <a href="Chinese-Classical-374.html" class="mini-card theme-purple is-exercise"><div class="mini-title">41旅夜書懷(練習題)</div><div class="mini-code">CC-374</div></a>
+        <a href="Chinese-Classical-375.html" class="mini-card theme-purple"><div class="mini-title">42塞翁失馬(本文)</div><div class="mini-code">CC-375</div></a>
+        <a href="Chinese-Classical-376.html" class="mini-card theme-purple is-exercise"><div class="mini-title">42塞翁失馬(練習題)</div><div class="mini-code">CC-376</div></a>
+        <a href="Chinese-Classical-377.html" class="mini-card theme-purple"><div class="mini-title">43金絲猿(本文)</div><div class="mini-code">CC-377</div></a>
+        <a href="Chinese-Classical-378.html" class="mini-card theme-purple is-exercise"><div class="mini-title">43金絲猿(練習題)</div><div class="mini-code">CC-378</div></a>
+        <a href="Chinese-Classical-379.html" class="mini-card theme-purple"><div class="mini-title">44東方朔救乳母(本文)</div><div class="mini-code">CC-379</div></a>
+        <a href="Chinese-Classical-380.html" class="mini-card theme-purple is-exercise"><div class="mini-title">44東方朔救乳母(練習題)</div><div class="mini-code">CC-380</div></a>
+        <a href="Chinese-Classical-381.html" class="mini-card theme-purple"><div class="mini-title">45悲摯獸(本文)</div><div class="mini-code">CC-381</div></a>
+        <a href="Chinese-Classical-382.html" class="mini-card theme-purple is-exercise"><div class="mini-title">45悲摯獸(練習題)</div><div class="mini-code">CC-382</div></a>
+        <a href="Chinese-Classical-383.html" class="mini-card theme-purple"><div class="mini-title">46皋魚之泣(本文)</div><div class="mini-code">CC-383</div></a>
+        <a href="Chinese-Classical-384.html" class="mini-card theme-purple is-exercise"><div class="mini-title">46皋魚之泣(練習題)</div><div class="mini-code">CC-384</div></a>
+        <a href="Chinese-Classical-385.html" class="mini-card theme-purple"><div class="mini-title">47含羞草(本文)</div><div class="mini-code">CC-385</div></a>
+        <a href="Chinese-Classical-386.html" class="mini-card theme-purple is-exercise"><div class="mini-title">47含羞草(練習題)</div><div class="mini-code">CC-386</div></a>
+        <a href="Chinese-Classical-387.html" class="mini-card theme-purple"><div class="mini-title">48張相遇盜(本文)</div><div class="mini-code">CC-387</div></a>
+        <a href="Chinese-Classical-388.html" class="mini-card theme-purple is-exercise"><div class="mini-title">48張相遇盜(練習題)</div><div class="mini-code">CC-388</div></a>
+        <a href="Chinese-Classical-389.html" class="mini-card theme-purple"><div class="mini-title">49葉公好龍(本文)</div><div class="mini-code">CC-389</div></a>
+        <a href="Chinese-Classical-390.html" class="mini-card theme-purple is-exercise"><div class="mini-title">49葉公好龍(練習題)</div><div class="mini-code">CC-390</div></a>
+        <a href="Chinese-Classical-391.html" class="mini-card theme-purple"><div class="mini-title">50戴高帽(本文)</div><div class="mini-code">CC-391</div></a>
+        <a href="Chinese-Classical-392.html" class="mini-card theme-purple is-exercise"><div class="mini-title">50戴高帽(練習題)</div><div class="mini-code">CC-392</div></a>
+        <a href="Chinese-Classical-393.html" class="mini-card theme-purple"><div class="mini-title">51朝天子(本文)</div><div class="mini-code">CC-393</div></a>
+        <a href="Chinese-Classical-394.html" class="mini-card theme-purple is-exercise"><div class="mini-title">51朝天子(練習題)</div><div class="mini-code">CC-394</div></a>
+        <a href="Chinese-Classical-395.html" class="mini-card theme-purple"><div class="mini-title">52致浣弟書(本文)</div><div class="mini-code">CC-395</div></a>
+        <a href="Chinese-Classical-396.html" class="mini-card theme-purple is-exercise"><div class="mini-title">52致浣弟書(練習題)</div><div class="mini-code">CC-396</div></a>
+        <a href="Chinese-Classical-397.html" class="mini-card theme-purple"><div class="mini-title">53里仁為美(本文)</div><div class="mini-code">CC-397</div></a>
+        <a href="Chinese-Classical-398.html" class="mini-card theme-purple is-exercise"><div class="mini-title">53里仁為美(練習題)</div><div class="mini-code">CC-398</div></a>
+        <a href="Chinese-Classical-399.html" class="mini-card theme-purple"><div class="mini-title">54訓儉示康(本文)</div><div class="mini-code">CC-399</div></a>
+        <a href="Chinese-Classical-400.html" class="mini-card theme-purple is-exercise"><div class="mini-title">54訓儉示康(練習題)</div><div class="mini-code">CC-400</div></a>
+        <a href="Chinese-Classical-401.html" class="mini-card theme-purple"><div class="mini-title">55蠹魚(本文)</div><div class="mini-code">CC-401</div></a>
+        <a href="Chinese-Classical-402.html" class="mini-card theme-purple is-exercise"><div class="mini-title">55蠹魚(練習題)</div><div class="mini-code">CC-402</div></a>
+        <a href="Chinese-Classical-403.html" class="mini-card theme-purple"><div class="mini-title">56班超傳(本文)</div><div class="mini-code">CC-403</div></a>
+        <a href="Chinese-Classical-404.html" class="mini-card theme-purple is-exercise"><div class="mini-title">56班超傳(練習題)</div><div class="mini-code">CC-404</div></a>
+        <a href="Chinese-Classical-405.html" class="mini-card theme-purple"><div class="mini-title">57鴝鵒與禪(本文)</div><div class="mini-code">CC-405</div></a>
+        <a href="Chinese-Classical-406.html" class="mini-card theme-purple is-exercise"><div class="mini-title">57鴝鵒與禪(練習題)</div><div class="mini-code">CC-406</div></a>
+        <a href="Chinese-Classical-407.html" class="mini-card theme-purple"><div class="mini-title">58三峽(本文)</div><div class="mini-code">CC-407</div></a>
+        <a href="Chinese-Classical-408.html" class="mini-card theme-purple is-exercise"><div class="mini-title">58三峽(練習題)</div><div class="mini-code">CC-408</div></a>
+        <a href="Chinese-Classical-409.html" class="mini-card theme-purple"><div class="mini-title">59登泰山記(本文)</div><div class="mini-code">CC-409</div></a>
+        <a href="Chinese-Classical-410.html" class="mini-card theme-purple is-exercise"><div class="mini-title">59登泰山記(練習題)</div><div class="mini-code">CC-410</div></a>
+        <a href="Chinese-Classical-411.html" class="mini-card theme-purple"><div class="mini-title">60後園作回文詩(本文)</div><div class="mini-code">CC-411</div></a>
+        <a href="Chinese-Classical-412.html" class="mini-card theme-purple is-exercise"><div class="mini-title">60後園作回文詩(練習題)</div><div class="mini-code">CC-412</div></a>
+        <a href="Chinese-Classical-413.html" class="mini-card theme-purple"><div class="mini-title">61西湖香市(本文)</div><div class="mini-code">CC-413</div></a>
+        <a href="Chinese-Classical-414.html" class="mini-card theme-purple is-exercise"><div class="mini-title">61西湖香市(練習題)</div><div class="mini-code">CC-414</div></a>
+        <a href="Chinese-Classical-415.html" class="mini-card theme-purple"><div class="mini-title">62晚遊六橋待月記(本文)</div><div class="mini-code">CC-415</div></a>
+        <a href="Chinese-Classical-416.html" class="mini-card theme-purple is-exercise"><div class="mini-title">62晚遊六橋待月記(練習題)</div><div class="mini-code">CC-416</div></a>
+        <a href="Chinese-Classical-417.html" class="mini-card theme-purple"><div class="mini-title">63齊桓公好服紫(本文)</div><div class="mini-code">CC-417</div></a>
+        <a href="Chinese-Classical-418.html" class="mini-card theme-purple is-exercise"><div class="mini-title">63齊桓公好服紫(練習題)</div><div class="mini-code">CC-418</div></a>
+        <a href="Chinese-Classical-419.html" class="mini-card theme-purple"><div class="mini-title">64小重山(本文)</div><div class="mini-code">CC-419</div></a>
+        <a href="Chinese-Classical-420.html" class="mini-card theme-purple is-exercise"><div class="mini-title">64小重山(練習題)</div><div class="mini-code">CC-420</div></a>
+        <a href="Chinese-Classical-421.html" class="mini-card theme-purple"><div class="mini-title">65吳興老狸(本文)</div><div class="mini-code">CC-421</div></a>
+        <a href="Chinese-Classical-422.html" class="mini-card theme-purple is-exercise"><div class="mini-title">65吳興老狸(練習題)</div><div class="mini-code">CC-422</div></a>
+        <a href="Chinese-Classical-423.html" class="mini-card theme-purple"><div class="mini-title">66口技(本文)</div><div class="mini-code">CC-423</div></a>
+        <a href="Chinese-Classical-424.html" class="mini-card theme-purple is-exercise"><div class="mini-title">66口技(練習題)</div><div class="mini-code">CC-424</div></a>
+        <a href="Chinese-Classical-425.html" class="mini-card theme-purple"><div class="mini-title">67殺青(本文)</div><div class="mini-code">CC-425</div></a>
+        <a href="Chinese-Classical-426.html" class="mini-card theme-purple is-exercise"><div class="mini-title">67殺青(練習題)</div><div class="mini-code">CC-426</div></a>
+        <a href="Chinese-Classical-427.html" class="mini-card theme-purple"><div class="mini-title">68濟盜成良(本文)</div><div class="mini-code">CC-427</div></a>
+        <a href="Chinese-Classical-428.html" class="mini-card theme-purple is-exercise"><div class="mini-title">68濟盜成良(練習題)</div><div class="mini-code">CC-428</div></a>
+        <a href="Chinese-Classical-429.html" class="mini-card theme-purple"><div class="mini-title">69望洋興嘆(本文)</div><div class="mini-code">CC-429</div></a>
+        <a href="Chinese-Classical-430.html" class="mini-card theme-purple is-exercise"><div class="mini-title">69望洋興嘆(練習題)</div><div class="mini-code">CC-430</div></a>
+        <a href="Chinese-Classical-431.html" class="mini-card theme-purple"><div class="mini-title">70戒子孫(本文)</div><div class="mini-code">CC-431</div></a>
+        <a href="Chinese-Classical-432.html" class="mini-card theme-purple is-exercise"><div class="mini-title">70戒子孫(練習題)</div><div class="mini-code">CC-432</div></a>
+        <a href="Chinese-Classical-433.html" class="mini-card theme-purple"><div class="mini-title">71書感(本文)</div><div class="mini-code">CC-433</div></a>
+        <a href="Chinese-Classical-434.html" class="mini-card theme-purple is-exercise"><div class="mini-title">71書感(練習題)</div><div class="mini-code">CC-434</div></a>
+        <a href="Chinese-Classical-435.html" class="mini-card theme-purple"><div class="mini-title">72疏廣答勸買田宅者(本文)</div><div class="mini-code">CC-435</div></a>
+        <a href="Chinese-Classical-436.html" class="mini-card theme-purple is-exercise"><div class="mini-title">72疏廣答勸買田宅者(練習題)</div><div class="mini-code">CC-436</div></a>
+        <a href="Chinese-Classical-437.html" class="mini-card theme-purple"><div class="mini-title">73涉江采芙蓉(本文)</div><div class="mini-code">CC-437</div></a>
+        <a href="Chinese-Classical-438.html" class="mini-card theme-purple is-exercise"><div class="mini-title">73涉江采芙蓉(練習題)</div><div class="mini-code">CC-438</div></a>
+        <a href="Chinese-Classical-439.html" class="mini-card theme-purple"><div class="mini-title">74澆灌竹木(本文)</div><div class="mini-code">CC-439</div></a>
+        <a href="Chinese-Classical-440.html" class="mini-card theme-purple is-exercise"><div class="mini-title">74澆灌竹木(練習題)</div><div class="mini-code">CC-440</div></a>
+        <a href="Chinese-Classical-441.html" class="mini-card theme-purple"><div class="mini-title">75不食嗟來食(本文)</div><div class="mini-code">CC-441</div></a>
+        <a href="Chinese-Classical-442.html" class="mini-card theme-purple is-exercise"><div class="mini-title">75不食嗟來食(練習題)</div><div class="mini-code">CC-442</div></a>
+        <a href="Chinese-Classical-443.html" class="mini-card theme-purple"><div class="mini-title">76慕賢(本文)</div><div class="mini-code">CC-443</div></a>
+        <a href="Chinese-Classical-444.html" class="mini-card theme-purple is-exercise"><div class="mini-title">76慕賢(練習題)</div><div class="mini-code">CC-444</div></a>
+        <a href="Chinese-Classical-445.html" class="mini-card theme-purple"><div class="mini-title">77紀水沙連(本文)</div><div class="mini-code">CC-445</div></a>
+        <a href="Chinese-Classical-446.html" class="mini-card theme-purple is-exercise"><div class="mini-title">77紀水沙連(練習題)</div><div class="mini-code">CC-446</div></a>
+        <a href="Chinese-Classical-447.html" class="mini-card theme-purple"><div class="mini-title">78台灣三字經序(本文)</div><div class="mini-code">CC-447</div></a>
+        <a href="Chinese-Classical-448.html" class="mini-card theme-purple is-exercise"><div class="mini-title">78台灣三字經序(練習題)</div><div class="mini-code">CC-448</div></a>
+
+        <!-- 古文素養攻略 (Theme: Brown) -->
+        <div class="section-title">古文素養攻略</div>
+
+        <a href="Chinese-Classical-449.html" class="mini-card theme-brown"><div class="mini-title">1牛山嘆(本文)</div><div class="mini-code">CC-449</div></a>
+        <a href="Chinese-Classical-450.html" class="mini-card theme-brown is-exercise"><div class="mini-title">1牛山嘆(練習題)</div><div class="mini-code">CC-450</div></a>
+        <a href="Chinese-Classical-451.html" class="mini-card theme-brown"><div class="mini-title">2王母使者(本文)</div><div class="mini-code">CC-451</div></a>
+        <a href="Chinese-Classical-452.html" class="mini-card theme-brown is-exercise"><div class="mini-title">2王母使者(練習題)</div><div class="mini-code">CC-452</div></a>
+        <a href="Chinese-Classical-453.html" class="mini-card theme-brown"><div class="mini-title">3郭文救虎(本文)</div><div class="mini-code">CC-453</div></a>
+        <a href="Chinese-Classical-454.html" class="mini-card theme-brown is-exercise"><div class="mini-title">3郭文救虎(練習題)</div><div class="mini-code">CC-454</div></a>
+        <a href="Chinese-Classical-455.html" class="mini-card theme-brown"><div class="mini-title">4羅友(本文)</div><div class="mini-code">CC-455</div></a>
+        <a href="Chinese-Classical-456.html" class="mini-card theme-brown is-exercise"><div class="mini-title">4羅友(練習題)</div><div class="mini-code">CC-456</div></a>
+        <a href="Chinese-Classical-457.html" class="mini-card theme-brown"><div class="mini-title">5海大魚(本文)</div><div class="mini-code">CC-457</div></a>
+        <a href="Chinese-Classical-458.html" class="mini-card theme-brown is-exercise"><div class="mini-title">5海大魚(練習題)</div><div class="mini-code">CC-458</div></a>
+        <a href="Chinese-Classical-459.html" class="mini-card theme-brown"><div class="mini-title">6劉勝項敗(本文)</div><div class="mini-code">CC-459</div></a>
+        <a href="Chinese-Classical-460.html" class="mini-card theme-brown is-exercise"><div class="mini-title">6劉勝項敗(練習題)</div><div class="mini-code">CC-460</div></a>
+        <a href="Chinese-Classical-461.html" class="mini-card theme-brown"><div class="mini-title">7-1遊戲汙瀆中(本文)</div><div class="mini-code">CC-461</div></a>
+        <a href="Chinese-Classical-462.html" class="mini-card theme-brown is-exercise"><div class="mini-title">7-1遊戲汙瀆中(練習題)</div><div class="mini-code">CC-462</div></a>
+        <a href="Chinese-Classical-463.html" class="mini-card theme-brown"><div class="mini-title">7-2曳尾塗中(本文)</div><div class="mini-code">CC-463</div></a>
+        <a href="Chinese-Classical-464.html" class="mini-card theme-brown is-exercise"><div class="mini-title">7-2曳尾塗中(練習題)</div><div class="mini-code">CC-464</div></a>
+        <a href="Chinese-Classical-465.html" class="mini-card theme-brown"><div class="mini-title">8秦士錄(本文)</div><div class="mini-code">CC-465</div></a>
+        <a href="Chinese-Classical-466.html" class="mini-card theme-brown is-exercise"><div class="mini-title">8秦士錄(練習題)</div><div class="mini-code">CC-466</div></a>
+        <a href="Chinese-Classical-467.html" class="mini-card theme-brown"><div class="mini-title">9景林寺(本文)</div><div class="mini-code">CC-467</div></a>
+        <a href="Chinese-Classical-468.html" class="mini-card theme-brown is-exercise"><div class="mini-title">9景林寺(練習題)</div><div class="mini-code">CC-468</div></a>
+        <a href="Chinese-Classical-469.html" class="mini-card theme-brown"><div class="mini-title">10小石潭記(本文)</div><div class="mini-code">CC-469</div></a>
+        <a href="Chinese-Classical-470.html" class="mini-card theme-brown is-exercise"><div class="mini-title">10小石潭記(練習題)</div><div class="mini-code">CC-470</div></a>
+        <a href="Chinese-Classical-471.html" class="mini-card theme-brown"><div class="mini-title">11飲酒詩(本文)</div><div class="mini-code">CC-471</div></a>
+        <a href="Chinese-Classical-472.html" class="mini-card theme-brown is-exercise"><div class="mini-title">11飲酒詩(練習題)</div><div class="mini-code">CC-472</div></a>
+        <a href="Chinese-Classical-473.html" class="mini-card theme-brown"><div class="mini-title">12-1楊柳枝詞(本文)</div><div class="mini-code">CC-473</div></a>
+        <a href="Chinese-Classical-474.html" class="mini-card theme-brown is-exercise"><div class="mini-title">12-1楊柳枝詞(練習題)</div><div class="mini-code">CC-474</div></a>
+        <a href="Chinese-Classical-475.html" class="mini-card theme-brown"><div class="mini-title">12-2詠柳(本文)</div><div class="mini-code">CC-475</div></a>
+        <a href="Chinese-Classical-476.html" class="mini-card theme-brown is-exercise"><div class="mini-title">12-2詠柳(練習題)</div><div class="mini-code">CC-476</div></a>
+        <a href="Chinese-Classical-477.html" class="mini-card theme-brown"><div class="mini-title">13-1客舍悲秋(本文)</div><div class="mini-code">CC-477</div></a>
+        <a href="Chinese-Classical-478.html" class="mini-card theme-brown is-exercise"><div class="mini-title">13-1客舍悲秋(練習題)</div><div class="mini-code">CC-478</div></a>
+        <a href="Chinese-Classical-479.html" class="mini-card theme-brown"><div class="mini-title">13-2春日寄懷(本文)</div><div class="mini-code">CC-479</div></a>
+        <a href="Chinese-Classical-480.html" class="mini-card theme-brown is-exercise"><div class="mini-title">13-2春日寄懷(練習題)</div><div class="mini-code">CC-480</div></a>
+        <a href="Chinese-Classical-481.html" class="mini-card theme-brown"><div class="mini-title">14明月何皎皎(本文)</div><div class="mini-code">CC-481</div></a>
+        <a href="Chinese-Classical-482.html" class="mini-card theme-brown is-exercise"><div class="mini-title">14明月何皎皎(練習題)</div><div class="mini-code">CC-482</div></a>
+        <a href="Chinese-Classical-483.html" class="mini-card theme-brown"><div class="mini-title">15哺雛詩(本文)</div><div class="mini-code">CC-483</div></a>
+        <a href="Chinese-Classical-484.html" class="mini-card theme-brown is-exercise"><div class="mini-title">15哺雛詩(練習題)</div><div class="mini-code">CC-484</div></a>
+        <a href="Chinese-Classical-485.html" class="mini-card theme-brown"><div class="mini-title">16滿江紅(本文)</div><div class="mini-code">CC-485</div></a>
+        <a href="Chinese-Classical-486.html" class="mini-card theme-brown is-exercise"><div class="mini-title">16滿江紅(練習題)</div><div class="mini-code">CC-486</div></a>
+        <a href="Chinese-Classical-487.html" class="mini-card theme-brown"><div class="mini-title">17永遇樂/南鄉子(本文)</div><div class="mini-code">CC-487</div></a>
+        <a href="Chinese-Classical-488.html" class="mini-card theme-brown is-exercise"><div class="mini-title">17永遇樂/南鄉子(練習)</div><div class="mini-code">CC-488</div></a>
+        <a href="Chinese-Classical-489.html" class="mini-card theme-brown"><div class="mini-title">18大德歌(本文)</div><div class="mini-code">CC-489</div></a>
+        <a href="Chinese-Classical-490.html" class="mini-card theme-brown is-exercise"><div class="mini-title">18大德歌(練習題)</div><div class="mini-code">CC-490</div></a>
+        <a href="Chinese-Classical-491.html" class="mini-card theme-brown"><div class="mini-title">19吊古戰場文(本文)</div><div class="mini-code">CC-491</div></a>
+        <a href="Chinese-Classical-492.html" class="mini-card theme-brown is-exercise"><div class="mini-title">19吊古戰場文(練習題)</div><div class="mini-code">CC-492</div></a>
+        <a href="Chinese-Classical-493.html" class="mini-card theme-brown"><div class="mini-title">20祭十二郎文(本文)</div><div class="mini-code">CC-493</div></a>
+        <a href="Chinese-Classical-494.html" class="mini-card theme-brown is-exercise"><div class="mini-title">20祭十二郎文(練習題)</div><div class="mini-code">CC-494</div></a>
+        <a href="Chinese-Classical-495.html" class="mini-card theme-brown"><div class="mini-title">21火候須知(本文)</div><div class="mini-code">CC-495</div></a>
+        <a href="Chinese-Classical-496.html" class="mini-card theme-brown is-exercise"><div class="mini-title">21火候須知(練習題)</div><div class="mini-code">CC-496</div></a>
+        <a href="Chinese-Classical-497.html" class="mini-card theme-brown"><div class="mini-title">22飯(本文)</div><div class="mini-code">CC-497</div></a>
+        <a href="Chinese-Classical-498.html" class="mini-card theme-brown is-exercise"><div class="mini-title">22飯(練習題)</div><div class="mini-code">CC-498</div></a>
+        <a href="Chinese-Classical-499.html" class="mini-card theme-brown"><div class="mini-title">23五金(本文)</div><div class="mini-code">CC-499</div></a>
+        <a href="Chinese-Classical-500.html" class="mini-card theme-brown is-exercise"><div class="mini-title">23五金(練習題)</div><div class="mini-code">CC-500</div></a>
+        <a href="Chinese-Classical-501.html" class="mini-card theme-brown"><div class="mini-title">24官鍼(本文)</div><div class="mini-code">CC-501</div></a>
+        <a href="Chinese-Classical-502.html" class="mini-card theme-brown is-exercise"><div class="mini-title">24官鍼(練習題)</div><div class="mini-code">CC-502</div></a>
+        <a href="Chinese-Classical-503.html" class="mini-card theme-brown"><div class="mini-title">25書畫(本文)</div><div class="mini-code">CC-503</div></a>
+        <a href="Chinese-Classical-504.html" class="mini-card theme-brown is-exercise"><div class="mini-title">25書畫(練習題)</div><div class="mini-code">CC-504</div></a>
+        <a href="Chinese-Classical-505.html" class="mini-card theme-brown"><div class="mini-title">26朽木為琴(本文)</div><div class="mini-code">CC-505</div></a>
+        <a href="Chinese-Classical-506.html" class="mini-card theme-brown is-exercise"><div class="mini-title">26朽木為琴(練習題)</div><div class="mini-code">CC-506</div></a>
+        <a href="Chinese-Classical-507.html" class="mini-card theme-brown"><div class="mini-title">27行軍(本文)</div><div class="mini-code">CC-507</div></a>
+        <a href="Chinese-Classical-508.html" class="mini-card theme-brown is-exercise"><div class="mini-title">27行軍(練習題)</div><div class="mini-code">CC-508</div></a>
+        <a href="Chinese-Classical-509.html" class="mini-card theme-brown"><div class="mini-title">28謀攻(本文)</div><div class="mini-code">CC-509</div></a>
+        <a href="Chinese-Classical-510.html" class="mini-card theme-brown is-exercise"><div class="mini-title">28謀攻(練習題)</div><div class="mini-code">CC-510</div></a>
+        <a href="Chinese-Classical-511.html" class="mini-card theme-brown"><div class="mini-title">29將器(本文)</div><div class="mini-code">CC-511</div></a>
+        <a href="Chinese-Classical-512.html" class="mini-card theme-brown is-exercise"><div class="mini-title">29將器(練習題)</div><div class="mini-code">CC-512</div></a>
+        <a href="Chinese-Classical-513.html" class="mini-card theme-brown"><div class="mini-title">30珍寶(本文)</div><div class="mini-code">CC-513</div></a>
+        <a href="Chinese-Classical-514.html" class="mini-card theme-brown is-exercise"><div class="mini-title">30珍寶(練習題)</div><div class="mini-code">CC-514</div></a>
+        <a href="Chinese-Classical-515.html" class="mini-card theme-brown"><div class="mini-title">31知人(本文)</div><div class="mini-code">CC-515</div></a>
+        <a href="Chinese-Classical-516.html" class="mini-card theme-brown is-exercise"><div class="mini-title">31知人(練習題)</div><div class="mini-code">CC-516</div></a>
+        <a href="Chinese-Classical-517.html" class="mini-card theme-brown"><div class="mini-title">32任事(本文)</div><div class="mini-code">CC-517</div></a>
+        <a href="Chinese-Classical-518.html" class="mini-card theme-brown is-exercise"><div class="mini-title">32任事(練習題)</div><div class="mini-code">CC-518</div></a>
+        <a href="Chinese-Classical-519.html" class="mini-card theme-brown"><div class="mini-title">33范增非人傑(本文)</div><div class="mini-code">CC-519</div></a>
+        <a href="Chinese-Classical-520.html" class="mini-card theme-brown is-exercise"><div class="mini-title">33范增非人傑(練習題)</div><div class="mini-code">CC-520</div></a>
+        <a href="Chinese-Classical-521.html" class="mini-card theme-brown"><div class="mini-title">34深慮論(本文)</div><div class="mini-code">CC-521</div></a>
+        <a href="Chinese-Classical-522.html" class="mini-card theme-brown is-exercise"><div class="mini-title">34深慮論(練習題)</div><div class="mini-code">CC-522</div></a>
+        <a href="Chinese-Classical-523.html" class="mini-card theme-brown"><div class="mini-title">35咸宜(本文)</div><div class="mini-code">CC-523</div></a>
+        <a href="Chinese-Classical-524.html" class="mini-card theme-brown is-exercise"><div class="mini-title">35咸宜(練習題)</div><div class="mini-code">CC-524</div></a>
+        <a href="Chinese-Classical-525.html" class="mini-card theme-brown"><div class="mini-title">36北狄(本文)</div><div class="mini-code">CC-525</div></a>
+        <a href="Chinese-Classical-526.html" class="mini-card theme-brown is-exercise"><div class="mini-title">36北狄(練習題)</div><div class="mini-code">CC-526</div></a>
+        <a href="Chinese-Classical-527.html" class="mini-card theme-brown"><div class="mini-title">37子從父孝乎?(本文)</div><div class="mini-code">CC-527</div></a>
+        <a href="Chinese-Classical-528.html" class="mini-card theme-brown is-exercise"><div class="mini-title">37子從父孝乎?(練習題)</div><div class="mini-code">CC-528</div></a>
+        <a href="Chinese-Classical-529.html" class="mini-card theme-brown"><div class="mini-title">38非薄鮑叔(本文)</div><div class="mini-code">CC-529</div></a>
+        <a href="Chinese-Classical-530.html" class="mini-card theme-brown is-exercise"><div class="mini-title">38非薄鮑叔(練習題)</div><div class="mini-code">CC-530</div></a>
+        <a href="Chinese-Classical-531.html" class="mini-card theme-brown"><div class="mini-title">39仲尼不知善賞(本文)</div><div class="mini-code">CC-531</div></a>
+        <a href="Chinese-Classical-532.html" class="mini-card theme-brown is-exercise"><div class="mini-title">39仲尼不知善賞(練習題)</div><div class="mini-code">CC-532</div></a>
+        <a href="Chinese-Classical-533.html" class="mini-card theme-brown"><div class="mini-title">40親士(本文)</div><div class="mini-code">CC-533</div></a>
+        <a href="Chinese-Classical-534.html" class="mini-card theme-brown is-exercise"><div class="mini-title">40親士(練習題)</div><div class="mini-code">CC-534</div></a>
+        <a href="Chinese-Classical-535.html" class="mini-card theme-brown"><div class="mini-title">41隆中對(本文)</div><div class="mini-code">CC-535</div></a>
+        <a href="Chinese-Classical-536.html" class="mini-card theme-brown is-exercise"><div class="mini-title">41隆中對(練習題)</div><div class="mini-code">CC-536</div></a>
+        <a href="Chinese-Classical-537.html" class="mini-card theme-brown"><div class="mini-title">42誡兄子嚴敦書(本文)</div><div class="mini-code">CC-537</div></a>
+        <a href="Chinese-Classical-538.html" class="mini-card theme-brown is-exercise"><div class="mini-title">42誡兄子嚴敦書(練習題)</div><div class="mini-code">CC-538</div></a>
+        <a href="Chinese-Classical-539.html" class="mini-card theme-brown"><div class="mini-title">43答盧諶書(本文)</div><div class="mini-code">CC-539</div></a>
+        <a href="Chinese-Classical-540.html" class="mini-card theme-brown is-exercise"><div class="mini-title">43答盧諶書(練習題)</div><div class="mini-code">CC-540</div></a>
+        <a href="Chinese-Classical-541.html" class="mini-card theme-brown"><div class="mini-title">44與孫季述書(本文)</div><div class="mini-code">CC-541</div></a>
+        <a href="Chinese-Classical-542.html" class="mini-card theme-brown is-exercise"><div class="mini-title">44與孫季述書(練習題)</div><div class="mini-code">CC-542</div></a>
+        <a href="Chinese-Classical-543.html" class="mini-card theme-brown"><div class="mini-title">45獄中上梁王書(本文)</div><div class="mini-code">CC-543</div></a>
+        <a href="Chinese-Classical-544.html" class="mini-card theme-brown is-exercise"><div class="mini-title">45獄中上梁王書(練習題)</div><div class="mini-code">CC-544</div></a>
+        <a href="Chinese-Classical-545.html" class="mini-card theme-brown"><div class="mini-title">46上書諫獵(本文)</div><div class="mini-code">CC-545</div></a>
+        <a href="Chinese-Classical-546.html" class="mini-card theme-brown is-exercise"><div class="mini-title">46上書諫獵(練習題)</div><div class="mini-code">CC-546</div></a>
+        <a href="Chinese-Classical-547.html" class="mini-card theme-brown"><div class="mini-title">47論積貯疏(本文)</div><div class="mini-code">CC-547</div></a>
+        <a href="Chinese-Classical-548.html" class="mini-card theme-brown is-exercise"><div class="mini-title">47論積貯疏(練習題)</div><div class="mini-code">CC-548</div></a>
+        <a href="Chinese-Classical-549.html" class="mini-card theme-brown"><div class="mini-title">48駁復讎議(本文)</div><div class="mini-code">CC-549</div></a>
+        <a href="Chinese-Classical-550.html" class="mini-card theme-brown is-exercise"><div class="mini-title">48駁復讎議(練習題)</div><div class="mini-code">CC-550</div></a>
+        <a href="Chinese-Classical-551.html" class="mini-card theme-brown"><div class="mini-title">49野廟碑(本文)</div><div class="mini-code">CC-551</div></a>
+        <a href="Chinese-Classical-552.html" class="mini-card theme-brown is-exercise"><div class="mini-title">49野廟碑(練習題)</div><div class="mini-code">CC-552</div></a>
+        <a href="Chinese-Classical-553.html" class="mini-card theme-brown"><div class="mini-title">50祭鱷魚文(本文)</div><div class="mini-code">CC-553</div></a>
+        <a href="Chinese-Classical-554.html" class="mini-card theme-brown is-exercise"><div class="mini-title">50祭鱷魚文(練習題)</div><div class="mini-code">CC-554</div></a>
+
+    </div>
+
+</body>
+</html>
