@@ -31,7 +31,6 @@
             --bg: #fffaf5;
             --text-main: #4e342e;
             --card-bg: #ffffff;
-            --peach-red: #ff4081; /* 桃紅色 */
         }
 
         body {
@@ -46,50 +45,6 @@
         }
 
         h1, h2, .font-serif { font-family: 'Noto Serif TC', serif; }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            max-width: 900px;
-        }
-
-        /* 修改 2: 加大與加粗 "古文閱讀題庫總部" */
-        .header h1 {
-            font-family: 'Noto Serif TC', serif;
-            color: var(--text-main);
-            font-size: 3.5em; /* 加大 */
-            font-weight: 900; /* 加粗 */
-            margin-bottom: 15px;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.05);
-        }
-
-        .header p {
-            color: #795548;
-            font-size: 1.1em;
-            margin-bottom: 20px;
-        }
-
-        /* 修改 3: 加大 "返回快樂學習百寶箱" 的文字, 圓角外型 */
-        .home-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: linear-gradient(135deg, #ff7043 0%, #ff8a65 100%);
-            color: white;
-            padding: 15px 50px; /* 增加內距讓按鈕變大 */
-            border-radius: 9999px; /* 確保左右完全圓角 (Pill shape) */
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.3em; /* 加大文字 */
-            box-shadow: 0 6px 15px rgba(255, 112, 67, 0.3);
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-        .home-btn:hover { 
-            transform: translateY(-3px); 
-            box-shadow: 0 8px 20px rgba(255, 112, 67, 0.4); 
-        }
 
         /* 卡片網格佈局 */
         .app-grid {
@@ -116,7 +71,7 @@
             align-items: center;
             text-align: center;
             position: relative;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05); /* 預設細邊框 */
             min-height: 180px;
         }
 
@@ -125,14 +80,20 @@
             box-shadow: 0 12px 30px rgba(0,0,0,0.1);
         }
 
+        /* ★★★ 重點修改：已完成的卡片樣式 (螢光外框) ★★★ */
         .app-card.completed {
-            border: 4px solid #ffab00 !important;
-            border-top: 6px solid #ffab00 !important;
+            /* 強制覆蓋邊框樣式 */
+            border: 4px solid #ffab00 !important; /* 螢光琥珀色 */
+            border-top: 6px solid #ffab00 !important; /* 頂部也統一顏色或保持原色 */
+            /* 螢光光暈效果 */
             box-shadow: 0 0 20px rgba(255, 171, 0, 0.5) !important;
+            /* 微微放大，增加存在感 */
             transform: scale(1.02);
+            /* 確保背景稍微暖一點 */
             background-color: #fff8e1; 
         }
 
+        /* 圖示區塊 */
         .card-icon-wrapper {
             font-size: 2.5em;
             margin-bottom: 10px;
@@ -145,6 +106,7 @@
             background: #f5f5f5;
         }
 
+        /* 標題 */
         .card-title {
             font-family: 'Noto Serif TC', serif;
             font-size: 1.2em;
@@ -158,6 +120,7 @@
             justify-content: center;
         }
 
+        /* 代碼標籤 */
         .card-desc {
             font-size: 0.85em;
             color: #888;
@@ -168,6 +131,7 @@
             margin-top: auto;
         }
 
+        /* 手動 Checkbox */
         .card-checkbox {
             position: absolute;
             top: 12px;
@@ -186,12 +150,12 @@
         }
         
         .card-checkbox:hover {
-            border-color: #ffab00;
+            border-color: #ffab00; /* Hover 時也顯示螢光色 */
             transform: scale(1.1);
         }
 
         .card-checkbox.checked {
-            background: #ffab00;
+            background: #ffab00; /* 核取後也是螢光色 */
             border-color: #ffab00;
             color: white;
             font-weight: bold;
@@ -199,9 +163,25 @@
             box-shadow: 0 0 8px rgba(255, 171, 0, 0.6);
         }
 
+        /* 練習題特別標示 */
         .is-exercise-card {
             background-color: #fffbf5;
         }
+
+        /* 主題樣式 */
+        .theme-blue { --theme-color: #3949ab; --theme-light: #e8eaf6; }
+        .theme-teal { --theme-color: #00897b; --theme-light: #e0f2f1; }
+        .theme-orange { --theme-color: #f57c00; --theme-light: #fff3e0; }
+        .theme-purple { --theme-color: #7b1fa2; --theme-light: #f3e5f5; }
+        .theme-brown { --theme-color: #795548; --theme-light: #efebe9; }
+
+        /* 按鈕與燈號樣式 */
+        .home-btn {
+            background: linear-gradient(135deg, #ff7043 0%, #ff8a65 100%);
+            box-shadow: 0 4px 10px rgba(255, 112, 67, 0.3);
+            transition: all 0.3s ease;
+        }
+        .home-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(255, 112, 67, 0.4); }
 
         .status-dot {
             width: 10px;
@@ -220,47 +200,23 @@
         }
         .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
 
-        /* 修改 5: 章節標題改為桃紅色且加大 */
         .section-divider {
             grid-column: 1 / -1;
             display: flex;
             align-items: center;
-            margin: 50px 0 30px 0;
-            color: var(--peach-red); /* 改為桃紅色 */
+            margin: 40px 0 20px 0;
+            color: #5d4037;
             font-family: 'Noto Serif TC', serif;
-            font-size: 2.2em; /* 加大 */
-            font-weight: 900;
-            text-shadow: 1px 1px 0px rgba(0,0,0,0.05);
+            font-size: 1.5em;
+            font-weight: bold;
         }
         .section-divider::before, .section-divider::after {
             content: "";
             flex: 1;
-            border-bottom: 3px solid #ffcdd2; /* 搭配桃紅色的淺粉邊線 */
+            border-bottom: 2px solid #e0e0e0;
         }
-        .section-divider::before { margin-right: 20px; }
-        .section-divider::after { margin-left: 20px; }
-
-        /* 快速登入按鈕樣式 */
-        .quick-user-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: white;
-            border: 2px solid #ffcc80;
-            color: #5d4037;
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.1em;
-            transition: all 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .quick-user-btn:hover {
-            background: #fff3e0;
-            border-color: #ff9800;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
+        .section-divider::before { margin-right: 15px; }
+        .section-divider::after { margin-left: 15px; }
 
     </style>
 </head>
@@ -528,31 +484,11 @@
                 <div className="max-w-[1200px] mx-auto relative">
                     
                     {/* Header */}
-                    <div className="header mx-auto">
+                    <div className="header">
                         <h1>📜 古文閱讀題庫總部</h1>
-                        <div className="flex flex-col items-center gap-4">
-                            <p className="mb-0 text-xl font-medium">經典文言文・閱讀素養全集</p>
+                        <div className="flex flex-col items-center gap-2">
+                            <p className="mb-0">經典文言文・閱讀素養全集</p>
                             
-                            {/* 修改 1: 快速登入區塊 - 只在未登入時顯示 */}
-                            {!currentUser && allUsers.length > 0 && (
-                                <div className="w-full max-w-3xl my-2 p-4 bg-white/50 rounded-2xl border border-orange-100">
-                                    <p className="text-center text-[#795548] mb-3 font-bold text-sm opacity-80">
-                                        ▼ 點擊下方名字快速登入 ▼
-                                    </p>
-                                    <div className="flex flex-wrap justify-center gap-3">
-                                        {allUsers.map(u => (
-                                            <button 
-                                                key={u} 
-                                                onClick={() => handleLogin(u)} 
-                                                className="quick-user-btn"
-                                            >
-                                                👤 {u}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
                             <div className="flex items-center gap-4 mt-2">
                                 <div className="text-lg font-bold text-[#5d4037] bg-white px-4 py-1 rounded-full shadow-sm border border-orange-100">
                                     目前進度：{completedCount} / {TOTAL_ITEMS}
@@ -560,31 +496,30 @@
                                 <StatusLight status={syncStatus} />
                             </div>
 
-                            <div className="mt-2 flex items-center gap-3">
+                            <div className="mt-4 flex items-center gap-3">
                                 {currentUser ? (
                                     <div className="flex items-center gap-2 animate-fade-in">
-                                        <span className="text-base text-gray-600 font-medium">挑戰者：</span>
-                                        <span className="font-bold text-lg text-orange-700 bg-orange-100 px-4 py-1 rounded-full shadow-sm">{currentUser}</span>
+                                        <span className="text-sm text-gray-600">挑戰者：</span>
+                                        <span className="font-bold text-orange-700 bg-orange-100 px-3 py-1 rounded-full">{currentUser}</span>
                                         <button 
                                             onClick={() => { setCurrentUser(null); setLocalProgress({}); }}
-                                            className="text-sm text-gray-400 hover:text-gray-600 underline ml-2 font-medium"
+                                            className="text-xs text-gray-400 hover:text-gray-600 underline ml-2"
                                         >
                                             登出
                                         </button>
                                     </div>
                                 ) : (
-                                    /* 修改 4: 加大登入按鈕文字 */
                                     <button 
                                         onClick={() => setShowLogin(true)}
-                                        className="text-lg bg-white border-2 border-orange-300 text-orange-600 px-6 py-2 rounded-full hover:bg-orange-50 transition shadow-sm font-bold flex items-center gap-2"
+                                        className="text-sm bg-white border border-orange-200 text-orange-600 px-4 py-1.5 rounded-full hover:bg-orange-50 transition shadow-sm font-bold"
                                     >
-                                        <span>👤</span> 登入紀錄進度
+                                        👤 登入紀錄進度
                                     </button>
                                 )}
                             </div>
                         </div>
                         
-                        <div className="mt-8">
+                        <div className="mt-6">
                             <a href="https://nicktsai88.github.io/List/" className="home-btn">
                                 🎁 返回快樂學習百寶箱
                             </a>
@@ -595,7 +530,23 @@
                     {showLogin && (
                         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 backdrop-blur-sm" onClick={() => setShowLogin(false)}>
                             <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-sm mx-4 animate-fade-in" onClick={e => e.stopPropagation()}>
-                                <h3 className="text-xl font-bold text-center mb-4 text-[#4e342e] font-serif">登入 / 建立使用者</h3>
+                                <h3 className="text-xl font-bold text-center mb-4 text-[#4e342e] font-serif">選擇或建立使用者</h3>
+                                <div className="max-h-40 overflow-y-auto mb-4 space-y-2 border-b pb-4">
+                                    {allUsers.length > 0 ? (
+                                        allUsers.map(u => (
+                                            <button 
+                                                key={u} 
+                                                onClick={() => handleLogin(u)}
+                                                className="w-full text-left px-4 py-2 hover:bg-orange-50 rounded-lg text-gray-700 font-medium transition flex justify-between items-center"
+                                            >
+                                                <span>{u}</span>
+                                                <span className="text-gray-300 text-xs">➔</span>
+                                            </button>
+                                        ))
+                                    ) : (
+                                        <p className="text-center text-gray-400 text-sm py-2">尚無挑戰者紀錄，歡迎加入！</p>
+                                    )}
+                                </div>
                                 <div className="flex gap-2">
                                     <input 
                                         type="text" 
