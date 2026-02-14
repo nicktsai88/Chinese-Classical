@@ -8,6 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 載入 Marked.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- 載入 JSZip 和 FileSaver -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <!-- 載入 FontAwesome 圖標 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- 載入 Canvas Confetti -->
@@ -538,26 +541,30 @@
                     displayHtml = displayHtml.replace(new RegExp(key, 'g'), `<span class="interactive-word" onclick="showNote('${key}', ${idx}, this, event)">${key}</span>`);
                 });
 
-                // 圖片路徑邏輯：僅載入本地資料夾 (Chinese-Classical-383-images)
+                // 圖片路徑邏輯：1. Base64 (AI 生成) -> 2. 本地資料夾 (Chinese-Classical-383-images) -> 3. 佔位符
                 const localPath = `Chinese-Classical-383-images/segment_${idx + 1}.jpg`;
+                const hasGenImage = !!seg.imageData;
                 
                 // HTML 結構：同時包含 img 與 placeholder，透過 onerror 和樣式控制顯示
                 let imageSection = `
                     <div class="mt-6 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 relative min-h-[250px]">
                         <!-- 圖片容器 -->
                         <img 
-                            src="${localPath}" 
-                            class="w-full h-auto object-cover" 
+                            src="${hasGenImage ? seg.imageData : localPath}" 
+                            class="w-full h-auto object-cover ${hasGenImage ? '' : 'hidden-initially'}" 
                             alt="段落插圖"
                             onerror="this.style.display='none'; document.getElementById('placeholder-${idx}').style.display='flex';"
                             onload="this.style.display='block'; document.getElementById('placeholder-${idx}').style.display='none';"
                         >
                         
-                        <!-- 佔位符 -->
-                        <div id="placeholder-${idx}" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hidden">
-                             <div class="text-center p-6">
+                        <!-- 佔位符 / AI 生成介面 -->
+                        <div id="placeholder-${idx}" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 ${hasGenImage ? 'hidden' : 'flex'}">
+                             <div class="text-center p-6 border-2 border-dashed border-gray-300 rounded-lg">
                                 <i class="fas fa-image text-4xl mb-2 text-gray-300"></i>
-                                <p class="text-sm text-gray-400">圖片未找到<br><span class="text-xs text-gray-300">(請確認 Chinese-Classical-383-images 資料夾)</span></p>
+                                <p class="text-sm mb-2">尚未載入圖片</p>
+                                <button onclick="generateSingleImage(${idx})" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 px-3 py-1 rounded transition">
+                                    <i class="fas fa-magic mr-1"></i>AI 立即繪圖
+                                </button>
                              </div>
                         </div>
                     </div>
@@ -588,6 +595,20 @@
             }).join('');
 
             container.innerHTML = `
+                <div class="flex flex-col md:flex-row gap-6 mb-8 items-center bg-gradient-to-r from-amber-50 to-white p-5 rounded-xl border border-amber-100 shadow-sm">
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-amber-900 text-lg">AI 寫實圖解</h3>
+                        <p class="text-sm text-gray-600">若資料夾 <code>Chinese-Classical-383-images</code> 中有圖片將自動顯示，否則可點擊生成。</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="btn-gen-all" onclick="generateAllImages()" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg shadow-md hover:shadow-lg transition flex items-center font-medium">
+                            <i class="fas fa-paint-brush mr-2"></i>生成全篇
+                        </button>
+                        <button id="btn-download-all" onclick="downloadAllImages()" class="px-5 py-2.5 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow-md hover:shadow-lg transition flex items-center font-medium">
+                            <i class="fas fa-download mr-2"></i>打包下載
+                        </button>
+                    </div>
+                </div>
                 <div class="max-w-4xl mx-auto">
                     ${segmentsHtml}
                 </div>
@@ -937,22 +958,27 @@
             if(!window.currentStoryNode) window.currentStoryNode = 'start';
             const node = storyNodes[window.currentStoryNode];
             const localPath = `Chinese-Classical-383-images/rpg_${window.currentStoryNode}.jpg`;
-            
+            const hasGenImage = !!node.imageData;
+
             let imageContent = `
                 <div class="relative w-full overflow-hidden rounded-t-xl bg-gray-100 min-h-[300px]">
                     <img 
-                        src="${localPath}" 
+                        src="${hasGenImage ? node.imageData : localPath}" 
                         class="w-full h-auto object-cover fade-in-image shadow-inner" 
                         alt="場景圖"
                         onerror="this.style.display='none'; document.getElementById('story-ph').style.display='flex';"
                         onload="this.style.display='block'; document.getElementById('story-ph').style.display='none';"
                     >
-                    <div id="story-ph" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-gray-50 border-b border-gray-200">
+                    <div id="story-ph" class="${hasGenImage ? 'hidden' : 'flex'} absolute inset-0 flex flex-col items-center justify-center bg-gray-50 border-b border-gray-200">
                         <div class="z-10 text-center text-gray-400">
                             <i class="fas fa-image text-6xl mb-4"></i>
-                            <p class="text-sm mb-4">圖片未找到<br>(請確認 Chinese-Classical-383-images 資料夾)</p>
+                            <p class="text-sm mb-4">場景準備中...</p>
+                             <button onclick="generateStoryImage('${window.currentStoryNode}')" class="px-4 py-2 bg-amber-600 text-white rounded-lg shadow hover:bg-amber-700 transition">
+                                <i class="fas fa-magic mr-2"></i>生成此場景
+                            </button>
                         </div>
                     </div>
+                    ${node.isLoading ? `<div class="absolute inset-0 bg-white/80 flex items-center justify-center z-20"><div class="animate-pulse flex flex-col items-center"><i class="fas fa-palette text-5xl text-amber-500 mb-4"></i><p class="text-amber-700 font-bold">AI 繪製中...</p></div></div>` : ''}
                 </div>
             `;
 
@@ -968,7 +994,113 @@
         async function preloadStoryImages() {
             if (hasPreloadedStory) return;
             hasPreloadedStory = true;
-            // 預載邏輯暫緩
+            // 預載邏輯暫緩，改為點擊觸發以免消耗過多資源
+        }
+
+        async function generateSingleImage(idx) {
+             if (isGeneratingImage) return;
+             isGeneratingImage = true;
+             const btn = document.querySelector(`#placeholder-${idx} button`);
+             if(btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> 繪製中...';
+             
+             try {
+                const prompt = contentData.segments[idx].imagePrompt;
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
+                const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instances: [{ prompt: prompt }], parameters: { sampleCount: 1 } }) });
+                const data = await response.json();
+                if (data.predictions && data.predictions[0].bytesBase64Encoded) {
+                    const b64 = `data:image/png;base64,${data.predictions[0].bytesBase64Encoded}`;
+                    contentData.segments[idx].imageData = b64;
+                    // Refresh view
+                    renderReading(document.getElementById('content-display'));
+                } else {
+                    throw new Error("API Error");
+                }
+             } catch(e) {
+                 showError("圖片生成失敗，請檢查 API Key 或稍後再試。");
+                 if(btn) btn.innerHTML = '<i class="fas fa-magic mr-1"></i> 重試';
+             } finally {
+                 isGeneratingImage = false;
+             }
+        }
+
+        async function generateStoryImage(nodeId) {
+            const node = storyNodes[nodeId];
+            if (node.isLoading) return; 
+            
+            node.isLoading = true;
+            renderStory(document.getElementById('content-display'));
+            
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
+                const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instances: [{ prompt: node.imgPrompt }], parameters: { sampleCount: 1 } }) });
+                const data = await response.json();
+                if (data.predictions && data.predictions[0].bytesBase64Encoded) { node.imageData = `data:image/png;base64,${data.predictions[0].bytesBase64Encoded}`; } else { throw new Error("No image data returned"); }
+            } catch (err) { console.error(`Story image failed for ${nodeId}:`, err); showError("生成失敗，請確認 API Key"); } 
+            finally { 
+                node.isLoading = false; 
+                renderStory(document.getElementById('content-display'));
+            }
+        }
+
+        async function generateAllImages() {
+            if (isGeneratingImage) return;
+            const btn = document.getElementById('btn-gen-all');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>AI 畫師繪製中...';
+            isGeneratingImage = true;
+            
+            try {
+                for (let i = 0; i < contentData.segments.length; i++) {
+                    if (contentData.segments[i].imageData) continue;
+                    const prompt = contentData.segments[i].imagePrompt;
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
+                    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instances: [{ prompt: prompt }], parameters: { sampleCount: 1 } }) });
+                    const data = await response.json();
+                    if (data.predictions && data.predictions[0].bytesBase64Encoded) {
+                        contentData.segments[i].imageData = `data:image/png;base64,${data.predictions[0].bytesBase64Encoded}`;
+                        // 更新 UI 顯示進度
+                         btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>繪製中 (${i+1}/${contentData.segments.length})...`;
+                    }
+                }
+                renderReading(document.getElementById('content-display'));
+            } catch (err) { showError("圖片生成過程中遇到了一些問題，請稍後再試。"); console.error(err); } finally { isGeneratingImage = false; btn.disabled = false; btn.innerHTML = '<i class="fas fa-check mr-2"></i>繪製完成'; }
+        }
+
+        // 下載功能 - 確保資料夾結構正確
+        async function downloadAllImages() {
+            const zip = new JSZip();
+            let count = 0;
+            const title = "Gaoyu_Story"; 
+            // 關鍵修改：設定資料夾名稱符合 GitHub 需求
+            const folder = zip.folder("Chinese-Classical-383-images");
+
+            // Reading segments
+            contentData.segments.forEach((seg, index) => {
+                if (seg.imageData) {
+                    const base64Data = seg.imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+                    folder.file(`segment_${index + 1}.jpg`, base64Data, {base64: true});
+                    count++;
+                }
+            });
+
+            // RPG nodes
+            Object.entries(storyNodes).forEach(([nodeId, node]) => {
+                if (node.imageData) {
+                    const base64Data = node.imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+                    folder.file(`rpg_${nodeId}.jpg`, base64Data, {base64: true});
+                    count++;
+                }
+            });
+
+            if (count === 0) {
+                showError("目前沒有快取圖片，請先點擊「生成全篇」或手動放入圖片。");
+                return;
+            }
+
+            const content = await zip.generateAsync({type: "blob"});
+            saveAs(content, `${title}_assets.zip`);
+            showError(`已下載 ${count} 張圖片，請解壓縮並將資料夾上傳至 GitHub。`);
         }
 
         function checkAnswer(idx, val, ans) {
