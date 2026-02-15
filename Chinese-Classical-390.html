@@ -91,34 +91,68 @@
     <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl">
         
         <!-- View: Login -->
-        <div id="view-login" class="fade-in max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden mt-10 border-t-4 border-orange-500">
-            <div class="p-8">
-                <div class="text-center mb-8">
-                    <div class="inline-block p-3 rounded-full bg-orange-100 text-orange-600 mb-3">
-                        <i class="fas fa-book-reader text-3xl"></i>
+        <!-- 修改：加寬至 max-w-2xl，增加內距 p-12，加大所有文字 -->
+        <div id="view-login" class="fade-in max-w-2xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden mt-10 border-t-8 border-orange-500">
+            <div class="p-12">
+                <div class="text-center mb-10">
+                    <div class="inline-block p-5 rounded-full bg-orange-100 text-orange-600 mb-6">
+                        <i class="fas fa-book-reader text-5xl"></i>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-900 mb-2">文言文推與敲</h2>
-                    <p class="text-orange-600 font-bold text-xl">第49篇 葉公好龍</p>
-                    <p class="text-gray-500 text-base mt-2">瀑布流刷題模式 • 即時解析</p>
+                    <h2 class="text-5xl font-bold text-gray-900 mb-4">文言文推與敲</h2>
+                    <p class="text-orange-600 font-bold text-3xl">第49篇 葉公好龍</p>
+                    <p class="text-gray-500 text-xl mt-4">瀑布流刷題模式 • 即時解析</p>
                 </div>
                 
-                <div class="space-y-6">
+                <div class="space-y-8">
                     <div>
-                        <label for="username" class="block text-lg font-bold text-gray-700 mb-3">請輸入姓名開始</label>
+                        <label for="username" class="block text-2xl font-bold text-gray-700 mb-4">請輸入姓名開始</label>
                         <input type="text" id="username" 
-                            class="w-full pl-4 pr-4 py-4 text-lg border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all bg-gray-50 focus:bg-white" 
+                            class="w-full pl-6 pr-6 py-5 text-2xl border border-gray-200 rounded-2xl focus:ring-4 focus:ring-orange-500 focus:border-orange-500 transition-all bg-gray-50 focus:bg-white" 
                             placeholder="例如：王小明"
                             onkeypress="if(event.key === 'Enter') window.attemptLogin()">
                     </div>
                     
-                    <button onclick="window.attemptLogin()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 px-6 rounded-xl text-xl font-bold shadow-md transform active:scale-95 transition duration-200">
-                        開始刷題 <i class="fas fa-arrow-right ml-2"></i>
+                    <button onclick="window.attemptLogin()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-5 px-8 rounded-2xl text-3xl font-bold shadow-lg transform active:scale-95 transition duration-200">
+                        開始刷題 <i class="fas fa-arrow-right ml-3"></i>
                     </button>
 
                     <!-- Quick Login Section (加大) -->
-                    <div id="quick-login-area" class="hidden pt-6 border-t border-gray-100">
-                        <p class="text-xl text-gray-600 mb-4 font-bold">歷史挑戰者</p>
-                        <div id="recent-users-list" class="flex flex-wrap gap-3 max-h-48 overflow-y-auto"></div>
+                    <div id="quick-login-area" class="hidden pt-8 border-t border-gray-100">
+                        <p class="text-2xl text-gray-600 mb-6 font-bold">歷史挑戰者</p>
+                        <div id="recent-users-list" class="flex flex-wrap gap-4 max-h-60 overflow-y-auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Dashboard -->
+        <div id="view-dashboard" class="hidden fade-in max-w-lg mx-auto mt-6">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border-t-4 border-amber-500 p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">歡迎回來，<span id="dashboard-username" class="text-orange-600"></span></h2>
+                    <p class="text-gray-500 text-sm mt-2">請選擇您要進行的項目</p>
+                </div>
+
+                <div class="space-y-4">
+                    <button onclick="window.startExam()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-4 px-6 rounded-xl transition duration-200 font-bold shadow-md hover:shadow-lg flex items-center justify-between group">
+                        <span class="flex items-center"><i class="fas fa-pen-nib text-xl mr-3 w-8 text-center"></i> 開始測驗</span>
+                        <i class="fas fa-chevron-right opacity-50 group-hover:opacity-100 transition-opacity"></i>
+                    </button>
+
+                    <button onclick="window.showReview('wrong')" class="w-full bg-white border-2 border-red-100 text-red-600 hover:bg-red-50 py-4 px-6 rounded-xl transition duration-200 font-bold shadow-sm hover:shadow-md flex items-center justify-between group">
+                        <span class="flex items-center"><i class="fas fa-times-circle text-xl mr-3 w-8 text-center"></i> 錯題本</span>
+                        <span class="text-sm bg-red-100 px-2 py-1 rounded text-red-600" id="dash-wrong-count">0</span>
+                    </button>
+
+                    <button onclick="window.showReview('favorite')" class="w-full bg-white border-2 border-amber-100 text-amber-600 hover:bg-amber-50 py-4 px-6 rounded-xl transition duration-200 font-bold shadow-sm hover:shadow-md flex items-center justify-between group">
+                        <span class="flex items-center"><i class="fas fa-star text-xl mr-3 w-8 text-center"></i> 我的最愛</span>
+                        <span class="text-sm bg-amber-100 px-2 py-1 rounded text-amber-600" id="dash-fav-count">0</span>
+                    </button>
+
+                    <div class="pt-4 border-t border-gray-100 mt-4">
+                        <button onclick="window.showAllQuestions()" class="w-full bg-gray-50 text-gray-600 hover:bg-gray-100 py-3 px-4 rounded-lg transition duration-200 font-medium text-sm flex items-center justify-center">
+                            <i class="fas fa-list-ul mr-2"></i> 題目一覽表 (快速刷題)
+                        </button>
                     </div>
                 </div>
             </div>
@@ -247,6 +281,9 @@
             usernameInput: document.getElementById('username'),
             userDisplay: document.getElementById('user-display'),
             usernameSpan: document.getElementById('username-span'),
+            dashboardUsername: document.getElementById('dashboard-username'),
+            dashWrongCount: document.getElementById('dash-wrong-count'),
+            dashFavCount: document.getElementById('dash-fav-count'),
             quickLoginArea: document.getElementById('quick-login-area'),
             recentUsersList: document.getElementById('recent-users-list'),
             statCorrect: document.getElementById('stat-correct'),
@@ -256,6 +293,7 @@
             statusText: document.getElementById('status-text'),
             views: {
                 login: document.getElementById('view-login'),
+                dashboard: document.getElementById('view-dashboard'),
                 quiz: document.getElementById('view-quiz')
             }
         };
@@ -294,8 +332,8 @@
                 users.forEach(user => {
                     const btn = document.createElement('button');
                     // 加大快速登入按鈕
-                    btn.className = 'px-5 py-3 bg-white hover:bg-orange-50 text-gray-700 rounded-xl text-xl border border-gray-200 transition mb-2 shadow-sm font-medium';
-                    btn.innerHTML = `<i class="fas fa-user-circle mr-2 text-orange-400 text-2xl"></i>${user}`;
+                    btn.className = 'px-6 py-4 bg-white hover:bg-orange-50 text-gray-700 rounded-2xl text-2xl border border-gray-200 transition mb-3 shadow-sm font-medium flex items-center';
+                    btn.innerHTML = `<i class="fas fa-user-circle mr-3 text-orange-400 text-3xl"></i>${user}`;
                     btn.onclick = () => {
                         ui.usernameInput.value = user;
                         window.attemptLogin();
@@ -325,7 +363,7 @@
             ui.userDisplay.classList.add('flex');
             ui.usernameSpan.textContent = name;
             
-            switchView('quiz');
+            switchView('dashboard');
         }
 
         function startUserListener(username) {
@@ -340,6 +378,9 @@
                     const data = docSnap.data();
                     currentState.favorites = data.favorites || [];
                     currentState.mistakes = data.mistakes || [];
+                    ui.dashWrongCount.textContent = currentState.mistakes.length;
+                    ui.dashFavCount.textContent = currentState.favorites.length;
+
                     if (data.progress) {
                          currentState.answers = data.progress.answers || {};
                     }
@@ -348,6 +389,8 @@
                     currentState.favorites = [];
                     currentState.mistakes = [];
                     currentState.answers = {};
+                    ui.dashWrongCount.textContent = 0;
+                    ui.dashFavCount.textContent = 0;
                 }
                 // Render the quiz list with new data
                 renderWaterfallQuiz();
@@ -361,6 +404,37 @@
             Object.values(ui.views).forEach(el => el.classList.add('hidden'));
             ui.views[viewName].classList.remove('hidden');
             window.scrollTo(0, 0);
+        }
+
+        window.startExam = function() {
+            // Logic handled by Listener mostly, but check finish state
+            // if (currentState.isFinished === false && Object.keys(currentState.answers).length > 0) {
+            //      const resume = confirm(`系統發現您上次作答到第 ${currentState.questionIndex + 1} 題，是否繼續？`);
+            //      if (resume) {
+            //          switchView('quiz');
+            //          loadQuestion(currentState.questionIndex);
+            //          return;
+            //      }
+            // }
+            
+            // Start New Session
+            // window.restartQuiz();
+            switchView('quiz');
+            renderWaterfallQuiz();
+        }
+
+        window.showDashboard = function() {
+            // Counts are updated by onSnapshot
+            switchView('dashboard');
+        }
+
+        window.restartQuiz = function() {
+            if (confirm("確定要重新開始測驗嗎？\n這將清除本回的作答紀錄，但不會刪除錯題本與收藏。")) {
+                currentState.answers = {};
+                saveProgress();
+                renderWaterfallQuiz();
+                window.scrollTo({top:0, behavior:'smooth'});
+            }
         }
 
         // --- Waterfall Render Logic ---
@@ -536,6 +610,7 @@
             if (currentUserUnsubscribe) currentUserUnsubscribe();
             currentState.username = '';
             ui.views.login.classList.remove('hidden');
+            ui.views.dashboard.classList.add('hidden');
             ui.views.quiz.classList.add('hidden');
             document.getElementById('username').value = '';
         }
@@ -546,6 +621,14 @@
             } else {
                 window.location.reload();
             }
+        }
+
+        // Placeholder functions for Review modes (to avoid console errors in Dashboard)
+        window.showReview = function(type) {
+            alert("錯題本與最愛功能在本版本中尚未實作 (Waterfall Mode 優先)");
+        }
+        window.showAllQuestions = function() {
+            window.startExam();
         }
 
         const style = document.createElement('style');
