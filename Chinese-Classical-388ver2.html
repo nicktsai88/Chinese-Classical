@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文言文推與敲 - 第48篇 張相遇盜 (完整加強版)</title>
+    <title>文言文推與敲 - 第48篇 張相遇盜 (瀑布流大字版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -25,14 +25,6 @@
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Star Animation */
-        .star-anim {
-            transition: transform 0.2s;
-        }
-        .star-anim:active {
-            transform: scale(1.3);
         }
 
         /* Custom Scrollbar */
@@ -70,8 +62,7 @@
         <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
             <h1 class="text-2xl font-bold tracking-wider flex items-center gap-3 text-orange-700 cursor-pointer" onclick="goHome()">
                 <i class="fas fa-scroll text-orange-500 text-3xl"></i>
-                <span class="hidden sm:inline">張相遇盜</span>
-                <span class="sm:hidden">張相遇盜</span>
+                <span>張相遇盜</span>
             </h1>
             
             <div class="flex items-center gap-4">
@@ -140,70 +131,30 @@
         <!-- View: Quiz (Waterfall) -->
         <div id="view-quiz" class="hidden fade-in-up">
             
-            <!-- Sticky Stats Bar & Navigation -->
-            <div class="sticky top-20 z-40 space-y-2 mb-8">
-                <!-- Stats -->
-                <div class="bg-white/95 backdrop-blur-md shadow-md rounded-2xl p-4 border border-gray-200 flex justify-between items-center transition-all duration-300" id="stats-bar">
-                    <div class="flex items-center gap-4 sm:gap-6">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                            <span class="text-base sm:text-lg font-bold text-gray-700">答對: <span id="stat-correct" class="text-green-600 text-xl sm:text-2xl">0</span></span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                            <span class="text-base sm:text-lg font-bold text-gray-700">答錯: <span id="stat-wrong" class="text-red-600 text-xl sm:text-2xl">0</span></span>
-                        </div>
+            <!-- Sticky Stats Bar -->
+            <div class="sticky top-20 z-40 bg-white/95 backdrop-blur-md shadow-md rounded-2xl p-4 mb-8 border border-gray-200 flex justify-between items-center transition-all duration-300" id="stats-bar">
+                <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="text-lg font-bold text-gray-700">答對: <span id="stat-correct" class="text-green-600 text-2xl">0</span></span>
                     </div>
-                    <div class="text-gray-500 font-medium text-sm sm:text-base">
-                        進度: <span id="stat-progress">0</span> / <span id="stat-total">25</span>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <span class="text-lg font-bold text-gray-700">答錯: <span id="stat-wrong" class="text-red-600 text-2xl">0</span></span>
                     </div>
                 </div>
-
-                <!-- Navigation Tabs -->
-                <div class="bg-white/90 backdrop-blur-sm rounded-xl p-1.5 shadow-sm border border-gray-200 flex justify-between gap-2 overflow-x-auto">
-                    <button onclick="window.setFilterMode('all')" id="tab-all" class="flex-1 py-2 px-4 rounded-lg font-bold text-sm sm:text-base transition-colors duration-200 flex items-center justify-center gap-2 bg-orange-500 text-white shadow-sm">
-                        <i class="fas fa-list"></i> 全部題目
-                    </button>
-                    <button onclick="window.setFilterMode('mistakes')" id="tab-mistakes" class="flex-1 py-2 px-4 rounded-lg font-bold text-sm sm:text-base transition-colors duration-200 text-gray-600 hover:bg-red-50 flex items-center justify-center gap-2">
-                        <i class="fas fa-times-circle text-red-500"></i> 錯題本
-                        <span id="badge-mistakes" class="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full hidden">0</span>
-                    </button>
-                    <button onclick="window.setFilterMode('favorites')" id="tab-favorites" class="flex-1 py-2 px-4 rounded-lg font-bold text-sm sm:text-base transition-colors duration-200 text-gray-600 hover:bg-yellow-50 flex items-center justify-center gap-2">
-                        <i class="fas fa-star text-yellow-400"></i> 我的最愛
-                        <span id="badge-favorites" class="bg-yellow-400 text-white text-xs px-1.5 py-0.5 rounded-full hidden">0</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Header for Filtered View -->
-            <div id="filter-header" class="hidden mb-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h3 class="text-xl font-bold text-blue-800" id="filter-title">模式標題</h3>
-                        <p class="text-blue-600 text-sm" id="filter-desc">模式描述</p>
-                    </div>
-                    <button onclick="window.resetQuizState()" id="reset-btn" class="hidden text-sm bg-white border border-gray-300 px-3 py-1.5 rounded-lg shadow-sm hover:bg-gray-50 text-gray-600">
-                        <i class="fas fa-redo mr-1"></i> 重置作答
-                    </button>
+                <div class="text-gray-500 font-medium hidden sm:block">
+                    進度: <span id="stat-progress">0</span> / <span id="stat-total">25</span>
                 </div>
             </div>
 
             <!-- Quiz List Container -->
-            <div id="quiz-list-container" class="space-y-8 pb-20 min-h-[300px]">
+            <div id="quiz-list-container" class="space-y-8 pb-20">
                 <!-- Cards injected by JS -->
             </div>
 
-            <!-- Empty State Template (Hidden) -->
-            <div id="empty-state" class="hidden text-center py-20">
-                <div class="inline-block p-6 rounded-full bg-gray-100 mb-4">
-                    <i id="empty-icon" class="fas fa-check-circle text-gray-400 text-5xl"></i>
-                </div>
-                <h3 id="empty-title" class="text-xl font-bold text-gray-600 mb-2">沒有資料</h3>
-                <p id="empty-desc" class="text-gray-500">目前沒有相關題目。</p>
-            </div>
-
             <!-- Back to Top Button -->
-            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-8 right-8 bg-gray-800 text-white w-12 h-12 md:w-14 md:h-14 rounded-full shadow-2xl flex items-center justify-center hover:bg-gray-700 transition transform hover:scale-110 z-50" title="回頂端">
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-8 right-8 bg-gray-800 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center hover:bg-gray-700 transition transform hover:scale-110 z-50" title="回頂端">
                 <i class="fas fa-arrow-up text-xl"></i>
             </button>
         </div>
@@ -234,9 +185,6 @@
             messagingSenderId: "76289812052",
             appId: "1:76289812052:web:898384a916f9f341f62fc1"
         };
-        // Reuse key from user input if available in context, otherwise use the one from prompt
-        // Assuming the prompt key is valid for this specific app
-        firebaseConfig.apiKey = "AIzaSyAxQFt76ZPXE7d0i1XeNZ1yiiD2WYNIfHs";
 
         let app, db, auth;
         let isFirebaseReady = false;
@@ -292,9 +240,8 @@
         let currentState = {
             username: '',
             answers: {}, // { questionId: selectedOptionIndex }
-            mistakes: [], // [questionId, questionId, ...]
-            favorites: [], // [questionId, questionId, ...]
-            currentMode: 'all' // 'all', 'mistakes', 'favorites'
+            mistakes: [], 
+            favorites: []
         };
 
         // --- DOM Elements ---
@@ -315,26 +262,7 @@
             statCorrect: document.getElementById('stat-correct'),
             statWrong: document.getElementById('stat-wrong'),
             statProgress: document.getElementById('stat-progress'),
-            statTotal: document.getElementById('stat-total'),
-            
-            // New Filter UI
-            tabs: {
-                all: document.getElementById('tab-all'),
-                mistakes: document.getElementById('tab-mistakes'),
-                favorites: document.getElementById('tab-favorites')
-            },
-            badges: {
-                mistakes: document.getElementById('badge-mistakes'),
-                favorites: document.getElementById('badge-favorites')
-            },
-            filterHeader: document.getElementById('filter-header'),
-            filterTitle: document.getElementById('filter-title'),
-            filterDesc: document.getElementById('filter-desc'),
-            emptyState: document.getElementById('empty-state'),
-            emptyTitle: document.getElementById('empty-title'),
-            emptyDesc: document.getElementById('empty-desc'),
-            emptyIcon: document.getElementById('empty-icon'),
-            resetBtn: document.getElementById('reset-btn')
+            statTotal: document.getElementById('stat-total')
         };
 
         // --- Initialization ---
@@ -405,6 +333,7 @@
                 setDoc(globalRef, { users: arrayUnion(name) }, { merge: true }).catch(console.error);
                 startUserListener(name);
             } else {
+                // Offline mode: just render the quiz empty or with local storage if implemented (skipping for this demo)
                 renderWaterfallQuiz();
                 updateStats();
             }
@@ -428,20 +357,15 @@
                     // Update state from cloud
                     if (data.progress && data.progress.answers) {
                         currentState.answers = data.progress.answers;
-                    } else {
-                        currentState.answers = {};
                     }
-                    currentState.mistakes = data.mistakes || [];
-                    currentState.favorites = data.favorites || [];
+                    if (data.mistakes) currentState.mistakes = data.mistakes;
+                    if (data.favorites) currentState.favorites = data.favorites;
 
-                    // Re-render
+                    // Re-render UI to reflect cloud state
                     renderWaterfallQuiz();
                     updateStats();
                 } else {
-                    // New user or reset
-                    currentState.answers = {};
-                    currentState.mistakes = [];
-                    currentState.favorites = [];
+                    // New user, init view
                     renderWaterfallQuiz();
                     updateStats();
                 }
@@ -453,110 +377,27 @@
             views.quiz.classList.add('hidden');
             
             views[viewName].classList.remove('hidden');
-            if (viewName === 'quiz') {
-                window.scrollTo(0, 0);
-            }
-        }
-
-        // --- Filter/Mode Logic ---
-        window.setFilterMode = function(mode) {
-            currentState.currentMode = mode;
-            
-            // Update Tab UI
-            const activeClass = "bg-orange-500 text-white shadow-sm";
-            const inactiveClass = "text-gray-600 hover:bg-gray-50"; // Simplified for removal
-            
-            // Reset all tabs
-            Object.values(ui.tabs).forEach(tab => {
-                tab.className = tab.className.replace(activeClass, "").replace("text-gray-600", "").replace("hover:bg-gray-50", "");
-                // Add back base inactive
-                tab.classList.add("text-gray-600");
-                // Remove specific hover colors to reset
-                tab.classList.remove("bg-orange-500", "text-white", "shadow-sm");
-            });
-
-            // Set active tab
-            const activeTab = ui.tabs[mode];
-            activeTab.classList.remove("text-gray-600");
-            activeTab.classList.add("bg-orange-500", "text-white", "shadow-sm");
-
-            // Update Header info
-            if (mode === 'all') {
-                ui.filterHeader.classList.add('hidden');
-                ui.resetBtn.classList.remove('hidden'); // Show reset in main view? Or maybe show it in filter header
-                ui.resetBtn.parentElement.parentElement.classList.add('hidden'); // Hide the whole filter header container
-            } else {
-                ui.filterHeader.classList.remove('hidden');
-                ui.resetBtn.parentElement.parentElement.classList.remove('hidden');
-                
-                if (mode === 'mistakes') {
-                    ui.filterHeader.className = "mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg";
-                    ui.filterTitle.className = "text-xl font-bold text-red-800";
-                    ui.filterTitle.textContent = "錯題複習本";
-                    ui.filterDesc.className = "text-red-600 text-sm";
-                    ui.filterDesc.textContent = "自動記錄您答錯的題目。即使重置測驗，紀錄依然保留。";
-                    ui.resetBtn.classList.add('hidden'); 
-                } else if (mode === 'favorites') {
-                    ui.filterHeader.className = "mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg";
-                    ui.filterTitle.className = "text-xl font-bold text-yellow-800";
-                    ui.filterTitle.textContent = "我的最愛";
-                    ui.filterDesc.className = "text-yellow-600 text-sm";
-                    ui.filterDesc.textContent = "您收藏的重點題目。";
-                    ui.resetBtn.classList.add('hidden');
-                }
-            }
-            
-            renderWaterfallQuiz();
+            window.scrollTo(0, 0);
         }
 
         // --- Waterfall Quiz Logic ---
         function renderWaterfallQuiz() {
             const container = ui.quizContainer;
+            // Note: In a real React app we wouldn't clear innerHTML, but for vanilla JS this is simplest 
+            // to ensure state consistency without complex diffing.
+            // To prevent scroll jumping during re-renders, we could implement a smarter update, 
+            // but since onSnapshot updates are infrequent (only on other device changes), this is acceptable.
+            // For local interactions, we will manipulate the DOM directly first.
             container.innerHTML = ''; 
-            ui.emptyState.classList.add('hidden');
 
-            const mode = currentState.currentMode;
-            let filteredQuestions = [];
-
-            // 1. Filter Data
-            if (mode === 'all') {
-                filteredQuestions = questionsData;
-            } else if (mode === 'mistakes') {
-                filteredQuestions = questionsData.filter(q => currentState.mistakes.includes(q.id));
-            } else if (mode === 'favorites') {
-                filteredQuestions = questionsData.filter(q => currentState.favorites.includes(q.id));
-            }
-
-            // 2. Handle Empty State
-            if (filteredQuestions.length === 0) {
-                ui.emptyState.classList.remove('hidden');
-                if (mode === 'mistakes') {
-                    ui.emptyTitle.textContent = "太棒了！沒有錯題";
-                    ui.emptyDesc.textContent = "目前沒有答錯的紀錄，繼續保持！";
-                    ui.emptyIcon.className = "fas fa-check-circle text-green-400 text-5xl";
-                } else if (mode === 'favorites') {
-                    ui.emptyTitle.textContent = "尚未收藏題目";
-                    ui.emptyDesc.textContent = "點擊題目右上角的星星即可收藏。";
-                    ui.emptyIcon.className = "fas fa-star text-yellow-300 text-5xl";
-                } else {
-                    ui.emptyTitle.textContent = "沒有題目";
-                }
-                return;
-            }
-
-            // 3. Render Items
-            filteredQuestions.forEach((q, index) => {
+            questionsData.forEach((q, index) => {
                 const answeredIdx = currentState.answers[q.id];
                 const isAnswered = answeredIdx !== undefined;
                 const isCorrect = isAnswered && answeredIdx === q.answer;
-                const isFavorite = currentState.favorites.includes(q.id);
 
-                // Styling logic
+                // Card Styling
                 let borderClass = 'border-2 border-gray-200';
                 let bgClass = 'bg-white';
-                
-                // If in mistake mode, always show neutral or slightly red bg? 
-                // Let's keep the answered state logic active in all views.
                 if (isAnswered) {
                     if (isCorrect) {
                         borderClass = 'border-2 border-green-400';
@@ -567,40 +408,16 @@
                     }
                 }
 
-                // Font Size adjustments for Review Modes
-                const isReviewMode = mode === 'mistakes' || mode === 'favorites';
-                const questionTextSize = isReviewMode ? 'text-3xl sm:text-4xl leading-snug' : 'text-2xl md:text-3xl leading-relaxed';
-                const explanationTextSize = isReviewMode ? 'text-xl sm:text-2xl leading-relaxed' : 'text-xl leading-9';
-
                 const card = document.createElement('div');
                 card.id = `card-${q.id}`;
                 card.className = `relative rounded-2xl shadow-sm p-6 md:p-8 transition-all duration-300 ${borderClass} ${bgClass}`;
                 
-                // Favorite Button HTML
-                const starIconClass = isFavorite ? 'fas fa-star text-yellow-400' : 'far fa-star text-gray-300';
-                
                 // Header (Question)
-                // Add Trash button for Mistakes mode
-                let extraActionBtn = '';
-                if (mode === 'mistakes') {
-                    extraActionBtn = `
-                        <button onclick="window.removeFromMistakes(${q.id})" class="ml-2 w-10 h-10 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center text-red-500 transition-colors" title="移出錯題本">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    `;
-                }
-
                 const headerHtml = `
-                    <div class="flex justify-between items-start mb-6 relative pr-10">
+                    <div class="flex justify-between items-start mb-6">
                         <div class="flex items-start gap-4 w-full">
-                            <span class="flex-shrink-0 bg-orange-500 text-white font-bold rounded-lg px-4 py-2 text-xl shadow-sm mt-1">#${q.id}</span>
-                            <h3 class="${questionTextSize} font-bold text-gray-800 tracking-wide serif">${q.question}</h3>
-                        </div>
-                        <div class="absolute top-0 right-0 flex flex-col gap-2">
-                            <button onclick="window.toggleFavorite(${q.id})" class="star-anim w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors shadow-sm bg-white border border-gray-100">
-                                <i class="${starIconClass} text-2xl"></i>
-                            </button>
-                            ${extraActionBtn}
+                            <span class="flex-shrink-0 bg-orange-500 text-white font-bold rounded-lg px-4 py-2 text-xl shadow-sm mt-1">#${index + 1}</span>
+                            <h3 class="text-2xl md:text-3xl font-bold text-gray-800 leading-relaxed tracking-wide serif">${q.question}</h3>
                         </div>
                     </div>
                 `;
@@ -614,23 +431,27 @@
                     let iconHtml = '';
 
                     if (isAnswered) {
+                        // Disable interactions visuals
                         btnClass = 'cursor-default'; 
                         
                         if (optIdx === q.answer) {
+                            // Correct Answer (Always Green)
                             btnClass = 'bg-green-100 border-green-500 text-green-900';
                             circleClass = 'bg-green-500 text-white';
                             iconHtml = '<i class="fas fa-check text-green-600 text-2xl ml-auto"></i>';
                         } else if (optIdx === answeredIdx && !isCorrect) {
+                            // User Selected Wrong Answer (Red)
                             btnClass = 'bg-red-100 border-red-500 text-red-900';
                             circleClass = 'bg-red-500 text-white';
                             iconHtml = '<i class="fas fa-times text-red-600 text-2xl ml-auto"></i>';
                         } else {
+                            // Other options fade out
                             btnClass = 'bg-white border-gray-100 text-gray-400 opacity-60';
                         }
                     }
 
                     optionsHtml += `
-                        <button onclick="window.handleAnswer(${q.id}, ${optIdx})" 
+                        <button onclick="window.handleAnswer(${index}, ${optIdx})" 
                                 ${isAnswered ? 'disabled' : ''}
                                 class="option-btn w-full text-left p-5 rounded-xl flex items-center group transition-all duration-200 ${btnClass}">
                             <span class="w-10 h-10 flex items-center justify-center rounded-full font-bold mr-5 text-lg flex-shrink-0 transition-colors ${circleClass}">${letters[optIdx]}</span>
@@ -641,15 +462,7 @@
                 });
                 optionsHtml += '</div>';
 
-                // Explanation
-                // In Review Mode (Mistakes), always show explanation if available? 
-                // Or stick to "Show only if answered"? 
-                // Usually review mode implies studying, so let's show explanation if answered OR if in review mode (optional choice, but let's stick to 'if answered' to encourage trying first, unless it's a pure review list).
-                // Re-reading Prompt: "當您在瀑布流測驗中答錯... 開啟複習列表... 解析 text-xl".
-                // Since it's a "Review List", the user might want to see the answer directly. But let's keep the interactivity: if they haven't answered it in *this session*, they can try again.
-                // However, for visual consistency, if it's in the mistake list, they likely already got it wrong before. 
-                // Let's keep logic: Show explanation if answered.
-                
+                // Explanation (Show immediately if answered)
                 let explanationHtml = '';
                 if (isAnswered) {
                     explanationHtml = `
@@ -660,7 +473,7 @@
                                 </div>
                                 <div>
                                     <span class="font-bold text-orange-700 block mb-3 text-xl">解析：</span>
-                                    <p class="text-gray-800 ${explanationTextSize} text-justify font-medium">${q.explanation}</p>
+                                    <p class="text-gray-800 text-xl leading-9 text-justify font-medium">${q.explanation}</p>
                                 </div>
                             </div>
                         </div>
@@ -672,73 +485,27 @@
             });
         }
 
-        window.handleAnswer = function(qId, selectedIdx) {
-            // Find question index in data
-            const q = questionsData.find(item => item.id === qId);
-            if (!q) return;
-
-            // 1. Update Answers State
-            currentState.answers[qId] = selectedIdx;
+        window.handleAnswer = function(qIndex, selectedIdx) {
+            const q = questionsData[qIndex];
+            
+            // 1. Update State
+            currentState.answers[q.id] = selectedIdx;
             
             // 2. Local Logic (Mistakes)
             const isCorrect = selectedIdx === q.answer;
             if (!isCorrect) {
-                // If wrong, add to mistakes if not already there
-                if (!currentState.mistakes.includes(qId)) {
-                    currentState.mistakes.push(qId);
+                if (!currentState.mistakes.includes(q.id)) {
+                    currentState.mistakes.push(q.id);
                 }
-            } else {
-                // Optional: If correct, remove from mistakes? 
-                // Prompt says: "until you manually clear or system reset". 
-                // So we do NOT auto-remove on correct answer here.
             }
 
-            // 3. Save
+            // 3. Save to Firebase (Debounced or immediate)
             saveProgress();
 
-            // 4. Update UI
+            // 4. Update UI immediately (Re-render this specific card or whole list)
+            // Re-rendering whole list ensures consistency with the "RenderWaterfallQuiz" logic
             renderWaterfallQuiz();
             updateStats();
-        }
-
-        window.toggleFavorite = function(qId) {
-            const index = currentState.favorites.indexOf(qId);
-            if (index === -1) {
-                currentState.favorites.push(qId);
-            } else {
-                currentState.favorites.splice(index, 1);
-            }
-            
-            saveProgress();
-            renderWaterfallQuiz(); // Re-render to update star icon
-            updateStats(); // Update badge counts
-        }
-
-        window.removeFromMistakes = function(qId) {
-            if (confirm("確認從錯題本中移除此題？")) {
-                const index = currentState.mistakes.indexOf(qId);
-                if (index > -1) {
-                    currentState.mistakes.splice(index, 1);
-                    saveProgress();
-                    renderWaterfallQuiz();
-                    updateStats();
-                }
-            }
-        }
-
-        window.resetQuizState = function() {
-            if (confirm("確定要重置所有答題狀態嗎？(錯題本與收藏將會保留)")) {
-                // Only clear current answers
-                currentState.answers = {};
-                saveProgress();
-                renderWaterfallQuiz();
-                updateStats();
-                
-                // If in 'all' mode, scroll top
-                if (currentState.currentMode === 'all') {
-                    window.scrollTo({top: 0, behavior: 'smooth'});
-                }
-            }
         }
 
         function updateStats() {
@@ -755,28 +522,10 @@
 
             const wrong = answered - correct;
 
-            // Stats Bar
+            // Animate numbers (simple text update)
             ui.statCorrect.textContent = correct;
             ui.statWrong.textContent = wrong;
             ui.statProgress.textContent = answered;
-
-            // Badges
-            const mistakeCount = currentState.mistakes.length;
-            const favCount = currentState.favorites.length;
-
-            if (mistakeCount > 0) {
-                ui.badges.mistakes.classList.remove('hidden');
-                ui.badges.mistakes.textContent = mistakeCount;
-            } else {
-                ui.badges.mistakes.classList.add('hidden');
-            }
-
-            if (favCount > 0) {
-                ui.badges.favorites.classList.remove('hidden');
-                ui.badges.favorites.textContent = favCount;
-            } else {
-                ui.badges.favorites.classList.add('hidden');
-            }
         }
 
         function saveProgress() {
@@ -788,8 +537,7 @@
                     answers: currentState.answers,
                     timestamp: new Date().getTime()
                 },
-                mistakes: currentState.mistakes,
-                favorites: currentState.favorites
+                mistakes: currentState.mistakes
             };
 
             setDoc(userRef, data, { merge: true }).catch(console.error);
@@ -800,17 +548,13 @@
                 if (currentUserUnsubscribe) currentUserUnsubscribe();
                 currentState.username = '';
                 ui.usernameInput.value = '';
-                // Clear badges
-                ui.badges.mistakes.classList.add('hidden');
-                ui.badges.favorites.classList.add('hidden');
                 switchView('login');
             }
         }
         
         window.goHome = function() {
             if (currentState.username) {
-                // If clicked while logged in, reset view mode to 'all'
-                window.setFilterMode('all');
+               // Already on quiz page or do nothing
             } else {
                 switchView('login');
             }
