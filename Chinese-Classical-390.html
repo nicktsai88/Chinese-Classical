@@ -11,7 +11,7 @@
         
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #fcf6f0; /* 配合圖片的柔和背景色 */
+            background-color: #f3f4f6;
         }
         
         .serif {
@@ -32,17 +32,17 @@
             transition: all 0.2s ease;
         }
         .option-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.1);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
         /* 狀態燈號 */
         .status-dot {
-            height: 10px;
-            width: 10px;
+            height: 12px; /* 稍微加大燈號 */
+            width: 12px;
             border-radius: 50%;
             display: inline-block;
-            margin-right: 6px;
+            margin-right: 8px;
         }
         .status-loading { background-color: #fbbf24; box-shadow: 0 0 5px #fbbf24; }
         .status-success { background-color: #34d399; box-shadow: 0 0 5px #34d399; }
@@ -51,34 +51,35 @@
         /* 滾動條美化 */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #fed7aa; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #fb923c; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col text-gray-800">
 
     <!-- Header -->
     <header class="bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-lg sticky top-0 z-50">
-        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wider flex items-center gap-2 cursor-pointer" onclick="window.goHome()">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-wider flex items-center gap-2" onclick="goHome()" style="cursor: pointer;">
                 <i class="fas fa-scroll text-amber-200"></i>
                 <span class="hidden sm:inline">文言文推與敲 - </span>
                 <span>葉公好龍</span>
             </h1>
             
-            <div class="flex items-center gap-4">
-                <!-- Status Indicator -->
-                <div id="connection-status" class="hidden sm:flex items-center text-xs bg-black/20 px-2 py-1 rounded transition-opacity duration-500">
+            <div class="flex items-center gap-6">
+                <!-- Status Indicator (加大) -->
+                <div id="connection-status" class="hidden sm:flex items-center text-base bg-black/20 px-3 py-1.5 rounded-lg transition-opacity duration-500 font-medium">
                     <span id="status-dot" class="status-dot status-loading"></span>
                     <span id="status-text">連線中...</span>
                 </div>
 
-                <div id="user-display" class="hidden flex items-center gap-3">
-                    <div class="text-sm bg-white/20 px-3 py-1 rounded-full flex items-center backdrop-blur-sm">
+                <div id="user-display" class="hidden flex items-center gap-4">
+                    <div class="text-lg bg-white/20 px-4 py-2 rounded-full flex items-center backdrop-blur-sm shadow-sm">
                         <i class="fas fa-user mr-2 text-amber-200"></i>
-                        <span id="username-span" class="font-medium"></span>
+                        <span id="username-span" class="font-bold"></span>
                     </div>
-                    <button onclick="window.logout()" class="text-sm font-bold bg-white/10 hover:bg-white/20 text-white border border-white/30 px-3 py-1.5 rounded transition shadow-sm">
+                    <!-- 按鈕加大字體 -->
+                    <button onclick="window.logout()" class="text-lg font-bold bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition shadow-md border border-red-400">
                         登出
                     </button>
                 </div>
@@ -86,90 +87,39 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-grow container mx-auto px-4 py-8 max-w-2xl">
+    <!-- Main Content (加寬 max-w-6xl) -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl">
         
         <!-- View: Login -->
-        <div id="view-login" class="fade-in bg-white rounded-3xl shadow-xl overflow-hidden mt-10 border-t-8 border-orange-500">
-            <div class="p-10">
-                <div class="text-center mb-10">
-                    <div class="inline-flex justify-center items-center w-20 h-20 rounded-full bg-orange-100 text-orange-600 mb-6">
-                        <i class="fas fa-book-reader text-4xl"></i>
+        <div id="view-login" class="fade-in max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden mt-10 border-t-4 border-orange-500">
+            <div class="p-8">
+                <div class="text-center mb-8">
+                    <div class="inline-block p-3 rounded-full bg-orange-100 text-orange-600 mb-3">
+                        <i class="fas fa-book-reader text-3xl"></i>
                     </div>
                     <h2 class="text-3xl font-bold text-gray-900 mb-2">文言文推與敲</h2>
                     <p class="text-orange-600 font-bold text-xl">第49篇 葉公好龍</p>
+                    <p class="text-gray-500 text-base mt-2">瀑布流刷題模式 • 即時解析</p>
                 </div>
                 
                 <div class="space-y-6">
                     <div>
-                        <label for="username" class="block text-lg font-bold text-gray-700 mb-3 ml-1">請輸入姓名開始</label>
-                        <div class="relative">
-                            <i class="fas fa-pen absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                            <input type="text" id="username" 
-                                class="w-full pl-12 pr-4 py-4 text-xl border-2 border-gray-100 rounded-2xl focus:ring-4 focus:ring-orange-100 focus:border-orange-400 transition-all bg-gray-50 focus:bg-white outline-none" 
-                                placeholder="例如：王小明"
-                                onkeypress="if(event.key === 'Enter') window.attemptLogin()">
-                        </div>
+                        <label for="username" class="block text-lg font-bold text-gray-700 mb-3">請輸入姓名開始</label>
+                        <input type="text" id="username" 
+                            class="w-full pl-4 pr-4 py-4 text-lg border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all bg-gray-50 focus:bg-white" 
+                            placeholder="例如：王小明"
+                            onkeypress="if(event.key === 'Enter') window.attemptLogin()">
                     </div>
                     
-                    <button onclick="window.attemptLogin()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-4 px-6 rounded-2xl text-xl font-bold shadow-lg shadow-orange-200 transform active:scale-95 transition duration-200 flex justify-center items-center gap-2">
-                        <span>登入系統</span> <i class="fas fa-sign-in-alt"></i>
+                    <button onclick="window.attemptLogin()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 px-6 rounded-xl text-xl font-bold shadow-md transform active:scale-95 transition duration-200">
+                        開始刷題 <i class="fas fa-arrow-right ml-2"></i>
                     </button>
 
-                    <!-- Quick Login -->
-                    <div id="quick-login-area" class="hidden pt-8 border-t border-gray-100 mt-8">
-                        <p class="text-sm text-gray-400 mb-4 font-bold text-center">快速登入</p>
-                        <div id="recent-users-list" class="flex flex-wrap gap-2 justify-center max-h-32 overflow-y-auto"></div>
+                    <!-- Quick Login Section (加大) -->
+                    <div id="quick-login-area" class="hidden pt-6 border-t border-gray-100">
+                        <p class="text-xl text-gray-600 mb-4 font-bold">歷史挑戰者</p>
+                        <div id="recent-users-list" class="flex flex-wrap gap-3 max-h-48 overflow-y-auto"></div>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- View: Dashboard -->
-        <div id="view-dashboard" class="hidden fade-in mt-6">
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden p-10 border-t-8 border-orange-500">
-                <div class="text-center mb-10">
-                    <h2 class="text-4xl font-bold text-gray-800 mb-3">歡迎回來，</h2>
-                    <p class="text-gray-500 text-lg">請選擇您要進行的項目</p>
-                </div>
-
-                <div class="space-y-5">
-                    <!-- 1. 開始測驗 (橘色) -->
-                    <button onclick="window.startQuizMode('all')" class="group w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-5 px-8 rounded-2xl shadow-lg shadow-orange-200 transition-all duration-200 flex items-center justify-between transform hover:-translate-y-1">
-                        <div class="flex items-center gap-4">
-                            <i class="fas fa-pen-nib text-3xl opacity-90"></i>
-                            <span class="text-2xl font-bold tracking-wide">開始測驗 (瀑布流)</span>
-                        </div>
-                        <i class="fas fa-chevron-right text-xl opacity-60 group-hover:opacity-100 transition-opacity"></i>
-                    </button>
-
-                    <!-- 2. 錯題本 (紅色框) -->
-                    <button onclick="window.startQuizMode('mistakes')" class="group w-full bg-white border-2 border-red-100 hover:border-red-200 hover:bg-red-50 text-red-600 py-5 px-8 rounded-2xl shadow-sm transition-all duration-200 flex items-center justify-between transform hover:-translate-y-1">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                                <i class="fas fa-times text-xl"></i>
-                            </div>
-                            <span class="text-2xl font-bold">錯題本</span>
-                        </div>
-                        <span id="dash-wrong-count" class="bg-red-100 text-red-600 px-4 py-1.5 rounded-full text-xl font-bold min-w-[3rem] text-center">0</span>
-                    </button>
-
-                    <!-- 3. 我的最愛 (黃色框) -->
-                    <button onclick="window.startQuizMode('favorites')" class="group w-full bg-white border-2 border-amber-100 hover:border-amber-200 hover:bg-amber-50 text-amber-500 py-5 px-8 rounded-2xl shadow-sm transition-all duration-200 flex items-center justify-between transform hover:-translate-y-1">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
-                                <i class="fas fa-star text-xl"></i>
-                            </div>
-                            <span class="text-2xl font-bold">我的最愛</span>
-                        </div>
-                        <span id="dash-fav-count" class="bg-amber-100 text-amber-600 px-4 py-1.5 rounded-full text-xl font-bold min-w-[3rem] text-center">0</span>
-                    </button>
-                </div>
-
-                <div class="mt-12 text-center">
-                    <button onclick="window.clearLocalAndLogout()" class="text-gray-400 hover:text-red-500 text-sm font-medium underline transition">
-                        清除本機暫存並登出
-                    </button>
                 </div>
             </div>
         </div>
@@ -177,52 +127,32 @@
         <!-- View: Quiz List (Waterfall) -->
         <div id="view-quiz" class="hidden fade-in pb-20">
             
-            <!-- Sticky Header -->
-            <div class="bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-md border border-orange-100 mb-8 sticky top-4 z-40 flex flex-wrap justify-between items-center gap-3">
+            <!-- Dashboard / Stats Sticky Header -->
+            <div class="bg-white p-5 rounded-xl shadow-md border border-gray-200 mb-8 sticky top-20 z-40 flex flex-wrap justify-between items-center gap-4 transition-all">
                 <div>
-                    <button onclick="window.goHome()" class="text-gray-400 hover:text-orange-600 mr-2 transition">
-                        <i class="fas fa-arrow-left text-xl"></i>
-                    </button>
-                    <span class="text-xl font-bold text-gray-800" id="quiz-title">
-                        全真模擬試題
-                    </span>
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        <span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span>
+                        <span class="text-lg text-gray-500 font-normal">共 25 題</span>
+                    </h2>
                 </div>
-                <div class="flex gap-3 text-base font-medium">
-                    <div class="flex items-center text-green-700 bg-green-100 px-4 py-1.5 rounded-full">
-                        <i class="fas fa-check mr-2"></i>
-                        <span id="stat-correct" class="font-bold text-xl">0</span>
+                <div class="flex gap-6 text-lg font-medium">
+                    <div class="flex items-center text-green-600 bg-green-50 px-5 py-2.5 rounded-full border border-green-200 shadow-sm">
+                        <span class="mr-2 font-bold">答對:</span>
+                        <span id="stat-correct" class="font-bold text-2xl">0</span>
                     </div>
-                    <div class="flex items-center text-red-700 bg-red-100 px-4 py-1.5 rounded-full">
-                        <i class="fas fa-times mr-2"></i>
-                        <span id="stat-wrong" class="font-bold text-xl">0</span>
+                    <div class="flex items-center text-red-600 bg-red-50 px-5 py-2.5 rounded-full border border-red-200 shadow-sm">
+                        <span class="mr-2 font-bold">答錯:</span>
+                        <span id="stat-wrong" class="font-bold text-2xl">0</span>
                     </div>
                 </div>
-                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-orange-100 text-gray-500 hover:text-orange-600 transition flex items-center justify-center">
-                    <i class="fas fa-arrow-up"></i>
+                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-gray-400 hover:text-orange-500 transition px-4 py-2 border border-transparent hover:border-orange-200 rounded-lg">
+                    <i class="fas fa-arrow-up text-2xl"></i>
                 </button>
-            </div>
-
-            <!-- Empty State -->
-            <div id="empty-state" class="hidden text-center py-20">
-                <div class="inline-flex justify-center items-center w-24 h-24 rounded-full bg-gray-100 text-gray-400 mb-4">
-                    <i class="far fa-folder-open text-5xl"></i>
-                </div>
-                <p class="text-xl text-gray-500 font-bold">這裡目前沒有題目</p>
-                <p class="text-gray-400 mt-2">快去練習並累積紀錄吧！</p>
-                <button onclick="window.goHome()" class="mt-6 text-orange-500 font-bold hover:underline">返回首頁</button>
             </div>
 
             <!-- Questions Container -->
-            <div id="quiz-list-container" class="space-y-8">
-                <!-- Questions injected here -->
-            </div>
-
-            <!-- Restart Button (Only in All mode) -->
-            <div id="restart-area" class="hidden mt-10 text-center">
-                <button onclick="window.restartQuiz()" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-4 px-8 rounded-xl shadow-lg transition transform active:scale-95 text-xl">
-                    <i class="fas fa-redo-alt mr-2"></i> 重新測驗 (清空本回進度)
-                </button>
-                <p class="text-gray-400 text-sm mt-3">注意：重新測驗不會清除錯題本與收藏紀錄</p>
+            <div id="quiz-list-container" class="space-y-10">
+                <!-- Questions will be injected here -->
             </div>
 
         </div>
@@ -247,12 +177,12 @@
 
         // TODO: Replace with your actual Firebase config
         const firebaseConfig = {
-            apiKey: "AIzaSyAxQFt76ZPXE7d0i1XeNZ1yiiD2WYNIfHs",
-            authDomain: "chinese-learning-47f4d.firebaseapp.com",
-            projectId: "chinese-learning-47f4d",
-            storageBucket: "chinese-learning-47f4d.firebasestorage.app",
-            messagingSenderId: "76289812052",
-            appId: "1:76289812052:web:898384a916f9f341f62fc1"
+          apiKey: "AIzaSyAxQFt76ZPXE7d0i1XeNZ1yiiD2WYNIfHs",
+          authDomain: "chinese-learning-47f4d.firebaseapp.com",
+          projectId: "chinese-learning-47f4d",
+          storageBucket: "chinese-learning-47f4d.firebasestorage.app",
+          messagingSenderId: "76289812052",
+          appId: "1:76289812052:web:898384a916f9f341f62fc1"
         };
 
         let app, db, auth;
@@ -308,8 +238,7 @@
         // --- State Management ---
         let currentState = {
             username: '',
-            currentMode: 'all', // 'all', 'mistakes', 'favorites'
-            answers: {}, 
+            answers: {}, // { questionId: selectedOptionIndex }
             mistakes: [], 
             favorites: [],
         };
@@ -320,19 +249,13 @@
             usernameSpan: document.getElementById('username-span'),
             quickLoginArea: document.getElementById('quick-login-area'),
             recentUsersList: document.getElementById('recent-users-list'),
-            dashWrongCount: document.getElementById('dash-wrong-count'),
-            dashFavCount: document.getElementById('dash-fav-count'),
-            quizTitle: document.getElementById('quiz-title'),
             statCorrect: document.getElementById('stat-correct'),
             statWrong: document.getElementById('stat-wrong'),
             quizListContainer: document.getElementById('quiz-list-container'),
-            emptyState: document.getElementById('empty-state'),
-            restartArea: document.getElementById('restart-area'),
             statusDot: document.getElementById('status-dot'),
             statusText: document.getElementById('status-text'),
             views: {
                 login: document.getElementById('view-login'),
-                dashboard: document.getElementById('view-dashboard'),
                 quiz: document.getElementById('view-quiz')
             }
         };
@@ -370,8 +293,9 @@
                 ui.recentUsersList.innerHTML = '';
                 users.forEach(user => {
                     const btn = document.createElement('button');
-                    btn.className = 'px-4 py-2 bg-white hover:bg-orange-50 text-gray-700 rounded-full text-base border border-gray-200 transition mb-2 shadow-sm font-medium';
-                    btn.innerHTML = `<i class="fas fa-user-circle mr-2 text-orange-400 text-lg"></i>${user}`;
+                    // 加大快速登入按鈕
+                    btn.className = 'px-5 py-3 bg-white hover:bg-orange-50 text-gray-700 rounded-xl text-xl border border-gray-200 transition mb-2 shadow-sm font-medium';
+                    btn.innerHTML = `<i class="fas fa-user-circle mr-2 text-orange-400 text-2xl"></i>${user}`;
                     btn.onclick = () => {
                         ui.usernameInput.value = user;
                         window.attemptLogin();
@@ -401,7 +325,7 @@
             ui.userDisplay.classList.add('flex');
             ui.usernameSpan.textContent = name;
             
-            switchView('dashboard');
+            switchView('quiz');
         }
 
         function startUserListener(username) {
@@ -416,24 +340,17 @@
                     const data = docSnap.data();
                     currentState.favorites = data.favorites || [];
                     currentState.mistakes = data.mistakes || [];
-                    ui.dashWrongCount.textContent = currentState.mistakes.length;
-                    ui.dashFavCount.textContent = currentState.favorites.length;
-
                     if (data.progress) {
                          currentState.answers = data.progress.answers || {};
                     }
                 } else {
+                    // New User
                     currentState.favorites = [];
                     currentState.mistakes = [];
                     currentState.answers = {};
-                    ui.dashWrongCount.textContent = 0;
-                    ui.dashFavCount.textContent = 0;
                 }
-                
-                // If in quiz mode, re-render to reflect changes
-                if (!ui.views.quiz.classList.contains('hidden')) {
-                    renderWaterfallQuiz();
-                }
+                // Render the quiz list with new data
+                renderWaterfallQuiz();
             }, (error) => {
                 console.error("User listen error", error);
                 updateConnectionStatus('error', '同步失敗');
@@ -446,61 +363,15 @@
             window.scrollTo(0, 0);
         }
 
-        // --- Quiz Modes ---
-        window.startQuizMode = function(mode) {
-            currentState.currentMode = mode;
-            switchView('quiz');
-            renderWaterfallQuiz();
-        }
-
-        window.goHome = function() {
-            if (currentState.username) {
-                switchView('dashboard');
-            } else {
-                window.location.reload();
-            }
-        }
-
         // --- Waterfall Render Logic ---
         function renderWaterfallQuiz() {
             const container = ui.quizListContainer;
             container.innerHTML = ''; 
 
-            // Filter questions based on mode
-            let targetQuestions = questionsData;
-            let title = "全真模擬試題";
-            let showRestart = false;
-
-            if (currentState.currentMode === 'mistakes') {
-                targetQuestions = questionsData.filter(q => currentState.mistakes.includes(q.id));
-                title = `<i class="fas fa-times-circle text-red-500 mr-2"></i>錯題本 (${targetQuestions.length}題)`;
-                showRestart = false;
-            } else if (currentState.currentMode === 'favorites') {
-                targetQuestions = questionsData.filter(q => currentState.favorites.includes(q.id));
-                title = `<i class="fas fa-star text-amber-500 mr-2"></i>我的最愛 (${targetQuestions.length}題)`;
-                showRestart = false;
-            } else {
-                title = `<i class="fas fa-pen-nib text-orange-500 mr-2"></i>全真模擬試題 (25題)`;
-                showRestart = true;
-            }
-
-            ui.quizTitle.innerHTML = title;
-            
-            // Empty State
-            if (targetQuestions.length === 0) {
-                ui.emptyState.classList.remove('hidden');
-                ui.restartArea.classList.add('hidden');
-                return;
-            } else {
-                ui.emptyState.classList.add('hidden');
-                if (showRestart) ui.restartArea.classList.remove('hidden');
-                else ui.restartArea.classList.add('hidden');
-            }
-
             let correctCount = 0;
             let wrongCount = 0;
 
-            targetQuestions.forEach((q, index) => {
+            questionsData.forEach((q, index) => {
                 const userAnswer = currentState.answers[q.id];
                 const isAnswered = userAnswer !== undefined;
                 const isCorrect = isAnswered && userAnswer === q.answer;
@@ -510,29 +381,29 @@
                     else wrongCount++;
                 }
 
-                // Determine Card Colors
+                // Determine Card Border Color
                 let borderColor = 'border-gray-200';
                 let bgColor = 'bg-white';
                 if (isAnswered) {
                     if (isCorrect) {
                         borderColor = 'border-green-400';
-                        bgColor = 'bg-green-50/20'; // Lighter green bg
+                        bgColor = 'bg-green-50/10';
                     } else {
                         borderColor = 'border-red-400';
-                        bgColor = 'bg-red-50/20';
+                        bgColor = 'bg-red-50/10';
                     }
                 }
 
-                // Card
+                // Card Element
                 const card = document.createElement('div');
                 card.className = `relative rounded-2xl shadow-sm border-2 p-6 md:p-8 transition-all duration-300 ${borderColor} ${bgColor}`;
                 
-                // Header
+                // Header (加大字體)
                 const headerHtml = `
                     <div class="flex justify-between items-start mb-6">
                         <div class="flex items-start gap-4">
                             <span class="flex-shrink-0 bg-orange-500 text-white font-bold rounded px-3 py-1.5 text-base shadow-sm">
-                                #${q.id}
+                                #${index + 1}
                             </span>
                             <h3 class="text-2xl md:text-3xl font-bold text-gray-800 leading-relaxed tracking-wide font-serif">
                                 ${q.question}
@@ -544,11 +415,11 @@
                     </div>
                 `;
 
-                // Options
+                // Options (加大字體)
                 let optionsHtml = '<div class="grid gap-4">';
                 q.options.forEach((opt, optIdx) => {
                     const letter = ['A','B','C','D'][optIdx];
-                    let btnClass = "option-btn w-full text-left p-5 rounded-xl border-2 flex items-center group transition-colors ";
+                    let btnClass = "option-btn w-full text-left p-5 rounded-xl border flex items-center group transition-colors ";
                     let badgeClass = "w-10 h-10 flex items-center justify-center rounded-full font-bold mr-4 text-lg flex-shrink-0 ";
                     
                     if (isAnswered) {
@@ -581,7 +452,7 @@
                 });
                 optionsHtml += '</div>';
 
-                // Explanation
+                // Explanation Block (加大字體)
                 let explanationHtml = '';
                 if (isAnswered) {
                     explanationHtml = `
@@ -601,7 +472,7 @@
                 container.appendChild(card);
             });
 
-            // Update Stats (only for current view)
+            // Update Stats
             ui.statCorrect.textContent = correctCount;
             ui.statWrong.textContent = wrongCount;
         }
@@ -614,7 +485,6 @@
             const q = questionsData.find(x => x.id === qId);
             const isCorrect = q.answer === selectedIdx;
             
-            // Logic: If wrong, add to mistakes.
             if (!isCorrect) {
                 if (!currentState.mistakes.includes(qId)) {
                     currentState.mistakes.push(qId);
@@ -634,17 +504,7 @@
             else currentState.favorites.splice(idx, 1);
             
             saveUserData('favorites');
-            // Re-render handled by snapshot listener usually, but for instant feedback:
             renderWaterfallQuiz(); 
-        }
-
-        window.restartQuiz = function() {
-            if (confirm("確定要重新開始測驗嗎？\n這將清除本回的作答紀錄，但不會刪除錯題本與收藏。")) {
-                currentState.answers = {};
-                saveProgress();
-                renderWaterfallQuiz();
-                window.scrollTo({top:0, behavior:'smooth'});
-            }
         }
 
         // --- Persistence Helpers ---
@@ -676,9 +536,16 @@
             if (currentUserUnsubscribe) currentUserUnsubscribe();
             currentState.username = '';
             ui.views.login.classList.remove('hidden');
-            ui.views.dashboard.classList.add('hidden');
             ui.views.quiz.classList.add('hidden');
             document.getElementById('username').value = '';
+        }
+        
+        window.goHome = function() {
+            if (currentState.username) {
+                window.scrollTo({top:0, behavior:'smooth'});
+            } else {
+                window.location.reload();
+            }
         }
 
         const style = document.createElement('style');
