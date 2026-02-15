@@ -55,48 +55,46 @@
         .transition-colors-slow {
             transition: background-color 0.5s ease, border-color 0.5s ease;
         }
-        
-        /* Loading overlay */
-        #loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(2px);
-            z-index: 100;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
+
+        /* Status Dot Styles */
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
         }
+        .status-loading { background-color: #fbbf24; box-shadow: 0 0 5px #fbbf24; } /* Amber */
+        .status-success { background-color: #34d399; box-shadow: 0 0 5px #34d399; } /* Green */
+        .status-error { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; } /* Red */
     </style>
 </head>
 <body class="min-h-screen flex flex-col text-gray-800 selection:bg-orange-200">
 
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" class="hidden fade-in">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mb-3"></div>
-        <p class="text-orange-600 font-bold animate-pulse">資料同步中...</p>
-    </div>
-
     <!-- Header -->
     <header class="bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-lg sticky top-0 z-50">
         <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wider flex items-center gap-2" onclick="window.goHome()" style="cursor: pointer;">
+            <h1 class="text-xl font-bold tracking-wider flex items-center gap-2" onclick="goHome()" style="cursor: pointer;">
                 <i class="fas fa-scroll text-amber-200"></i>
                 <span>皋魚之泣</span>
             </h1>
             
-            <div id="user-display" class="hidden flex items-center gap-3">
-                <div class="text-sm bg-white/20 px-3 py-1 rounded-full flex items-center backdrop-blur-sm">
-                    <i class="fas fa-user mr-2 text-amber-200"></i>
-                    <span id="username-span" class="font-medium"></span>
+            <div class="flex items-center gap-3">
+                <!-- Status Indicator -->
+                <div id="connection-status" class="hidden sm:flex items-center text-xs bg-black/20 px-2 py-1 rounded transition-opacity duration-500">
+                    <span id="status-dot" class="status-dot status-loading"></span>
+                    <span id="status-text">讀取資料中...</span>
                 </div>
-                <button onclick="window.logout()" class="text-xs bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded transition shadow-sm" title="登出並返回首頁">
-                    <i class="fas fa-sign-out-alt mr-1"></i>登出
-                </button>
+
+                <div id="user-display" class="hidden flex items-center gap-3">
+                    <div class="text-sm bg-white/20 px-3 py-1 rounded-full flex items-center backdrop-blur-sm">
+                        <i class="fas fa-user mr-2 text-amber-200"></i>
+                        <span id="username-span" class="font-medium"></span>
+                    </div>
+                    <button onclick="window.logout()" class="text-xs bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded transition shadow-sm" title="登出並返回首頁">
+                        <i class="fas fa-sign-out-alt mr-1"></i>登出
+                    </button>
+                </div>
             </div>
         </div>
     </header>
@@ -113,7 +111,7 @@
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 mb-1">文言文推與敲</h2>
                     <p class="text-orange-600 font-medium">第46篇 皋魚之泣</p>
-                    <p class="text-gray-400 text-sm mt-2">全真模擬試題 • 雲端記錄進度</p>
+                    <p class="text-gray-400 text-sm mt-2">全真模擬試題 • 雲端自動同步</p>
                 </div>
                 
                 <div class="space-y-5">
@@ -136,14 +134,11 @@
 
                     <!-- Quick Login Section -->
                     <div id="quick-login-area" class="hidden pt-4 border-t border-gray-100">
-                        <p class="text-xs text-gray-500 mb-3 font-medium">快速登入（本機紀錄）</p>
-                        <div id="recent-users-list" class="flex flex-wrap gap-2">
+                        <p class="text-xs text-gray-500 mb-3 font-medium">歷史挑戰者（點擊登入）</p>
+                        <!-- Added max-h and overflow for scrollable list -->
+                        <div id="recent-users-list" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
                             <!-- Buttons injected by JS -->
                         </div>
-                    </div>
-                    
-                    <div class="text-center mt-6">
-                        <button onclick="window.clearData()" class="text-xs text-gray-400 hover:text-red-500 underline transition">清除本機暫存與登入資訊</button>
                     </div>
                 </div>
             </div>
@@ -315,364 +310,84 @@
         </div>
     </footer>
 
-    <!-- Firebase SDK & App Logic -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
+        // --- Configuration ---
+        const COLLECTION_NAME = 'Chinese-Classical-384';
+        const DOC_GLOBAL = 'global';
+
+        // TODO: Replace with your actual Firebase config
         const firebaseConfig = {
-            apiKey: "AIzaSyAxQFt76ZPXE7d0i1XeNZ1yiiD2WYNIfHs",
-            authDomain: "chinese-learning-47f4d.firebaseapp.com",
-            projectId: "chinese-learning-47f4d",
-            storageBucket: "chinese-learning-47f4d.firebasestorage.app",
-            messagingSenderId: "76289812052",
-            appId: "1:76289812052:web:898384a916f9f341f62fc1"
+          apiKey: "AIzaSyAxQFt76ZPXE7d0i1XeNZ1yiiD2WYNIfHs",
+          authDomain: "chinese-learning-47f4d.firebaseapp.com",
+          projectId: "chinese-learning-47f4d",
+          storageBucket: "chinese-learning-47f4d.firebasestorage.app",
+          messagingSenderId: "76289812052",
+          appId: "1:76289812052:web:898384a916f9f341f62fc1"
         };
 
+        let app, db, auth;
+        let isFirebaseReady = false;
+        let currentUserUnsubscribe = null;
+
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const COLLECTION_NAME = 'Chinese-Classical-383';
-        const LOCAL_USERS_KEY = 'ChineseClassicalQuiz-LocalUsers';
+        try {
+            if(firebaseConfig.apiKey) {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                // Sign in anonymously immediately
+                signInAnonymously(auth).catch(console.error);
+                isFirebaseReady = true;
+            } else {
+                console.warn("Firebase Config missing. Running in limited mode.");
+                updateConnectionStatus('error', '雲端同步失敗');
+            }
+        } catch (e) {
+            console.error("Firebase init error:", e);
+            updateConnectionStatus('error', '雲端同步失敗');
+        }
 
         // --- Questions Data (皋魚之泣) ---
         // 原文：孔子行，聞哭聲甚悲。孔子曰：「驅！驅！前有賢者。」至則皋魚也。披褐擁鐮，哭於道旁。
-        // 孔子辟車與之言曰：「子非有喪，何哭之悲也？」
-        // 皋魚曰：「吾失之三矣：少而學，遊諸侯，以後吾親，失之一也；
-        // 高尚吾志，間吾事君，失之二也；與友厚而小絕之，失之三矣！
-        // 樹欲靜而風不止，子欲養而親不待也。往而不可追者，年也，去而不可得見者，親也！吾請從此辭矣！」
-        // 立槁而死。孔子曰：「弟子誡之，足以識矣！」於是門人辭歸而養親者十有三人。
+        // 孔子辟車與之言曰：「子非有喪，何哭之悲也？」皋魚曰：「吾失之三矣：少而學，遊諸侯，以後吾親，失之一也；
+        // 高尚吾志，間吾事君，失之二也；與友厚而小絕之，失之三矣！樹欲靜而風不止，子欲養而親不待也。
+        // 往而不可追者，年也，去而不可得見者，親也！吾請從此辭矣！」立槁而死。 
+        // 孔子曰：「弟子誡之，足以識矣！」於是門人辭歸而養親者十有三人。
 
         const questionsData = [
-            {
-                id: 1,
-                category: "字義測驗",
-                question: "「孔子『辟』車與之言曰」的「辟」，通哪一個字，意指為何？",
-                options: [
-                    "避，躲避",
-                    "闢，開闢",
-                    "避，讓開（指命人將車子退避一旁）",
-                    "譬，譬喻"
-                ],
-                answer: 2,
-                explanation: "「辟」通「避」，在此指孔子讓人把車子停在路旁，讓開路面以便與皋魚交談。"
-            },
-            {
-                id: 2,
-                category: "字義測驗",
-                question: "「披褐擁鐮」的「擁」，意思最接近下列何者？",
-                options: [
-                    "擁抱",
-                    "持有、拿著",
-                    "擁護",
-                    "聚集"
-                ],
-                answer: 1,
-                explanation: "「擁」鐮，指「拿著」、「持著」鐮刀。"
-            },
-            {
-                id: 3,
-                category: "文化常識",
-                question: "「披褐擁鐮」中的「褐」是指什麼樣的衣物，通常象徵何種身分？",
-                options: [
-                    "絲綢，象徵貴族",
-                    "粗布衣，象徵貧賤之人或平民",
-                    "獸皮，象徵獵人",
-                    "盔甲，象徵士兵"
-                ],
-                answer: 1,
-                explanation: "「褐」是用粗麻或是獸毛編織的粗布衣，古時多為貧苦百姓所穿。"
-            },
-            {
-                id: 4,
-                category: "修辭技巧",
-                question: "「樹欲靜而風不止」在文中運用了何種修辭技巧？",
-                options: [
-                    "映襯",
-                    "誇飾",
-                    "譬喻（借喻）",
-                    "轉化"
-                ],
-                answer: 2,
-                explanation: "這是藉由自然現象（樹想靜止但風不停）來比喻人事（子女想奉養但父母已不在），屬於隱喻（借喻）的用法。"
-            },
-            {
-                id: 5,
-                category: "文意理解",
-                question: "皋魚所說的「吾失之三矣」，其中第一失「以後吾親」的原因為何？",
-                options: [
-                    "因為家貧無法奉養",
-                    "因為年少求學，周遊列國，而將奉養雙親之事置於後",
-                    "因為父母不願隨行",
-                    "因為戰亂與父母失散"
-                ],
-                answer: 1,
-                explanation: "文中提到「少而學，遊諸侯」，導致「以後吾親」，意即為了求學與仕途遊歷，錯過了奉養父母的時機。"
-            },
-            {
-                id: 6,
-                category: "字詞釋義",
-                question: "「高尚吾志，間吾事君」的「高尚」在此作何解釋？",
-                options: [
-                    "形容品格高潔",
-                    "動詞，使...高尚（自命清高、堅持自己的志節）",
-                    "名詞，高尚的人",
-                    "副詞，高高地"
-                ],
-                answer: 1,
-                explanation: "此處「高尚」作動詞用，意指我看重、堅持自己的志向節操，不願隨意屈就。"
-            },
-            {
-                id: 7,
-                category: "字詞釋義",
-                question: "「間吾事君」的「間」，讀音與意思是？",
-                options: [
-                    "ㄐㄧㄢ，空間",
-                    "ㄐㄧㄢˋ，阻隔、中斷（導致無法事君）",
-                    "ㄐㄧㄢˋ，離間",
-                    "ㄐㄧㄢ，參與"
-                ],
-                answer: 1,
-                explanation: "「間」音ㄐㄧㄢˋ，意為阻隔、妨礙。指因為堅持志節，導致無法順利侍奉君主。"
-            },
-            {
-                id: 8,
-                category: "文意推敲",
-                question: "關於皋魚的第三失「與友厚而小絕之」，下列解讀何者最為適當？",
-                options: [
-                    "與朋友交情深厚，卻因為小事而斷絕往來",
-                    "朋友很少，且逐漸斷絕聯絡",
-                    "與朋友交情不深，所以斷絕也無所謂",
-                    "為了朋友而斷絕了其他關係"
-                ],
-                answer: 0,
-                explanation: "「與友厚」指交情深，「小絕之」指因微不足道的小事或小摩擦而絕交，事後感到後悔。"
-            },
-            {
-                id: 9,
-                category: "句義理解",
-                question: "「往而不可追者，年也」，這句話想要表達的感嘆是什麼？",
-                options: [
-                    "年紀大了跑不動",
-                    "往事不堪回首",
-                    "時光流逝，一去不復返",
-                    "追逐名利要趁年輕"
-                ],
-                answer: 2,
-                explanation: "意指時間（年光）過去了就無法追回，感嘆歲月無情。"
-            },
-            {
-                id: 10,
-                category: "詞語運用",
-                question: "「立槁而死」形容皋魚死時的狀態，下列描述何者最精確？",
-                options: [
-                    "立刻跌倒而死",
-                    "站著像枯木一樣死去（形容極度悲傷耗盡心力）",
-                    "被枯木壓死",
-                    "死後變成了枯木"
-                ],
-                answer: 1,
-                explanation: "「槁」是枯木。「立槁」指站立著像枯木般死去，極言其悲痛懊悔之深，精氣神耗盡。"
-            },
-            {
-                id: 11,
-                category: "人物分析",
-                question: "孔子未見其人先聞其聲，便判斷「前有賢者」，其推斷依據為何？",
-                options: [
-                    "哭聲非常大聲",
-                    "哭聲中流露出真摯而深刻的悲傷（甚悲），非一般俗人",
-                    "孔子有神通",
-                    "有人事先通報"
-                ],
-                answer: 1,
-                explanation: "孔子「聞哭聲甚悲」，從哭聲的情感濃度判斷此人內心必有深沈的感觸或過人的見識，故稱「賢者」。"
-            },
-            {
-                id: 12,
-                category: "成語典故",
-                question: "後世用「風樹之悲」來比喻什麼？",
-                options: [
-                    "環保意識的重要",
-                    "樹大招風的危險",
-                    "父母亡故，兒女不得奉養的悲痛",
-                    "朋友離散的無奈"
-                ],
-                answer: 2,
-                explanation: "源自本文「樹欲靜而風不止，子欲養而親不待」，專指喪親之痛，無法盡孝的遺憾。"
-            },
-            {
-                id: 13,
-                category: "文法結構",
-                question: "「子非有喪，何哭之悲也？」句中的「之」字用法為何？",
-                options: [
-                    "代詞，指哭聲",
-                    "動詞，往",
-                    "介詞，的",
-                    "助詞，表示強調或倒裝賓語（如此地悲傷）"
-                ],
-                answer: 3,
-                explanation: "「何哭之悲」即「哭得何其悲傷」，「之」在此為語助詞，用來強調程度或連接修飾語，增強感嘆語氣。"
-            },
-            {
-                id: 14,
-                category: "字音測驗",
-                question: "下列「」中的字音，何者正確？",
-                options: [
-                    "立「槁」：ㄍㄠ",
-                    "擁「鐮」：ㄌㄧㄢˊ",
-                    "「辟」車：ㄆㄧˋ",
-                    "「皋」魚：ㄏㄠˊ"
-                ],
-                answer: 1,
-                explanation: "A.ㄍㄠˇ；C.ㄅㄧˋ（通避）；D.ㄍㄠ。"
-            },
-            {
-                id: 15,
-                category: "邏輯因果",
-                question: "皋魚認為自己「遊諸侯」是導致「失親」的原因，這反映了儒家何種觀念的衝突？",
-                options: [
-                    "忠與孝的兩難（求取功名與奉養父母的時間衝突）",
-                    "義與利的衝突",
-                    "文與武的對立",
-                    "禮與法的矛盾"
-                ],
-                answer: 0,
-                explanation: "年少求學遊歷是為了未來的功名（廣義的忠君報國途徑），但這需要時間與遠離家鄉，導致無法在父母生前盡孝，反映了個人發展與盡孝在時間上的衝突。"
-            },
-            {
-                id: 16,
-                category: "字形辨析",
-                question: "文中「擁鐮」的「鐮」，與下列何字的部首相同？",
-                options: [
-                    "廉（清廉）",
-                    "簾（窗簾）",
-                    "鎌（鎌倉）",
-                    "謙（謙虛）"
-                ],
-                answer: 2,
-                explanation: "「鐮」是金部。「鎌」也是金部（異體字或地名用字）。A是广部，B是竹部，D是言部。"
-            },
-            {
-                id: 17,
-                category: "文句倒裝",
-                question: "「以後吾親」還原成現代漢語語序，應解釋為？",
-                options: [
-                    "在我的親人後面",
-                    "以後再認親人",
-                    "以吾親為後（將奉養雙親這件事放在後面/順位較低）",
-                    "我親人的後代"
-                ],
-                answer: 2,
-                explanation: "「後」在此轉品為動詞，意指「把...放在後面」。整句意為「把奉養雙親這件事排在求學遊歷之後」。"
-            },
-            {
-                id: 18,
-                category: "主旨大意",
-                question: "孔子說：「弟子誡之，足以識矣！」這句話的用意是？",
-                options: [
-                    "警告弟子不要像皋魚一樣哭哭啼啼",
-                    "告誡弟子要以此為鑑，及時行孝",
-                    "稱讚弟子們都很聰明，認識這個人",
-                    "指責皋魚的錯誤"
-                ],
-                answer: 1,
-                explanation: "「誡之」意為以此為戒，「足以識矣」意為這足以讓我們記取教訓/明白道理。孔子要弟子們從皋魚的悲劇中學到及時行孝的重要。"
-            },
-            {
-                id: 19,
-                category: "細節記憶",
-                question: "聽完皋魚的話後，孔子的門人有何具體行動？",
-                options: [
-                    "全部都留下來陪皋魚哭",
-                    "有十三人辭別回家奉養父母",
-                    "只有三人回家",
-                    "大家都無動於衷"
-                ],
-                answer: 1,
-                explanation: "文末記載：「於是門人辭歸而養親者十有三人（十三人）。」"
-            },
-            {
-                id: 20,
-                category: "多義詞辨析",
-                question: "「吾請從此辭矣」與「門人辭歸」的「辭」，意思分別為？",
-                options: [
-                    "皆指「推辭」",
-                    "前者指「言詞」，後者指「告別」",
-                    "皆指「告別/訣別」",
-                    "前者指「辭職」，後者指「修辭」"
-                ],
-                answer: 2,
-                explanation: "「從此辭」指告別這個世界（死）；「辭歸」指告別孔子回家。兩者核心語意皆為「告別/離開」。"
-            },
-            {
-                id: 21,
-                category: "比較閱讀",
-                question: "皋魚的際遇與下列哪位古人的故事性質最為相似？",
-                options: [
-                    "孟母三遷（重視教育）",
-                    "韓伯俞泣杖（感嘆母親衰老）",
-                    "子路負米（及時行孝與親不在的遺憾）",
-                    "臥冰求鯉（孝行的艱難）"
-                ],
-                answer: 2,
-                explanation: "子路曾感嘆父母死後「欲食菽而不可得」，同樣表達了「親不待」的遺憾，與皋魚之泣的主題最為契合。"
-            },
-            {
-                id: 22,
-                category: "詞性判斷",
-                question: "「少而學」的「少」，其詞性與解釋為何？",
-                options: [
-                    "形容詞，數量不多",
-                    "名詞，年少之時",
-                    "副詞，稍微",
-                    "動詞，缺少"
-                ],
-                answer: 1,
-                explanation: "「少」在此指「年少的時候」，作時間名詞（或形容詞轉名詞）。"
-            },
-            {
-                id: 23,
-                category: "深層寓意",
-                question: "皋魚為何在說完話後選擇「立槁而死」？",
-                options: [
-                    "因為他生了重病",
-                    "因為飢餓過度",
-                    "表達極度的悔恨與絕望，以此警世",
-                    "為了展示他的修行高深"
-                ],
-                answer: 2,
-                explanation: "這是一種戲劇性且極端的表現，象徵其悔恨之深切，心如死灰，生命力隨之枯竭，用生命為這三種過失付出代價。"
-            },
-            {
-                id: 24,
-                category: "綜合分析",
-                question: "下列關於本文的敘述，何者正確？",
-                options: [
-                    "皋魚因為喪子而哭泣",
-                    "孔子認為皋魚是個無病呻吟的人",
-                    "本文主旨在強調交友要謹慎",
-                    "本文透過對話層層遞進，最後以死明志，極具震撼力"
-                ],
-                answer: 3,
-                explanation: "A錯（非喪子）；B錯（稱其賢者）；C錯（主旨是孝）；D正確，文章結構緊湊，結局震撼。"
-            },
-            {
-                id: 25,
-                category: "邏輯推演",
-                question: "「子欲養而親不待」之所以成為千古名句，主要是因為它點出了人生的何種無奈？",
-                options: [
-                    "經濟能力的不足",
-                    "醫療技術的落後",
-                    "孝心與時間（壽命）的不可逆性",
-                    "社會制度的不公"
-                ],
-                answer: 2,
-                explanation: "這句話的核心在於「時間差」：當子女終於有能力或想到要奉養時，父母的壽命卻等不及了，強調時間的不可逆。"
-            }
+            { id: 1, category: "字音辨析", question: "「孔子『辟』車與之言」的「辟」，讀音與通假字為？", options: ["ㄆㄧˋ，通「僻」", "ㄅㄧˋ，通「避」", "ㄆㄧ，通「劈」", "ㄅㄧˋ，通「璧」"], answer: 1, explanation: "「辟」通「避」，讀音ㄅㄧˋ，意為避開、屏退，此指請人迴避。" },
+            { id: 2, category: "詞義測驗", question: "「披褐擁鐮」中的「擁」，最恰當的解釋是？", options: ["擁抱", "擁有", "持有、拿著", "遮蔽"], answer: 2, explanation: "「擁」在此指持有、拿著。意即穿著粗布衣，拿著鐮刀。" },
+            { id: 3, category: "文化常識", question: "皋魚「披褐擁鐮」的裝扮，暗示了他的身分或處境為何？", options: ["位高權重的貴族", "隱居或貧寒的士人", "正在服喪的孝子", "帶兵打仗的將軍"], answer: 1, explanation: "「褐」是粗布衣，古時貧賤者或隱士所穿。此形象顯示皋魚可能生活貧困或已隱居。" },
+            { id: 4, category: "字音辨析", question: "「間吾事君」的「間」，讀音與意思是？", options: ["ㄐㄧㄢ，空間", "ㄐㄧㄢ，時間", "ㄐㄧㄢˋ，阻隔、中斷", "ㄐㄧㄢˋ，挑撥"], answer: 2, explanation: "「間」讀作ㄐㄧㄢˋ，意指阻隔、中斷。指因為個人志向而中斷了侍奉君主。" },
+            { id: 5, category: "詞性活用", question: "「以『後』吾親」的「後」，在此作何詞性與解釋？", options: ["名詞，後代", "形容詞，後來的", "動詞，置於後（怠慢）", "副詞，遲遲"], answer: 2, explanation: "「後」在此轉品為動詞，意指「把...放在後面」，引申為怠慢、未及時奉養。" },
+            { id: 6, category: "文意理解", question: "皋魚所說的「第一失」，具體內容是指什麼？", options: ["為了學習和遊歷諸侯，而疏忽了奉養雙親", "為了做官，而拋棄了學習的機會", "因為父母反對，而無法周遊列國", "因為資質駑鈍，學業無成"], answer: 0, explanation: "文中云：「少而學，遊諸侯，以後吾親，失之一也。」" },
+            { id: 7, category: "文意理解", question: "皋魚的「第二失」：「高尚吾志，間吾事君」，意指？", options: ["志向太高，君主無法重用", "為了修養高尚的志節，而中斷了對君主的侍奉", "君主志向不高，不值得侍奉", "為了追求高官厚祿，違背了自己的志向"], answer: 1, explanation: "「高尚」在此作動詞用，意指使志節高尚（自命清高），因此不願或中斷了事君。" },
+            { id: 8, category: "修辭技巧", question: "「樹欲靜而風不止，子欲養而親不待」使用了哪種修辭技巧？", options: ["譬喻、感嘆", "轉化、誇飾", "借代、映襯", "層遞、排比"], answer: 0, explanation: "前句以樹與風的關係「譬喻」客觀環境無法隨主觀意願改變的無奈，整句亦充滿「感嘆」語氣。（亦含對偶）" },
+            { id: 9, category: "文意深究", question: "孔子初聞哭聲便說「驅！驅！前有賢者」，其判斷依據最可能是？", options: ["哭聲宏亮，身體健康", "哭聲甚悲，情感真摯", "哭聲有節奏，合乎禮法", "哭聲中夾雜著讀書聲"], answer: 1, explanation: "孔子「聞哭聲甚悲」，從其悲切的情感中推斷哭泣者可能有真性情或深沉的感悟，故稱賢者。" },
+            { id: 10, category: "文法結構", question: "「與友厚而小絕之」句中，「小絕之」的意思是？", options: ["從小就絕交", "斷絕關係的時間很短", "為了小事而與朋友絕交", "像小人一樣絕交"], answer: 2, explanation: "「小」指小事。「小絕之」意為因為微不足道的小事就與朋友斷絕往來。" },
+            { id: 11, category: "字義測驗", question: "「足以『識』矣」的「識」，讀音與意義為？", options: ["ㄕˋ，認識", "ㄕˋ，知識", "ㄓˋ，記住", "ㄓˋ，標誌"], answer: 2, explanation: "「識」通「誌」，讀作ㄓˋ，意為記住、銘記在心。" },
+            { id: 12, category: "邏輯推演", question: "皋魚最後「立槁而死」，這種結局在文學上主要象徵什麼？", options: ["身體虛弱不耐悲傷", "飢餓過度導致死亡", "悔恨之深，哀痛至極", "為了展示修行成果"], answer: 2, explanation: "「立槁」形容像枯木一樣站著死去，極言其悔恨、悲傷之深切，精氣神耗盡。" },
+            { id: 13, category: "成語應用", question: "下列何種情境最適合引用「樹欲靜而風不止，子欲養而親不待」？", options: ["感嘆時光飛逝，青春不再", "勸人把握機會，及時行孝", "形容自然界的氣候變化無常", "比喻朋友之間的情誼變質"], answer: 1, explanation: "此句主要用於感嘆子女想要奉養父母，但父母已故，勸人行孝要及時。" },
+            { id: 14, category: "文句重組", question: "「往而不可追者，年也」的意思是？", options: ["離去之後還可以追回來的，是年紀", "前往追逐不到的，是年輕人", "一旦流逝就無法追回的，是歲月", "年紀大的人追不到年輕人"], answer: 2, explanation: "「往」指流逝，「追」指追回。「年」指歲月。意即歲月一去不復返。" },
+            { id: 15, category: "虛詞用法", question: "「吾失『之』三矣」與「弟子誡『之』」，兩句中的「之」字詞性與指代？", options: ["皆為助詞，無義", "皆為代詞，前者指過失，後者指皋魚的話", "前者為動詞，後者為代詞", "前者為介詞，後者為助詞"], answer: 1, explanation: "第一句「之」指代「過失」或「這件事」；第二句「之」指代皋魚的經歷與教訓。" },
+            { id: 16, category: "文意比較", question: "孔子弟子「辭歸而養親者十有三人」，這反映了孔子教學的何種特色？", options: ["有教無類", "因材施教", "隨機機會教育", "舉一反三"], answer: 2, explanation: "孔子藉由路遇皋魚之事，當場教誨弟子，弟子亦受感動而付諸行動，展現了「機會教育」的成效。" },
+            { id: 17, category: "字形辨析", question: "下列選項中，「」內的字形何者完全正確？", options: ["披褐擁「廉」", "收「斂」骸骨", "眼花「繚」亂", "「鐮」刀割草"], answer: 3, explanation: "(A) 鐮；(B) 殮（收殮）；(C) 撩（眼花撩亂）。(D) 正確。" },
+            { id: 18, category: "句型判斷", question: "「子非有喪，何哭之悲也？」屬於何種句型？", options: ["敘事句", "有無句", "疑問句", "感嘆句"], answer: 2, explanation: "這是一個疑問句，孔子詢問皋魚為何哭得如此悲傷。" },
+            { id: 19, category: "文意推斷", question: "皋魚的三個過失，其共同的根本原因可以歸結為？", options: ["未能妥善管理時間", "未能平衡個人追求與人倫責任", "運氣不好，生不逢時", "缺乏良師益友的引導"], answer: 1, explanation: "三失分別對應：學業/親情、志向/君臣、交友。核心在於過度追求個人目標（學、志）或疏忽細節，導致人倫關係（親、君、友）的缺憾。" },
+            { id: 20, category: "字義通同", question: "「十有三人」的「有」，通假字與用法同於下列何者？", options: ["無中生「有」", "吾「十有五」而志於學", "富有四海", "有求必應"], answer: 1, explanation: "「有」通「又」，用於整數與零數之間。與《論語》「吾十有五而志於學」用法相同。" },
+            { id: 21, category: "倒裝句式", question: "「何哭之悲也」是倒裝句，還原後的語序應為？", options: ["悲何哭之也", "哭之何悲也", "哭何悲也（哭得多麼悲傷啊）", "何悲之哭也"], answer: 2, explanation: "此句為強調語氣，意即「哭得何等悲傷啊」。" },
+            { id: 22, category: "文意理解", question: "皋魚曰：「少而學，遊諸侯」，此處「遊」的意思最接近？", options: ["遊戲玩耍", "游泳健身", "遊歷求官", "悠閒度日"], answer: 2, explanation: "戰國時代士人「遊諸侯」多指遊歷各國，尋求被國君賞識任用的機會。" },
+            { id: 23, category: "主旨分析", question: "本篇故事的主旨，與下列哪一句《論語》的精神最相近？", options: ["學而时習之，不亦說乎", "父母在，不遠遊，遊必有方", "三人行，必有我師焉", "巧言令色，鮮矣仁"], answer: 1, explanation: "皋魚之痛在於遊歷在外而忽略奉養，正與「父母在，不遠遊」強調的孝道精神相呼應（或作為反面教材）。" },
+            { id: 24, category: "進階思考", question: "「去而不可得見者，親也！」這句話流露出何種情感？", options: ["對親人離去的憤怒", "對生命無常的恐懼", "對無法再盡孝的絕望與痛悔", "對親人背棄自己的怨恨"], answer: 2, explanation: "「去」指去世。表達了親人離世後，永遠無法再相見、再盡孝的深切絕望。" },
+            { id: 25, category: "綜合賞析", question: "關於本文的寫作特色，下列敘述何者錯誤？", options: ["以對話推動情節發展", "善用排比句式增強語氣", "運用譬喻修辭說明道理", "結尾孔子嚴厲批評了皋魚的愚蠢"], answer: 3, explanation: "孔子結尾說「弟子誡之，足以識矣」，是將其作為正面（或警惕）的教材，並無嚴厲批評，且開頭稱其為「賢者」。" }
         ];
 
         // --- State Management ---
-        window.currentState = {
+        let currentState = {
             username: '',
             questionIndex: 0,
             answers: {}, // { questionId: selectedOptionIndex }
@@ -691,7 +406,6 @@
         };
         
         const ui = {
-            loading: document.getElementById('loading-overlay'),
             usernameInput: document.getElementById('username'),
             userDisplay: document.getElementById('user-display'),
             usernameSpan: document.getElementById('username-span'),
@@ -715,40 +429,62 @@
             resultCorrect: document.getElementById('result-correct'),
             resultWrong: document.getElementById('result-wrong'),
             reviewList: document.getElementById('review-list'),
-            reviewTitle: document.getElementById('review-title')
+            reviewTitle: document.getElementById('review-title'),
+            statusDot: document.getElementById('status-dot'),
+            statusText: document.getElementById('status-text'),
         };
 
         // --- Initialization ---
-        window.addEventListener('DOMContentLoaded', () => {
-            renderRecentUsers();
-        });
-
-        // --- Helper Functions ---
-        function toggleLoading(show) {
-            if (show) ui.loading.classList.remove('hidden');
-            else ui.loading.classList.add('hidden');
-        }
-
-        function renderRecentUsers() {
-            const users = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '[]');
-            
-            if (users.length > 0) {
-                ui.quickLoginArea.classList.remove('hidden');
-                ui.recentUsersList.innerHTML = '';
-                users.forEach(user => {
-                    const btn = document.createElement('button');
-                    btn.className = 'px-3 py-1.5 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-full text-sm border border-orange-200 transition';
-                    btn.innerHTML = `<i class="fas fa-user-circle mr-1"></i>${user}`;
-                    btn.onclick = () => window.quickLogin(user);
-                    ui.recentUsersList.appendChild(btn);
+        function init() {
+            if (isFirebaseReady) {
+                // Listen to Global Users (for login list)
+                const globalRef = doc(db, COLLECTION_NAME, DOC_GLOBAL);
+                onSnapshot(globalRef, (docSnap) => {
+                    updateConnectionStatus('success', '已同步');
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        renderRecentUsers(data.users || []);
+                    } else {
+                        renderRecentUsers([]);
+                    }
+                }, (error) => {
+                    console.error("Global listen error", error);
+                    updateConnectionStatus('error', '雲端同步失敗');
                 });
             } else {
-                ui.quickLoginArea.classList.add('hidden');
+                updateConnectionStatus('error', '雲端同步失敗');
+                // Fallback to empty if firebase fails
+                renderRecentUsers([]); 
             }
         }
 
-        // --- Functions Attached to Window for HTML onClick ---
-        
+        function updateConnectionStatus(type, text) {
+            ui.statusText.textContent = text;
+            ui.statusDot.className = 'status-dot'; // Reset
+            if (type === 'loading') ui.statusDot.classList.add('status-loading');
+            else if (type === 'success') ui.statusDot.classList.add('status-success');
+            else if (type === 'error') ui.statusDot.classList.add('status-error');
+        }
+
+        function renderRecentUsers(users) {
+            if (users && users.length > 0) {
+                ui.quickLoginArea.classList.remove('hidden');
+                ui.recentUsersList.innerHTML = '';
+                // No slice(0,3) limit, showing all users
+                users.forEach(user => {
+                    const btn = document.createElement('button');
+                    btn.className = 'px-3 py-1.5 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-full text-sm border border-orange-200 transition mb-2';
+                    btn.innerHTML = `<i class="fas fa-user-circle mr-1"></i>${user}`;
+                    btn.onclick = () => quickLogin(user);
+                    ui.recentUsersList.appendChild(btn);
+                });
+            } else {
+                 ui.quickLoginArea.classList.remove('hidden');
+                 ui.recentUsersList.innerHTML = '<p class="text-sm text-gray-400 w-full text-center py-2">尚無挑戰者紀錄，歡迎加入！</p>';
+            }
+        }
+
+        // --- Login & Navigation ---
         window.quickLogin = function(name) {
             ui.usernameInput.value = name;
             window.attemptLogin();
@@ -761,127 +497,175 @@
                 return;
             }
             
-            toggleLoading(true);
-            window.currentState.username = name;
+            currentState.username = name;
             
-            // Update local recent users list
-            let users = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '[]');
-            if (!users.includes(name)) {
-                users.unshift(name); 
-                if (users.length > 5) users.pop(); 
-                localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users));
+            // 1. Add to Global User List (if new)
+            if (isFirebaseReady) {
+                const globalRef = doc(db, COLLECTION_NAME, DOC_GLOBAL);
+                // Use arrayUnion to add only if unique
+                setDoc(globalRef, { users: arrayUnion(name) }, { merge: true })
+                    .catch(e => console.error("Error updating global users:", e));
+
+                // 2. Start Listening to User Data (Progress, Favorites, Mistakes)
+                startUserListener(name);
             }
 
-            // Load Data from Firebase
-            try {
-                const docRef = doc(db, COLLECTION_NAME, name);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    window.currentState.mistakes = data.mistakes || [];
-                    window.currentState.favorites = data.favorites || [];
-                    window.currentState.questionIndex = data.progress?.questionIndex || 0;
-                    window.currentState.answers = data.progress?.answers || {};
-                    window.currentState.isFinished = data.progress?.isFinished || false;
-                } else {
-                    // New User init
-                    window.currentState.mistakes = [];
-                    window.currentState.favorites = [];
-                    window.currentState.questionIndex = 0;
-                    window.currentState.answers = {};
-                    window.currentState.isFinished = false;
-                    
-                    // Create doc
-                    await setDoc(docRef, {
-                        mistakes: [],
-                        favorites: [],
-                        progress: { questionIndex: 0, answers: {}, isFinished: false },
-                        lastLogin: new Date().toISOString()
-                    });
-                }
-            } catch (e) {
-                console.error("Firebase Error:", e);
-                alert("連線發生錯誤，將以離線模式運作，但進度可能無法儲存。");
-            }
-
-            // UI Update
-            toggleLoading(false);
+            // UI Update Header
             ui.userDisplay.classList.remove('hidden');
             ui.userDisplay.classList.add('flex');
             ui.usernameSpan.textContent = name;
-            ui.dashboardUsername.textContent = name;
-            updateDashboardCounts();
             
-            window.switchView('dashboard');
+            // Go to Dashboard (Listener will update the counts)
+            switchView('dashboard');
         }
 
-        function updateDashboardCounts() {
-            ui.dashWrongCount.textContent = window.currentState.mistakes.length;
-            ui.dashFavCount.textContent = window.currentState.favorites.length;
+        function startUserListener(username) {
+            if (currentUserUnsubscribe) {
+                currentUserUnsubscribe(); // Unsubscribe prev user
+            }
+
+            const userRef = doc(db, COLLECTION_NAME, username);
+            
+            currentUserUnsubscribe = onSnapshot(userRef, (docSnap) => {
+                updateConnectionStatus('success', '已同步');
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    // Sync State
+                    currentState.favorites = data.favorites || [];
+                    currentState.mistakes = data.mistakes || [];
+                    
+                    // Update Dashboard UI immediately
+                    ui.dashWrongCount.textContent = currentState.mistakes.length;
+                    ui.dashFavCount.textContent = currentState.favorites.length;
+
+                    // Sync Progress
+                    // Check if external progress is different and we are in quiz view?
+                    // For now, just load it into state.
+                    if (data.progress) {
+                         currentState.questionIndex = data.progress.questionIndex || 0;
+                         currentState.answers = data.progress.answers || {};
+                         currentState.isFinished = data.progress.isFinished || false;
+                         
+                         // Real-time update if user is currently in Quiz View
+                         const quizView = document.getElementById('view-quiz');
+                         if (!quizView.classList.contains('hidden') && !currentState.isFinished) {
+                             // Only reload if index changed to avoid flickering while answering
+                             const currentDisplayedIndex = parseInt(ui.currentQNum.textContent) - 1;
+                             if (currentState.questionIndex !== currentDisplayedIndex) {
+                                 loadQuestion(currentState.questionIndex);
+                             }
+                             // Update Favorites Icon real-time
+                             if (questionsData[currentState.questionIndex]) {
+                                updateFavoriteIcon(questionsData[currentState.questionIndex].id);
+                             }
+                         }
+                    }
+                } else {
+                    // New user or no data yet, reset state
+                    currentState.favorites = [];
+                    currentState.mistakes = [];
+                    currentState.questionIndex = 0;
+                    currentState.answers = {};
+                    currentState.isFinished = false;
+                }
+            }, (error) => {
+                console.error("User listen error", error);
+                updateConnectionStatus('error', '雲端同步失敗');
+            });
         }
 
-        window.switchView = function(viewName) {
+        function switchView(viewName) {
             Object.values(views).forEach(el => el.classList.add('hidden'));
             views[viewName].classList.remove('hidden');
             window.scrollTo(0, 0);
         }
 
         window.startExam = function() {
-            // Check loaded progress
-            if (window.currentState.progress && !window.currentState.isFinished && window.currentState.questionIndex > 0) {
-                const resume = confirm(`系統發現您上次作答到第 ${window.currentState.questionIndex + 1} 題，是否繼續？`);
-                if (resume) {
-                    window.switchView('quiz');
-                    loadQuestion(window.currentState.questionIndex);
-                    return;
-                }
+            // Logic handled by Listener mostly, but check finish state
+            if (currentState.isFinished === false && Object.keys(currentState.answers).length > 0) {
+                 const resume = confirm(`系統發現您上次作答到第 ${currentState.questionIndex + 1} 題，是否繼續？`);
+                 if (resume) {
+                     switchView('quiz');
+                     loadQuestion(currentState.questionIndex);
+                     return;
+                 }
             }
             
+            // Start New Session
             window.restartQuiz();
         }
 
         window.showDashboard = function() {
-            updateDashboardCounts();
-            window.switchView('dashboard');
+            // Counts are updated by onSnapshot
+            switchView('dashboard');
         }
 
-        async function saveDataToFirebase() {
-            if (!window.currentState.username) return;
+        window.restartQuiz = function() {
+            currentState.questionIndex = 0;
+            currentState.answers = {};
+            currentState.isFinished = false;
+            saveProgress(); 
+            switchView('quiz');
+            loadQuestion(0);
+        }
+
+        function saveProgress() {
+            if (!isFirebaseReady || !currentState.username) return;
             
-            const docRef = doc(db, COLLECTION_NAME, window.currentState.username);
-            try {
-                await updateDoc(docRef, {
-                    mistakes: window.currentState.mistakes,
-                    favorites: window.currentState.favorites,
-                    progress: {
-                        questionIndex: window.currentState.questionIndex,
-                        answers: window.currentState.answers,
-                        isFinished: window.currentState.isFinished
-                    },
-                    lastUpdate: new Date().toISOString()
+            updateConnectionStatus('loading', '儲存中...');
+            
+            const userRef = doc(db, COLLECTION_NAME, currentState.username);
+            const progressData = {
+                questionIndex: currentState.questionIndex,
+                answers: currentState.answers,
+                isFinished: currentState.isFinished,
+                timestamp: new Date().getTime()
+            };
+
+            setDoc(userRef, { progress: progressData }, { merge: true })
+                .then(() => updateConnectionStatus('success', '已同步'))
+                .catch(e => {
+                    console.error(e);
+                    updateConnectionStatus('error', '雲端同步失敗');
                 });
-            } catch (e) {
-                console.error("Save Error:", e);
-            }
+        }
+
+        function saveUserData(type) {
+            // Type: 'favorites' or 'mistakes'
+            if (!isFirebaseReady || !currentState.username) return;
+            
+            updateConnectionStatus('loading', '儲存中...');
+            const userRef = doc(db, COLLECTION_NAME, currentState.username);
+            const data = {};
+            data[type] = currentState[type];
+
+            setDoc(userRef, data, { merge: true })
+                .then(() => updateConnectionStatus('success', '已同步'))
+                .catch(e => {
+                    console.error(e);
+                    updateConnectionStatus('error', '雲端同步失敗');
+                });
         }
 
         window.logout = function() {
-            if (confirm("確定要登出嗎？您的作答進度與錯題本已同步至雲端。")) {
-                window.currentState.username = '';
+            if (confirm("確定要登出嗎？您的作答進度與錯題本已自動同步至雲端。")) {
+                if (currentUserUnsubscribe) currentUserUnsubscribe();
+                currentState.username = '';
                 ui.userDisplay.classList.add('hidden');
                 ui.userDisplay.classList.remove('flex');
                 ui.usernameInput.value = '';
-                renderRecentUsers();
-                window.switchView('login');
+                // Global listener is still active, so list will remain updated
+                switchView('login');
             }
         }
         
         window.goHome = function() {
-            if (window.currentState.username) {
+            if (currentState.username) {
                window.showDashboard();
             } else {
-                window.switchView('login');
+                switchView('login');
             }
         }
         
@@ -909,7 +693,8 @@
             // Reset Options
             ui.optionsContainer.innerHTML = '';
             
-            const answeredIdx = window.currentState.answers[q.id];
+            // Check if already answered
+            const answeredIdx = currentState.answers[q.id];
             
             q.options.forEach((opt, idx) => {
                 const btn = document.createElement('button');
@@ -922,16 +707,18 @@
                     <span class="text-gray-700 font-medium text-xl">${opt}</span>
                 `;
                 
-                btn.onclick = () => window.handleAnswer(index, idx, btn);
+                btn.onclick = () => handleAnswer(index, idx, btn);
                 ui.optionsContainer.appendChild(btn);
             });
 
             // Hide explanation
             ui.explanationArea.classList.add('hidden');
             
+            // If already answered, restore visual state
             if (answeredIdx !== undefined) {
                 const isCorrect = answeredIdx === q.answer;
                 
+                // Set Card Color
                 ui.questionCard.className = isCorrect 
                     ? "card-correct rounded-2xl shadow-lg overflow-hidden mb-6 border transition-colors-slow"
                     : "card-wrong rounded-2xl shadow-lg overflow-hidden mb-6 border transition-colors-slow";
@@ -956,6 +743,7 @@
                     }
                 });
                 
+                // Show explanation
                 ui.feedbackIcon.className = isCorrect ? "fas fa-check-circle text-green-500 text-2xl" : "fas fa-times-circle text-red-500 text-2xl";
                 ui.feedbackTitle.textContent = isCorrect ? "答對了！" : "答錯了！";
                 ui.feedbackTitle.className = isCorrect ? "text-lg font-bold text-green-700 mb-2" : "text-lg font-bold text-red-700 mb-2";
@@ -964,7 +752,8 @@
             }
         }
 
-        window.handleAnswer = function(qIndex, selectedIdx, btnElement) {
+        function handleAnswer(qIndex, selectedIdx, btnElement) {
+            // Disable all buttons
             const buttons = ui.optionsContainer.querySelectorAll('button');
             buttons.forEach(b => b.disabled = true);
 
@@ -972,10 +761,12 @@
             const isCorrect = selectedIdx === q.answer;
             const letterSpan = btnElement.querySelector('span');
             
+            // Card Color Feedback
             ui.questionCard.className = isCorrect 
                 ? "card-correct rounded-2xl shadow-lg overflow-hidden mb-6 border transition-colors-slow"
                 : "card-wrong rounded-2xl shadow-lg overflow-hidden mb-6 border transition-colors-slow";
 
+            // Style selection
             if (isCorrect) {
                 btnElement.classList.remove('bg-white', 'border-orange-100');
                 btnElement.classList.add('bg-green-50', 'border-green-500', 'text-green-800');
@@ -991,6 +782,7 @@
                 letterSpan.classList.remove('bg-orange-100', 'text-orange-600');
                 letterSpan.classList.add('bg-red-500', 'text-white');
                 
+                // Highlight correct answer
                 const correctBtn = buttons[q.answer];
                 correctBtn.classList.remove('bg-white', 'border-orange-100');
                 correctBtn.classList.add('bg-green-50', 'border-green-500', 'text-green-800');
@@ -1000,78 +792,78 @@
                 ui.feedbackTitle.textContent = "答錯了！";
                 ui.feedbackTitle.className = "text-lg font-bold text-red-700 mb-2";
                 
-                if (!window.currentState.mistakes.includes(q.id)) {
-                    window.currentState.mistakes.push(q.id);
+                // Record mistake to Cloud
+                if (!currentState.mistakes.includes(q.id)) {
+                    currentState.mistakes.push(q.id);
+                    saveUserData('mistakes');
                 }
             }
 
-            window.currentState.answers[q.id] = selectedIdx;
-            
-            // Save immediately to cloud
-            saveDataToFirebase();
+            // Save state
+            currentState.answers[q.id] = selectedIdx;
+            saveProgress();
 
+            // Show explanation
             ui.feedbackText.textContent = q.explanation;
             ui.explanationArea.classList.remove('hidden');
+            
+            // Scroll to explanation
             ui.explanationArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         window.nextQuestion = function() {
-            window.currentState.questionIndex++;
-            saveDataToFirebase();
+            currentState.questionIndex++;
+            saveProgress(); 
             
-            if (window.currentState.questionIndex < questionsData.length) {
-                loadQuestion(window.currentState.questionIndex);
+            if (currentState.questionIndex < questionsData.length) {
+                loadQuestion(currentState.questionIndex);
             } else {
                 finishQuiz();
             }
         }
 
         function finishQuiz() {
-            window.currentState.isFinished = true;
-            saveDataToFirebase();
+            currentState.isFinished = true;
+            saveProgress();
             
+            // Calculate Score (Session only)
             let correctCount = 0;
             questionsData.forEach(q => {
-                if (window.currentState.answers[q.id] === q.answer) {
+                if (currentState.answers[q.id] === q.answer) {
                     correctCount++;
                 }
             });
             const score = Math.round((correctCount / questionsData.length) * 100);
             
+            // Update UI
             ui.resultScore.textContent = score;
             ui.resultCorrect.textContent = correctCount;
             ui.resultWrong.textContent = questionsData.length - correctCount;
             
-            window.switchView('result');
+            switchView('result');
         }
 
-        window.restartQuiz = function() {
-            window.currentState.questionIndex = 0;
-            window.currentState.answers = {};
-            window.currentState.isFinished = false;
-            saveDataToFirebase();
-            window.switchView('quiz');
-            loadQuestion(0);
-        }
-
+        // --- Favorites Logic ---
         window.toggleFavorite = function() {
-            const currentQ = questionsData[window.currentState.questionIndex];
+            const currentQ = questionsData[currentState.questionIndex];
             const id = currentQ.id;
             
-            const index = window.currentState.favorites.indexOf(id);
+            const index = currentState.favorites.indexOf(id);
             if (index === -1) {
-                window.currentState.favorites.push(id);
+                currentState.favorites.push(id);
             } else {
-                window.currentState.favorites.splice(index, 1);
+                currentState.favorites.splice(index, 1);
             }
             
-            saveDataToFirebase();
+            // Persist favorites to Cloud
+            saveUserData('favorites');
+            
             updateFavoriteIcon(id);
         }
 
         function updateFavoriteIcon(id) {
             const icon = ui.btnFavorite.querySelector('i');
-            if (window.currentState.favorites.includes(id)) {
+            if (currentState.favorites.includes(id)) {
                 icon.className = "fas fa-star text-2xl text-amber-500";
                 ui.btnFavorite.classList.add('text-amber-500');
                 ui.btnFavorite.classList.remove('text-gray-300');
@@ -1082,19 +874,20 @@
             }
         }
 
+        // --- Review & All Questions Logic ---
         window.showReview = function(type) {
-            const ids = type === 'wrong' ? window.currentState.mistakes : window.currentState.favorites;
+            const ids = type === 'wrong' ? currentState.mistakes : currentState.favorites;
             ui.reviewTitle.textContent = type === 'wrong' ? '錯題本 (歷史累計)' : '我的最愛';
             
             renderQuestionList(ids, true);
-            window.switchView('review');
+            switchView('review');
         }
 
         window.showAllQuestions = function() {
             ui.reviewTitle.textContent = '題目一覽表';
             const allIds = questionsData.map(q => q.id);
             renderQuestionList(allIds, false);
-            window.switchView('review');
+            switchView('review');
         }
 
         function renderQuestionList(ids, showUserStatus) {
@@ -1121,7 +914,7 @@
                     
                     let userSelectedIdx = -1;
                     if (showUserStatus) {
-                         userSelectedIdx = window.currentState.answers[q.id];
+                         userSelectedIdx = currentState.answers[q.id];
                     }
                     const isUserSelected = userSelectedIdx === idx;
                     
@@ -1139,6 +932,7 @@
                         icon = '<span class="w-6 inline-block"></span>';
                     }
                     
+                    // Increased font size for review options: text-lg
                     return `<div class="${classStr} text-lg">${icon} ${['A','B','C','D'][idx]}. ${opt}</div>`;
                 }).join('');
 
@@ -1153,6 +947,7 @@
                     <div class="space-y-2 mb-4 text-sm">
                         ${optionsHtml}
                     </div>
+                    <!-- Increased font size for review explanation: text-lg -->
                     <div class="bg-amber-50 p-4 rounded-lg text-lg text-gray-700 border border-amber-100 leading-relaxed">
                         <span class="font-bold text-orange-600"><i class="fas fa-lightbulb mr-1"></i>解析：</span> ${q.explanation}
                     </div>
@@ -1161,12 +956,22 @@
             });
         }
 
+        window.backToResult = function() {
+            switchView('result');
+        }
+
         window.clearData = function() {
-            if(confirm("警告：這將會清除「這台裝置」上的快速登入紀錄，但不會刪除 Firebase 雲端上的作答資料。\n\n確定要執行嗎？")) {
-                localStorage.removeItem(LOCAL_USERS_KEY);
+            // Deprecated in Cloud version or implemented as clear user data?
+            // For safety, let's keep it as a local clear only or warn user.
+            if(confirm("警告：此操作僅清除「本機」暫存狀態，雲端資料將保留。\n若要重新開始測驗，請點擊「重新測驗」。")) {
                 location.reload();
             }
         }
+
+        // Wait for Auth to be ready before calling init logic inside the Auth Observer if needed, 
+        // but here we init the listener in the main flow.
+        init();
+
     </script>
 </body>
 </html>
