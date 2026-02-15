@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文言文推與敲 - 第47篇 含羞草 (錯題複習版)</title>
+    <title>文言文推與敲 - 第47篇 含羞草 (瀑布流大字版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -11,7 +11,7 @@
         
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #fcfbf9;
+            background-color: #fcfbf9; /* 更柔和的米白 */
             color: #374151;
         }
         
@@ -37,6 +37,21 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* 自定義捲軸 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
         /* 狀態點樣式 */
         .status-dot {
             height: 10px;
@@ -56,19 +71,11 @@
         .option-btn:active {
             transform: scale(0.99);
         }
-
-        /* 星星動畫 */
-        .star-anim {
-            transition: transform 0.2s;
-        }
-        .star-anim:active {
-            transform: scale(1.4) rotate(15deg);
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- 頂部固定導航列 -->
+    <!-- 頂部固定導航列 (全域) -->
     <header class="bg-gradient-to-r from-orange-700 to-amber-700 text-white shadow-lg sticky top-0 z-50">
         <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
             <h1 class="text-2xl font-bold tracking-wider flex items-center gap-3 cursor-pointer" onclick="window.goHome()">
@@ -164,7 +171,6 @@
                 </div>
 
                 <div class="p-8 space-y-5">
-                    <!-- 進入測驗 -->
                     <button onclick="window.startExam()" class="w-full group bg-white border-2 border-orange-100 hover:border-orange-500 hover:bg-orange-50 p-6 rounded-2xl transition-all duration-300 flex items-center justify-between shadow-sm hover:shadow-md">
                         <div class="flex items-center gap-5">
                             <div class="w-16 h-16 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-2xl group-hover:bg-orange-500 group-hover:text-white transition-colors">
@@ -178,40 +184,19 @@
                         <i class="fas fa-chevron-right text-gray-300 group-hover:text-orange-500 text-xl"></i>
                     </button>
 
-                    <!-- 功能按鈕區：錯題本 & 我的最愛 -->
                     <div class="grid grid-cols-2 gap-5">
-                        <button onclick="window.openReview('wrong')" class="group bg-red-50 hover:bg-red-100 border-2 border-red-100 hover:border-red-300 p-5 rounded-2xl transition-all flex flex-col items-center justify-center text-center">
-                            <div class="w-12 h-12 rounded-full bg-red-200 text-red-600 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
-                                <i class="fas fa-times"></i>
-                            </div>
-                            <h3 class="font-bold text-red-800 text-lg">錯題本</h3>
-                            <p class="text-red-600/70 text-sm mt-1">累積 <span id="count-wrong-history" class="font-bold">0</span> 題</p>
-                        </button>
-
-                        <button onclick="window.openReview('favorites')" class="group bg-yellow-50 hover:bg-yellow-100 border-2 border-yellow-100 hover:border-yellow-300 p-5 rounded-2xl transition-all flex flex-col items-center justify-center text-center">
-                            <div class="w-12 h-12 rounded-full bg-yellow-200 text-yellow-600 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <h3 class="font-bold text-yellow-800 text-lg">我的最愛</h3>
-                            <p class="text-yellow-600/70 text-sm mt-1">收藏 <span id="count-favorites" class="font-bold">0</span> 題</p>
-                        </button>
-                    </div>
-
-                    <!-- 統計資訊 -->
-                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 flex justify-between items-center px-10">
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-green-600 mb-1" id="dash-correct-count">0</div>
-                            <div class="text-gray-500 text-sm">本輪答對</div>
+                        <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 text-center">
+                            <div class="text-4xl font-bold text-green-600 mb-2" id="dash-correct-count">0</div>
+                            <div class="text-gray-500 font-medium">累積答對</div>
                         </div>
-                        <div class="h-10 w-px bg-gray-300"></div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-red-500 mb-1" id="dash-wrong-count">0</div>
-                            <div class="text-gray-500 text-sm">本輪答錯</div>
+                        <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 text-center">
+                            <div class="text-4xl font-bold text-red-500 mb-2" id="dash-wrong-count">0</div>
+                            <div class="text-gray-500 font-medium">累積答錯</div>
                         </div>
                     </div>
 
                     <button onclick="window.resetProgress()" class="w-full text-gray-400 hover:text-red-500 text-sm py-2 transition flex items-center justify-center gap-2">
-                        <i class="fas fa-trash-alt"></i> 清除本次測驗進度 (保留錯題本)
+                        <i class="fas fa-trash-alt"></i> 清除紀錄重新開始
                     </button>
                 </div>
             </div>
@@ -219,38 +204,16 @@
 
         <!-- View 3: Waterfall Quiz -->
         <div id="view-quiz" class="hidden fade-in pb-24">
+            <!-- Questions Container -->
             <div id="quiz-list-container" class="space-y-10">
-                <!-- 題目卡片由 JS 生成 -->
+                <!-- 題目卡片將由 JS 生成於此 -->
             </div>
-            
+
+            <!-- Back to Top Button -->
             <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
                 class="fixed bottom-8 right-8 bg-gray-800 hover:bg-orange-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-xl transition-all transform hover:scale-110 z-50 opacity-80 hover:opacity-100">
                 <i class="fas fa-arrow-up"></i>
             </button>
-        </div>
-
-        <!-- View 4: Review Mode (錯題本/我的最愛) -->
-        <div id="view-review" class="hidden fade-in pb-24">
-            <div class="flex items-center justify-between mb-8">
-                <button onclick="window.goHome()" class="flex items-center gap-2 text-gray-600 hover:text-orange-600 transition font-bold bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
-                    <i class="fas fa-arrow-left"></i> 返回儀表板
-                </button>
-                <h2 id="review-title" class="text-2xl font-bold text-gray-800"></h2>
-                
-                <button id="clear-review-btn" class="hidden text-red-500 hover:text-red-700 text-sm font-medium underline">
-                    清除錯題紀錄
-                </button>
-            </div>
-
-            <div id="review-list-container" class="space-y-10">
-                <!-- 複習卡片由 JS 生成 -->
-            </div>
-            
-            <div id="review-empty-state" class="hidden text-center py-20">
-                <div class="text-gray-300 text-6xl mb-4"><i class="fas fa-clipboard-check"></i></div>
-                <p class="text-xl text-gray-500">目前沒有相關題目紀錄</p>
-                <button onclick="window.goHome()" class="mt-4 text-orange-600 hover:underline">去練習吧！</button>
-            </div>
         </div>
 
     </main>
@@ -317,9 +280,7 @@
 
         let currentState = {
             username: '',
-            answers: {},        // Current session answers { id: optionIdx }
-            favorites: [],      // List of favorited Question IDs [1, 5, ...]
-            wrongHistory: []    // Accumulated wrong Question IDs [2, 3, ...]
+            answers: {}, // { questionId: selectedOptionIndex }
         };
 
         const ui = {
@@ -338,22 +299,13 @@
             dashWrongCount: document.getElementById('dash-wrong-count'),
             connectionStatus: document.getElementById('connection-status'),
             statusDot: document.getElementById('status-dot'),
-            statusText: document.getElementById('status-text'),
-            
-            // New UI Elements
-            countWrongHistory: document.getElementById('count-wrong-history'),
-            countFavorites: document.getElementById('count-favorites'),
-            reviewListContainer: document.getElementById('review-list-container'),
-            reviewTitle: document.getElementById('review-title'),
-            reviewEmptyState: document.getElementById('review-empty-state'),
-            clearReviewBtn: document.getElementById('clear-review-btn')
+            statusText: document.getElementById('status-text')
         };
 
         const views = {
             login: document.getElementById('view-login'),
             dashboard: document.getElementById('view-dashboard'),
-            quiz: document.getElementById('view-quiz'),
-            review: document.getElementById('view-review') // New View
+            quiz: document.getElementById('view-quiz')
         };
 
         // --- Firebase Init ---
@@ -444,36 +396,24 @@
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     currentState.answers = data.answers || {};
-                    currentState.favorites = data.favorites || [];
-                    currentState.wrongHistory = data.wrongHistory || [];
+                    updateStats();
                 } else {
                     currentState.answers = {};
-                    currentState.favorites = [];
-                    currentState.wrongHistory = [];
+                    updateStats();
                 }
                 
-                updateStats(); // Update Dashboard counts
-
-                // If currently in Review View, refresh the list
-                if (!views.review.classList.contains('hidden')) {
-                    const isFavorites = ui.reviewTitle.textContent.includes('最愛');
-                    renderReviewList(isFavorites ? 'favorites' : 'wrong');
-                }
-
-                // If currently in Quiz View, refresh to show new Star status
+                // Refresh views based on new data
                 if (!views.quiz.classList.contains('hidden')) {
-                     // Prefer not to full re-render to keep scroll position, but for simplicity:
-                     // We will just update stars status in DOM if we wanted to be fancy, 
-                     // but re-render is safer for syncing. 
-                     // To avoid scroll jumping, we save scroll pos.
-                     const scrollPos = window.scrollY;
-                     renderWaterfallQuiz();
-                     window.scrollTo(0, scrollPos);
+                    // If in quiz mode, re-render implies update UI states without full redraw to keep scroll
+                    // But for simplicity in this prompt, we'll re-render if data changes externally
+                    // Or just let local interaction handle immediate DOM updates
                 }
                 
-                // Route to dashboard on first load
-                if (views.login.classList.contains('hidden') === false) {
-                    switchView('dashboard');
+                // If we just logged in, go to dashboard
+                if (!views.dashboard.classList.contains('hidden') || !views.quiz.classList.contains('hidden')) {
+                   // do nothing, let user navigate
+                } else {
+                   switchView('dashboard');
                 }
                 
             }, (error) => {
@@ -488,12 +428,6 @@
             scrollToFirstUnanswered();
         }
 
-        // --- New: Open Review View ---
-        window.openReview = function(type) {
-            switchView('review');
-            renderReviewList(type);
-        }
-
         window.goHome = function() {
             if (currentState.username) switchView('dashboard');
             else switchView('login');
@@ -506,18 +440,11 @@
         }
 
         window.resetProgress = function() {
-            if(confirm("確定要清除當前測驗作答紀錄嗎？\n(錯題本的歷史紀錄將會保留)")) {
+            if(confirm("確定要清除所有作答紀錄嗎？")) {
                 currentState.answers = {};
                 saveProgress();
-                alert("測驗進度已重置");
-            }
-        }
-        
-        window.clearWrongHistory = function() {
-             if(confirm("確定要清空錯題本的所有歷史紀錄嗎？")) {
-                currentState.wrongHistory = [];
-                saveProgress();
-                alert("錯題本已清空");
+                updateStats();
+                alert("紀錄已清除");
             }
         }
 
@@ -533,7 +460,7 @@
             }
         }
 
-        // --- Logic ---
+        // --- Waterfall Logic ---
 
         function updateStats() {
             let correct = 0;
@@ -554,16 +481,11 @@
             ui.statsWrong.textContent = wrong;
             ui.statsProgress.textContent = answered;
 
-            // Update Dashboard Main Stats
+            // Update Dashboard
             ui.dashCorrectCount.textContent = correct;
             ui.dashWrongCount.textContent = wrong;
-
-            // Update Dashboard New Stats
-            ui.countFavorites.textContent = currentState.favorites.length;
-            ui.countWrongHistory.textContent = currentState.wrongHistory.length;
         }
 
-        // --- Render Waterfall Quiz (Standard Mode) ---
         function renderWaterfallQuiz() {
             const container = ui.quizListContainer;
             container.innerHTML = '';
@@ -573,30 +495,21 @@
                 const isAnswered = userAnswer !== undefined;
                 const isCorrect = isAnswered && userAnswer === q.answer;
                 const isWrong = isAnswered && !isCorrect;
-                const isFavorite = currentState.favorites.includes(q.id);
 
                 // Card Styles
                 let borderColor = isAnswered 
                     ? (isCorrect ? 'border-green-500 bg-green-50/30' : 'border-red-500 bg-red-50/30') 
                     : 'border-transparent bg-white';
                 
-                if (!isAnswered) borderColor += ' hover:border-orange-200 border-2 border-gray-100';
+                if (!isAnswered) borderColor += ' hover:border-orange-200 border-2 border-gray-100'; // Default border
 
                 const card = document.createElement('div');
                 card.id = `q-card-${q.id}`;
                 card.className = `relative rounded-3xl shadow-sm p-6 md:p-10 transition-all duration-300 ${borderColor}`;
 
-                // Favorite Button (Top Right)
-                const favIconClass = isFavorite ? 'fas text-yellow-400' : 'far text-gray-300 hover:text-yellow-400';
-                const favHtml = `
-                    <button onclick="window.toggleFavorite(${q.id})" class="absolute top-6 right-6 p-2 text-2xl star-anim focus:outline-none z-10" title="收藏/取消收藏">
-                        <i class="${favIconClass} fa-star"></i>
-                    </button>
-                `;
-
                 // Header
                 const headerHtml = `
-                    <div class="flex flex-col md:flex-row md:items-start gap-4 mb-8 pr-10">
+                    <div class="flex flex-col md:flex-row md:items-start gap-4 mb-8">
                         <span class="flex-shrink-0 bg-orange-600 text-white font-bold rounded-lg px-4 py-2 text-xl shadow-sm self-start">#${index + 1}</span>
                         <div class="flex-grow">
                             <span class="inline-block bg-orange-100 text-orange-800 text-sm px-3 py-1 rounded-full font-bold mb-3">${q.category}</span>
@@ -615,22 +528,27 @@
 
                     if (isAnswered) {
                         if (optIdx === q.answer) {
+                            // Correct Option (Always Green)
                             btnClass += "bg-green-100 border-green-500 text-green-900 shadow-md transform scale-[1.01]";
                             circleClass += "bg-green-600 text-white";
                             iconHtml = '<i class="fas fa-check-circle text-2xl text-green-600 ml-auto"></i>';
                         } else if (optIdx === userAnswer && isWrong) {
+                            // Wrong Selected Option
                             btnClass += "bg-red-100 border-red-500 text-red-900 opacity-90";
                             circleClass += "bg-red-600 text-white";
                             iconHtml = '<i class="fas fa-times-circle text-2xl text-red-600 ml-auto"></i>';
                         } else {
+                            // Other unselected options
                             btnClass += "bg-white/50 border-transparent text-gray-400 opacity-60 cursor-not-allowed";
                             circleClass += "bg-gray-200 text-gray-500";
                         }
                     } else {
+                        // Not Answered State
                         btnClass += "bg-white border-gray-200 hover:border-orange-400 hover:bg-orange-50 cursor-pointer";
                         circleClass += "bg-orange-100 text-orange-600 group-hover:bg-orange-500 group-hover:text-white";
                     }
 
+                    // Onclick logic string
                     const clickHandler = isAnswered ? '' : `onclick="window.handleWaterfallAnswer(${q.id}, ${optIdx})"`;
 
                     optionsHtml += `
@@ -661,144 +579,24 @@
                     `;
                 }
 
-                card.innerHTML = favHtml + headerHtml + optionsHtml + explanationHtml;
-                container.appendChild(card);
-            });
-        }
-
-        // --- Render Review List (Wrong / Favorites) ---
-        window.renderReviewList = function(type) {
-            const container = ui.reviewListContainer;
-            container.innerHTML = '';
-            
-            let sourceIds = [];
-            if (type === 'wrong') {
-                sourceIds = currentState.wrongHistory;
-                ui.reviewTitle.textContent = "錯題本複習";
-                ui.reviewTitle.className = "text-2xl font-bold text-red-700";
-                ui.clearReviewBtn.classList.remove('hidden');
-                ui.clearReviewBtn.onclick = window.clearWrongHistory;
-            } else {
-                sourceIds = currentState.favorites;
-                ui.reviewTitle.textContent = "我的最愛題目";
-                ui.reviewTitle.className = "text-2xl font-bold text-yellow-700";
-                ui.clearReviewBtn.classList.add('hidden');
-            }
-
-            if (sourceIds.length === 0) {
-                ui.reviewEmptyState.classList.remove('hidden');
-                return;
-            } else {
-                ui.reviewEmptyState.classList.add('hidden');
-            }
-
-            // Filter questions based on IDs and reverse to show newest first if desired, or just list them
-            // Here we map to preserve order or sort by ID
-            const targetQuestions = questionsData.filter(q => sourceIds.includes(q.id));
-
-            targetQuestions.forEach((q, index) => {
-                const isFavorite = currentState.favorites.includes(q.id);
-
-                const card = document.createElement('div');
-                card.className = "relative bg-white rounded-3xl shadow-md p-8 md:p-10 border-l-8 " + (type === 'wrong' ? "border-red-400" : "border-yellow-400");
-
-                // Favorite Button Logic in Review Mode
-                const favIconClass = isFavorite ? 'fas text-yellow-400' : 'far text-gray-300 hover:text-yellow-400';
-                
-                // Header (Text-3XL as requested)
-                const headerHtml = `
-                    <div class="flex flex-col md:flex-row md:items-start gap-4 mb-6 pr-10">
-                        <button onclick="window.toggleFavorite(${q.id})" class="absolute top-6 right-6 p-2 text-2xl star-anim focus:outline-none z-10">
-                             <i class="${favIconClass} fa-star"></i>
-                        </button>
-                        <div class="flex-grow">
-                            <span class="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded mb-2">ID: ${q.id} | ${q.category}</span>
-                            <h3 class="text-3xl font-bold text-gray-800 leading-relaxed serif">${q.question}</h3>
-                        </div>
-                    </div>
-                `;
-
-                // Options (Read Only - Highlight Correct)
-                let optionsHtml = '<div class="grid gap-3 mb-6 opacity-90">';
-                q.options.forEach((opt, optIdx) => {
-                    const letter = ['A','B','C','D'][optIdx];
-                    let btnClass = "w-full text-left p-4 rounded-xl border flex items-center ";
-                    let circleClass = "w-8 h-8 flex items-center justify-center rounded-full font-bold mr-4 text-base flex-shrink-0 ";
-                    
-                    if (optIdx === q.answer) {
-                        btnClass += "bg-green-50 border-green-500 text-green-900";
-                        circleClass += "bg-green-600 text-white";
-                    } else {
-                        btnClass += "bg-white border-gray-200 text-gray-500";
-                        circleClass += "bg-gray-100 text-gray-400";
-                    }
-
-                    optionsHtml += `
-                        <div class="${btnClass}">
-                            <span class="${circleClass}">${letter}</span>
-                            <span class="font-medium text-lg">${opt}</span>
-                            ${optIdx === q.answer ? '<i class="fas fa-check text-green-600 ml-auto"></i>' : ''}
-                        </div>
-                    `;
-                });
-                optionsHtml += '</div>';
-
-                // Explanation (Always Visible, Text-XL)
-                const explanationHtml = `
-                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                        <h4 class="font-bold text-gray-700 text-lg mb-2"><i class="fas fa-book-reader mr-2"></i>解析</h4>
-                        <p class="text-gray-800 text-xl leading-loose font-medium">${q.explanation}</p>
-                    </div>
-                `;
-
                 card.innerHTML = headerHtml + optionsHtml + explanationHtml;
                 container.appendChild(card);
             });
         }
 
-        // --- Interaction Logic ---
-
         window.handleWaterfallAnswer = function(qId, selectedIdx) {
             // Update State
             currentState.answers[qId] = selectedIdx;
             
-            // Logic: Add to Wrong History if wrong
-            const q = questionsData.find(x => x.id === qId);
-            if (q && selectedIdx !== q.answer) {
-                if (!currentState.wrongHistory.includes(qId)) {
-                    currentState.wrongHistory.push(qId);
-                }
-            }
-
+            // Re-render only to reflect changes (In a React app we'd just update state, here we rebuild UI or could patch it)
+            // For simplicity and to ensure animations trigger, we rebuild the list but preserve scroll? 
+            // Better: Re-render the specific Card to avoid jumpiness.
+            
             // Save to Cloud
             saveProgress();
             
-            // Update UI immediately (re-render specific card logic omitted for brevity, full render used)
-            const scrollPos = window.scrollY; // Preserve scroll
-            renderWaterfallQuiz();
-            window.scrollTo(0, scrollPos);
-            updateStats();
-        }
-
-        window.toggleFavorite = function(qId) {
-            const index = currentState.favorites.indexOf(qId);
-            if (index === -1) {
-                currentState.favorites.push(qId);
-            } else {
-                currentState.favorites.splice(index, 1);
-            }
-            saveProgress();
-            
-            // Refresh views appropriately
-            if (!views.review.classList.contains('hidden')) {
-                // If we are in "Favorites" view and unstar, we should probably re-render
-                const isFavoritesView = ui.reviewTitle.textContent.includes('最愛');
-                renderReviewList(isFavoritesView ? 'favorites' : 'wrong');
-            } else {
-                const scrollPos = window.scrollY;
-                renderWaterfallQuiz();
-                window.scrollTo(0, scrollPos);
-            }
+            // Update UI immediately
+            renderWaterfallQuiz(); // Re-render triggers status update logic inside
             updateStats();
         }
 
@@ -811,20 +609,15 @@
                         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                 }
-            }, 300);
+            }, 300); // Small delay to ensure DOM is ready
         }
 
         function saveProgress() {
             if (!isFirebaseReady || !currentState.username) return;
             
             const userRef = doc(db, COLLECTION_NAME, currentState.username);
-            setDoc(userRef, { 
-                answers: currentState.answers, 
-                favorites: currentState.favorites,
-                wrongHistory: currentState.wrongHistory,
-                timestamp: new Date().getTime() 
-            }, { merge: true })
-            .catch(console.error);
+            setDoc(userRef, { answers: currentState.answers, timestamp: new Date().getTime() }, { merge: true })
+                .catch(console.error);
         }
 
         // Start
@@ -832,9 +625,6 @@
         
         // Expose function for global scope
         window.handleWaterfallAnswer = window.handleWaterfallAnswer;
-        window.toggleFavorite = window.toggleFavorite;
-        window.renderReviewList = window.renderReviewList;
-        window.clearWrongHistory = window.clearWrongHistory;
 
     </script>
 </body>
