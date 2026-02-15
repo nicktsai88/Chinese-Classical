@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文言文推與敲 - 第48篇 張相遇盜 (錯題本&收藏版)</title>
+    <title>文言文推與敲 - 第48篇 張相遇盜 (儀表板版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -11,7 +11,7 @@
         
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #f3f4f6; /* gray-100 */
+            background-color: #f8f5f2; /* 配合圖片的暖色系背景 */
         }
         
         .serif {
@@ -19,24 +19,24 @@
         }
 
         .fade-in-up {
-            animation: fadeInUp 0.5s ease-out forwards;
+            animation: fadeInUp 0.4s ease-out forwards;
         }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
-            width: 10px;
+            width: 8px;
         }
         ::-webkit-scrollbar-track {
             background: #f1f1f1;
         }
         ::-webkit-scrollbar-thumb {
             background: #cbd5e1;
-            border-radius: 5px;
+            border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
@@ -44,8 +44,8 @@
 
         /* Status Dot Styles */
         .status-dot {
-            height: 10px;
-            width: 10px;
+            height: 8px;
+            width: 8px;
             border-radius: 50%;
             display: inline-block;
             margin-right: 6px;
@@ -63,75 +63,72 @@
             50% { transform: scale(1.4); }
             100% { transform: scale(1); }
         }
+
+        /* Dashboard Button Hover Effects */
+        .dashboard-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .dashboard-btn:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col text-gray-800 selection:bg-orange-200">
 
-    <!-- Header -->
-    <header class="bg-white shadow-md sticky top-0 z-50">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-xl md:text-2xl font-bold tracking-wider flex items-center gap-3 text-orange-700 cursor-pointer" onclick="goHome()">
-                <i class="fas fa-scroll text-orange-500 text-2xl md:text-3xl"></i>
-                <span class="hidden sm:inline">張相遇盜</span>
-                <span class="sm:hidden">張相</span>
+    <!-- Header (Simplified for this version) -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-orange-100">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-lg md:text-xl font-bold tracking-wider flex items-center gap-2 text-orange-800 cursor-pointer" onclick="goHome()">
+                <i class="fas fa-scroll text-orange-600"></i>
+                <span>張相遇盜</span>
             </h1>
             
             <div class="flex items-center gap-2 md:gap-4">
-                <!-- Status Indicator -->
-                <div id="connection-status" class="hidden lg:flex items-center text-sm bg-gray-100 px-3 py-1.5 rounded-full transition-opacity duration-500">
+                <div id="connection-status" class="hidden md:flex items-center text-xs bg-orange-50 px-3 py-1 rounded-full">
                     <span id="status-dot" class="status-dot status-loading"></span>
-                    <span id="status-text" class="text-gray-600 font-medium">連線中...</span>
+                    <span id="status-text" class="text-orange-700 font-medium">連線中...</span>
                 </div>
 
-                <div id="user-display" class="hidden flex items-center gap-2 md:gap-3">
-                    <div class="text-sm md:text-base bg-orange-50 px-3 py-1.5 md:px-4 md:py-2 rounded-full flex items-center border border-orange-100">
-                        <i class="fas fa-user mr-2 text-orange-500"></i>
-                        <span id="username-span" class="font-bold text-orange-800"></span>
-                    </div>
-                    <button onclick="window.logout()" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full transition font-bold" title="登出">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
+                <div id="user-display" class="hidden flex items-center gap-2">
+                    <span id="username-span" class="text-sm font-bold text-gray-600"></span>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow container mx-auto px-4 py-8 max-w-4xl relative">
+    <main class="flex-grow container mx-auto px-4 py-6 max-w-2xl relative flex flex-col justify-center">
         
-        <!-- View: Login -->
-        <div id="view-login" class="fade-in-up max-w-lg mx-auto bg-white rounded-3xl shadow-xl overflow-hidden mt-10 border-t-8 border-orange-500">
+        <!-- View 1: Login -->
+        <div id="view-login" class="fade-in-up w-full max-w-md mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-orange-100">
             <div class="p-8 md:p-10">
-                <div class="text-center mb-10">
-                    <div class="inline-block p-4 rounded-full bg-orange-100 text-orange-600 mb-4">
-                        <i class="fas fa-book-reader text-5xl"></i>
+                <div class="text-center mb-8">
+                    <div class="inline-block p-4 rounded-full bg-orange-50 text-orange-500 mb-4">
+                        <i class="fas fa-feather-alt text-4xl"></i>
                     </div>
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">文言文推與敲</h2>
-                    <p class="text-orange-600 text-lg md:text-xl font-medium">第48篇 張相遇盜</p>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-1">文言文推與敲</h2>
+                    <p class="text-gray-500 text-sm">請輸入姓名以同步您的學習進度</p>
                 </div>
                 
-                <div class="space-y-6">
-                    <div>
-                        <label for="username" class="block text-lg font-bold text-gray-700 mb-3">請輸入姓名開始</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <i class="fas fa-pencil-alt text-gray-400 text-xl"></i>
-                            </div>
-                            <input type="text" id="username" 
-                                class="w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-500 transition-all bg-gray-50 focus:bg-white" 
-                                placeholder="例如：王小明"
-                                onkeypress="if(event.key === 'Enter') window.attemptLogin()">
+                <div class="space-y-4">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-300"></i>
                         </div>
+                        <input type="text" id="username" 
+                            class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-200 focus:border-orange-400 transition-all outline-none" 
+                            placeholder="您的姓名"
+                            onkeypress="if(event.key === 'Enter') window.attemptLogin()">
                     </div>
                     
-                    <button onclick="window.attemptLogin()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 px-6 rounded-xl transition duration-200 text-xl font-bold shadow-lg hover:shadow-xl transform active:scale-95 flex justify-center items-center gap-2">
-                        <span>進入測驗</span> <i class="fas fa-arrow-right"></i>
+                    <button onclick="window.attemptLogin()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl transition font-bold shadow-md active:scale-95">
+                        開始使用
                     </button>
 
                     <!-- Quick Login -->
-                    <div id="quick-login-area" class="hidden pt-6 border-t border-gray-100">
-                        <p class="text-sm text-gray-500 mb-3 font-medium">歷史紀錄</p>
-                        <div id="recent-users-list" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
+                    <div id="quick-login-area" class="hidden pt-4 border-t border-gray-100 mt-4">
+                        <p class="text-xs text-gray-400 mb-2 text-center">歷史紀錄</p>
+                        <div id="recent-users-list" class="flex flex-wrap justify-center gap-2">
                             <!-- Buttons injected by JS -->
                         </div>
                     </div>
@@ -139,70 +136,124 @@
             </div>
         </div>
 
-        <!-- View: Quiz (Waterfall) -->
+        <!-- View 2: Dashboard (The Requested UI) -->
+        <div id="view-dashboard" class="hidden fade-in-up w-full max-w-md mx-auto">
+            <div class="bg-white rounded-3xl shadow-xl p-8 md:p-10 border border-orange-50 relative overflow-hidden">
+                <!-- Decorative Top Border -->
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-orange-400 to-orange-500"></div>
+
+                <!-- Header -->
+                <div class="text-center mb-8 mt-2">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2 tracking-tight">歡迎回來，</h2>
+                    <p class="text-gray-500 text-sm font-medium">請選擇您要進行的項目</p>
+                </div>
+
+                <!-- Menu Buttons -->
+                <div class="space-y-4">
+                    
+                    <!-- 1. Start Quiz (Main) -->
+                    <button onclick="window.enterMode('all')" class="dashboard-btn w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white p-5 rounded-2xl flex justify-between items-center shadow-lg shadow-orange-200 group">
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-pen-nib text-xl opacity-90"></i>
+                            <span class="text-lg font-bold tracking-wide">開始測驗 (瀑布流)</span>
+                        </div>
+                        <i class="fas fa-chevron-right opacity-70 group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+
+                    <!-- 2. Mistake Notebook -->
+                    <button onclick="window.enterMode('mistakes')" class="dashboard-btn w-full bg-white border-2 border-red-50 hover:border-red-100 text-red-800 p-4 rounded-2xl flex justify-between items-center shadow-sm group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-500">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <span class="text-lg font-bold">錯題本</span>
+                        </div>
+                        <div class="bg-red-50 text-red-600 px-3 py-1 rounded-full text-sm font-bold shadow-inner min-w-[30px] text-center">
+                            <span id="dash-mistake-count">0</span>
+                        </div>
+                    </button>
+
+                    <!-- 3. Favorites -->
+                    <button onclick="window.enterMode('favorites')" class="dashboard-btn w-full bg-white border-2 border-amber-50 hover:border-amber-100 text-amber-800 p-4 rounded-2xl flex justify-between items-center shadow-sm group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-500">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span class="text-lg font-bold">我的最愛</span>
+                        </div>
+                        <div class="bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-sm font-bold shadow-inner min-w-[30px] text-center">
+                            <span id="dash-favorite-count">0</span>
+                        </div>
+                    </button>
+
+                </div>
+
+                <!-- Footer -->
+                <div class="mt-10 text-center">
+                    <button onclick="window.logout()" class="text-gray-400 hover:text-gray-600 text-xs font-medium transition-colors border-b border-transparent hover:border-gray-300 pb-0.5">
+                        清除本機暫存並登出
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View 3: Quiz List (Waterfall) -->
         <div id="view-quiz" class="hidden fade-in-up">
             
-            <!-- Sticky Stats Bar & Controls -->
-            <div class="sticky top-20 z-40 bg-white/95 backdrop-blur-md shadow-md rounded-2xl p-3 md:p-4 mb-8 border border-gray-200 flex flex-col md:flex-row justify-between items-center transition-all duration-300 gap-3" id="stats-bar">
+            <!-- Sticky Header for Quiz View -->
+            <div class="sticky top-4 z-40 bg-white/95 backdrop-blur-md shadow-lg shadow-orange-500/5 rounded-2xl p-4 mb-6 border border-gray-100 flex justify-between items-center transition-all duration-300">
                 
-                <!-- Filters/Modes -->
-                <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 hide-scrollbar">
-                    <button onclick="window.setFilterMode('all')" id="btn-mode-all" class="flex-shrink-0 px-4 py-2 rounded-lg font-bold text-sm transition-colors bg-orange-500 text-white shadow-sm flex items-center gap-2">
-                        <i class="fas fa-list"></i> 全部題目
-                    </button>
-                    <button onclick="window.setFilterMode('mistakes')" id="btn-mode-mistakes" class="flex-shrink-0 px-4 py-2 rounded-lg font-bold text-sm transition-colors bg-white text-gray-600 hover:bg-red-50 border border-gray-200 flex items-center gap-2 relative">
-                        <i class="fas fa-times-circle text-red-500"></i> 錯題本
-                        <span id="badge-mistakes" class="hidden bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full absolute -top-2 -right-2 shadow-sm">0</span>
-                    </button>
-                    <button onclick="window.setFilterMode('favorites')" id="btn-mode-favorites" class="flex-shrink-0 px-4 py-2 rounded-lg font-bold text-sm transition-colors bg-white text-gray-600 hover:bg-yellow-50 border border-gray-200 flex items-center gap-2 relative">
-                        <i class="fas fa-star text-yellow-400"></i> 我的最愛
-                        <span id="badge-favorites" class="hidden bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full absolute -top-2 -right-2 shadow-sm">0</span>
-                    </button>
+                <button onclick="window.goHome()" class="text-gray-500 hover:text-orange-600 transition font-medium flex items-center gap-2 text-sm bg-gray-50 px-3 py-2 rounded-lg hover:bg-orange-50">
+                    <i class="fas fa-arrow-left"></i> 回儀表板
+                </button>
+
+                <!-- Current Mode Indicator -->
+                <div class="flex items-center gap-2">
+                    <span id="mode-indicator" class="text-sm font-bold text-gray-700 bg-gray-100 px-3 py-1 rounded-full">
+                        全部題目
+                    </span>
                 </div>
 
-                <!-- Stats -->
-                <div class="flex items-center gap-4 md:gap-6 w-full md:w-auto justify-end border-t md:border-t-0 pt-2 md:pt-0 border-gray-100">
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 md:w-3 md:h-3 rounded-full bg-green-500"></div>
-                        <span class="text-sm md:text-lg font-bold text-gray-700">對: <span id="stat-correct" class="text-green-600 text-lg md:text-2xl">0</span></span>
+                <!-- Mini Stats -->
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-1.5 text-sm font-bold text-gray-600">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span id="stat-correct">0</span>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 md:w-3 md:h-3 rounded-full bg-red-500"></div>
-                        <span class="text-sm md:text-lg font-bold text-gray-700">錯: <span id="stat-wrong" class="text-red-600 text-lg md:text-2xl">0</span></span>
+                    <div class="flex items-center gap-1.5 text-sm font-bold text-gray-600">
+                        <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                        <span id="stat-wrong">0</span>
                     </div>
-                    <button onclick="window.resetCurrentAnswers()" class="ml-2 text-gray-400 hover:text-orange-500 transition" title="重置本回作答 (保留錯題與最愛)">
-                        <i class="fas fa-redo-alt"></i>
+                    <button onclick="window.resetCurrentAnswers()" class="ml-1 text-gray-400 hover:text-orange-500" title="重置作答">
+                        <i class="fas fa-redo-alt text-xs"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- Empty State Message -->
+            <!-- Empty State -->
             <div id="empty-state-msg" class="hidden text-center py-20">
-                <div class="inline-block p-6 rounded-full bg-gray-100 text-gray-400 mb-4">
-                    <i class="fas fa-folder-open text-4xl"></i>
+                <div class="inline-block p-6 rounded-full bg-white shadow-sm mb-4">
+                    <i class="fas fa-box-open text-4xl text-gray-300"></i>
                 </div>
-                <h3 class="text-xl font-bold text-gray-600">目前沒有相關題目</h3>
-                <p class="text-gray-500 mt-2">請切換到「全部題目」繼續練習，或加入收藏/錯題。</p>
+                <h3 class="text-lg font-bold text-gray-600">目前沒有內容</h3>
+                <p class="text-gray-400 text-sm mt-2">請回到儀表板選擇其他項目</p>
             </div>
 
-            <!-- Quiz List Container -->
-            <div id="quiz-list-container" class="space-y-6 md:space-y-8 pb-20">
+            <!-- Quiz Container -->
+            <div id="quiz-list-container" class="space-y-6 pb-20">
                 <!-- Cards injected by JS -->
             </div>
 
-            <!-- Back to Top Button -->
-            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-8 right-8 bg-gray-800 text-white w-12 h-12 md:w-14 md:h-14 rounded-full shadow-2xl flex items-center justify-center hover:bg-gray-700 transition transform hover:scale-110 z-50" title="回頂端">
-                <i class="fas fa-arrow-up text-lg md:text-xl"></i>
+            <!-- Back to Top -->
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-6 right-6 bg-slate-800 text-white w-12 h-12 rounded-full shadow-xl flex items-center justify-center hover:bg-slate-700 transition transform hover:scale-110 z-50">
+                <i class="fas fa-arrow-up"></i>
             </button>
         </div>
 
     </main>
 
-    <footer class="bg-white border-t border-gray-200 py-10 mt-auto">
-        <div class="container mx-auto px-4 text-center">
-            <p class="text-gray-600 font-medium text-lg mb-2">文言文推與敲 - 張相遇盜</p>
-            <p class="text-gray-400 text-sm">&copy; 2025 道明中學國二國文模擬試題</p>
-        </div>
+    <footer class="py-6 mt-auto text-center text-gray-400 text-xs">
+        <p>&copy; 2025 道明中學國二國文模擬試題</p>
     </footer>
 
     <script type="module">
@@ -236,7 +287,6 @@
                 signInAnonymously(auth).catch(console.error);
                 isFirebaseReady = true;
             } else {
-                console.warn("Firebase Config missing.");
                 updateConnectionStatus('error', '離線模式');
             }
         } catch (e) {
@@ -285,6 +335,7 @@
         // --- DOM Elements ---
         const views = {
             login: document.getElementById('view-login'),
+            dashboard: document.getElementById('view-dashboard'),
             quiz: document.getElementById('view-quiz')
         };
         
@@ -296,17 +347,17 @@
             recentUsersList: document.getElementById('recent-users-list'),
             statusDot: document.getElementById('status-dot'),
             statusText: document.getElementById('status-text'),
+            
+            // Dashboard Elements
+            dashMistakeCount: document.getElementById('dash-mistake-count'),
+            dashFavoriteCount: document.getElementById('dash-favorite-count'),
+
+            // Quiz Elements
             quizContainer: document.getElementById('quiz-list-container'),
             statCorrect: document.getElementById('stat-correct'),
             statWrong: document.getElementById('stat-wrong'),
             emptyStateMsg: document.getElementById('empty-state-msg'),
-            
-            // Mode Buttons & Badges
-            btnModeAll: document.getElementById('btn-mode-all'),
-            btnModeMistakes: document.getElementById('btn-mode-mistakes'),
-            btnModeFavorites: document.getElementById('btn-mode-favorites'),
-            badgeMistakes: document.getElementById('badge-mistakes'),
-            badgeFavorites: document.getElementById('badge-favorites')
+            modeIndicator: document.getElementById('mode-indicator')
         };
 
         // --- Initialization ---
@@ -345,8 +396,8 @@
                 ui.recentUsersList.innerHTML = '';
                 users.forEach(user => {
                     const btn = document.createElement('button');
-                    btn.className = 'px-4 py-2 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-full text-sm border border-orange-200 transition font-medium';
-                    btn.innerHTML = `<i class="fas fa-user-circle mr-1"></i>${user}`;
+                    btn.className = 'px-3 py-1 bg-gray-50 hover:bg-orange-50 text-gray-600 hover:text-orange-600 rounded-full text-xs border border-gray-200 transition';
+                    btn.textContent = user;
                     btn.onclick = () => quickLogin(user);
                     ui.recentUsersList.appendChild(btn);
                 });
@@ -375,16 +426,15 @@
                 setDoc(globalRef, { users: arrayUnion(name) }, { merge: true }).catch(console.error);
                 startUserListener(name);
             } else {
-                // Offline fallback
-                renderWaterfallQuiz();
-                updateStats();
+                renderDashboard(); // Offline fallback
             }
 
             ui.userDisplay.classList.remove('hidden');
             ui.userDisplay.classList.add('flex');
             ui.usernameSpan.textContent = name;
             
-            switchView('quiz');
+            // Go to Dashboard instead of Quiz directly
+            switchView('dashboard');
         }
 
         function startUserListener(username) {
@@ -396,58 +446,64 @@
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     
-                    // Update state from cloud
                     if (data.progress && data.progress.answers) {
                         currentState.answers = data.progress.answers;
                     }
                     if (data.mistakes) currentState.mistakes = data.mistakes;
                     if (data.favorites) currentState.favorites = data.favorites;
 
-                    // Re-render UI
-                    renderWaterfallQuiz();
-                    updateStats();
+                    // Update dashboard counts in real-time
+                    renderDashboard();
+                    
+                    // If user is currently in quiz mode, re-render quiz too
+                    if (!views.quiz.classList.contains('hidden')) {
+                        renderWaterfallQuiz();
+                        updateStats();
+                    }
                 } else {
-                    // New user
-                    renderWaterfallQuiz();
-                    updateStats();
+                    renderDashboard();
                 }
             });
         }
 
         function switchView(viewName) {
             views.login.classList.add('hidden');
+            views.dashboard.classList.add('hidden');
             views.quiz.classList.add('hidden');
+            
             views[viewName].classList.remove('hidden');
             window.scrollTo(0, 0);
         }
 
-        // --- Filter Mode Logic ---
-        window.setFilterMode = function(mode) {
+        // --- Dashboard Logic ---
+        function renderDashboard() {
+            ui.dashMistakeCount.textContent = currentState.mistakes.length;
+            ui.dashFavoriteCount.textContent = currentState.favorites.length;
+        }
+
+        window.enterMode = function(mode) {
             currentState.filterMode = mode;
-            renderWaterfallQuiz();
             
-            // Update UI Buttons
-            const buttons = {
-                'all': ui.btnModeAll,
-                'mistakes': ui.btnModeMistakes,
-                'favorites': ui.btnModeFavorites
+            // Update Indicator Text
+            const map = {
+                'all': '全部題目',
+                'mistakes': '錯題本',
+                'favorites': '我的最愛'
             };
-
-            // Reset styles
-            Object.values(buttons).forEach(btn => {
-                btn.className = 'flex-shrink-0 px-4 py-2 rounded-lg font-bold text-sm transition-colors bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 flex items-center gap-2 relative';
-            });
-
-            // Set active style
-            if(buttons[mode]) {
-                const activeColor = mode === 'all' ? 'bg-orange-500 hover:bg-orange-600' : 
-                                    mode === 'mistakes' ? 'bg-red-500 hover:bg-red-600' : 'bg-yellow-400 hover:bg-yellow-500';
-                buttons[mode].className = `flex-shrink-0 px-4 py-2 rounded-lg font-bold text-sm transition-colors ${activeColor} text-white shadow-sm flex items-center gap-2 relative border-transparent`;
-                
-                // Keep icon color white when active
-                const icon = buttons[mode].querySelector('i');
-                if(icon) icon.className = mode === 'all' ? 'fas fa-list' : mode === 'mistakes' ? 'fas fa-times-circle' : 'fas fa-star';
+            ui.modeIndicator.textContent = map[mode];
+            
+            // Style Indicator
+            if (mode === 'mistakes') {
+                ui.modeIndicator.className = 'text-sm font-bold text-red-700 bg-red-50 px-3 py-1 rounded-full border border-red-100';
+            } else if (mode === 'favorites') {
+                ui.modeIndicator.className = 'text-sm font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full border border-amber-100';
+            } else {
+                ui.modeIndicator.className = 'text-sm font-bold text-gray-700 bg-gray-100 px-3 py-1 rounded-full';
             }
+
+            renderWaterfallQuiz();
+            updateStats();
+            switchView('quiz');
         }
 
         // --- Waterfall Quiz Logic ---
@@ -456,35 +512,18 @@
             container.innerHTML = ''; 
 
             const { filterMode, mistakes, favorites } = currentState;
-
-            // Update Badges
-            if (mistakes.length > 0) {
-                ui.badgeMistakes.textContent = mistakes.length;
-                ui.badgeMistakes.classList.remove('hidden');
-            } else {
-                ui.badgeMistakes.classList.add('hidden');
-            }
-
-            if (favorites.length > 0) {
-                ui.badgeFavorites.textContent = favorites.length;
-                ui.badgeFavorites.classList.remove('hidden');
-            } else {
-                ui.badgeFavorites.classList.add('hidden');
-            }
-
-            // Filter Questions based on mode
             let questionsToRender = questionsData;
-            let fontSizeTitle = 'text-2xl md:text-3xl'; // Default
-            let fontSizeExplain = 'text-xl'; // Default
+            let fontSizeTitle = 'text-xl md:text-2xl'; // Default size
+            let fontSizeExplain = 'text-lg'; // Default size
 
             if (filterMode === 'mistakes') {
                 questionsToRender = questionsData.filter(q => mistakes.includes(q.id));
-                fontSizeTitle = 'text-3xl md:text-4xl'; // Larger for review
-                fontSizeExplain = 'text-xl md:text-2xl'; // Larger for review
+                fontSizeTitle = 'text-2xl md:text-3xl'; // Larger for review
+                fontSizeExplain = 'text-xl'; 
             } else if (filterMode === 'favorites') {
                 questionsToRender = questionsData.filter(q => favorites.includes(q.id));
-                fontSizeTitle = 'text-3xl md:text-4xl'; // Larger for review
-                fontSizeExplain = 'text-xl md:text-2xl'; // Larger for review
+                fontSizeTitle = 'text-2xl md:text-3xl';
+                fontSizeExplain = 'text-xl';
             }
 
             // Empty State
@@ -502,93 +541,86 @@
                 const isFavorite = currentState.favorites.includes(q.id);
 
                 // Card Styling
-                let borderClass = 'border-2 border-gray-200';
+                let borderClass = 'border border-gray-100';
                 let bgClass = 'bg-white';
                 if (isAnswered) {
                     if (isCorrect) {
-                        borderClass = 'border-2 border-green-400';
-                        bgClass = 'bg-green-50/30';
+                        borderClass = 'border-l-4 border-l-green-500 border-gray-100';
+                        bgClass = 'bg-green-50/20';
                     } else {
-                        borderClass = 'border-2 border-red-400';
-                        bgClass = 'bg-red-50/30';
+                        borderClass = 'border-l-4 border-l-red-500 border-gray-100';
+                        bgClass = 'bg-red-50/20';
                     }
                 }
 
                 const card = document.createElement('div');
                 card.id = `card-${q.id}`;
-                card.className = `relative rounded-2xl shadow-sm p-6 md:p-8 transition-all duration-300 ${borderClass} ${bgClass}`;
+                card.className = `relative rounded-xl shadow-sm p-6 transition-all duration-300 ${borderClass} ${bgClass}`;
                 
                 // Star Button Logic
-                const starClass = isFavorite ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-300';
+                const starClass = isFavorite ? 'text-amber-400' : 'text-gray-200 hover:text-amber-300';
                 
                 // Header (Question)
                 const headerHtml = `
                     <button onclick="window.toggleFavorite(${q.id})" class="absolute top-4 right-4 p-2 focus:outline-none transition transform hover:scale-110 z-10" title="${isFavorite ? '取消收藏' : '加入最愛'}">
                         <i id="star-${q.id}" class="fas fa-star text-2xl ${starClass}"></i>
                     </button>
-                    <div class="flex justify-between items-start mb-6 pr-8">
-                        <div class="flex items-start gap-4 w-full">
-                            <span class="flex-shrink-0 bg-orange-500 text-white font-bold rounded-lg px-3 py-1 md:px-4 md:py-2 text-lg md:text-xl shadow-sm mt-1">#${filterMode === 'all' ? q.id : index + 1}</span>
-                            <h3 class="${fontSizeTitle} font-bold text-gray-800 leading-relaxed tracking-wide serif">${q.question}</h3>
+                    <div class="flex justify-between items-start mb-5 pr-8">
+                        <div class="flex items-start gap-3 w-full">
+                            <span class="flex-shrink-0 bg-orange-100 text-orange-700 font-bold rounded-md px-2.5 py-1 text-sm mt-1">#${filterMode === 'all' ? q.id : index + 1}</span>
+                            <h3 class="${fontSizeTitle} font-bold text-gray-800 leading-relaxed serif">${q.question}</h3>
                         </div>
                     </div>
                 `;
 
                 // Options
-                let optionsHtml = '<div class="grid gap-4">';
+                let optionsHtml = '<div class="grid gap-3">';
                 q.options.forEach((opt, optIdx) => {
                     const letters = ['A','B','C','D'];
-                    let btnClass = 'bg-white border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700';
-                    let circleClass = 'bg-gray-100 text-gray-600';
+                    let btnClass = 'bg-white border border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-600';
+                    let circleClass = 'bg-gray-100 text-gray-500';
                     let iconHtml = '';
 
                     if (isAnswered) {
                         btnClass = 'cursor-default'; 
                         
                         if (optIdx === q.answer) {
-                            btnClass = 'bg-green-100 border-green-500 text-green-900';
+                            btnClass = 'bg-green-50 border-green-200 text-green-800';
                             circleClass = 'bg-green-500 text-white';
-                            iconHtml = '<i class="fas fa-check text-green-600 text-2xl ml-auto"></i>';
+                            iconHtml = '<i class="fas fa-check text-green-600 ml-auto"></i>';
                         } else if (optIdx === answeredIdx && !isCorrect) {
-                            btnClass = 'bg-red-100 border-red-500 text-red-900';
+                            btnClass = 'bg-red-50 border-red-200 text-red-800';
                             circleClass = 'bg-red-500 text-white';
-                            iconHtml = '<i class="fas fa-times text-red-600 text-2xl ml-auto"></i>';
+                            iconHtml = '<i class="fas fa-times text-red-600 ml-auto"></i>';
                         } else {
-                            btnClass = 'bg-white border-gray-100 text-gray-400 opacity-60';
+                            btnClass = 'bg-white border-gray-100 text-gray-300 opacity-60';
                         }
                     }
 
                     optionsHtml += `
                         <button onclick="window.handleAnswer(${q.id}, ${optIdx})" 
                                 ${isAnswered ? 'disabled' : ''}
-                                class="option-btn w-full text-left p-4 md:p-5 rounded-xl flex items-center group transition-all duration-200 ${btnClass}">
-                            <span class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full font-bold mr-4 md:mr-5 text-base md:text-lg flex-shrink-0 transition-colors ${circleClass}">${letters[optIdx]}</span>
-                            <span class="font-medium text-lg md:text-xl leading-relaxed">${opt}</span>
+                                class="option-btn w-full text-left p-4 rounded-lg flex items-center group transition-all duration-200 ${btnClass}">
+                            <span class="w-8 h-8 flex items-center justify-center rounded-full font-bold mr-4 text-sm flex-shrink-0 transition-colors ${circleClass}">${letters[optIdx]}</span>
+                            <span class="font-medium text-lg leading-relaxed">${opt}</span>
                             ${iconHtml}
                         </button>
                     `;
                 });
                 optionsHtml += '</div>';
 
-                // Explanation (Show if answered OR in Mistake/Favorite review mode)
+                // Explanation
                 let explanationHtml = '';
-                // In review mode (Mistakes/Favorites), we always show explanation to help them learn
                 const shouldShowExplanation = isAnswered || (filterMode !== 'all');
 
                 if (shouldShowExplanation) {
-                     // If reviewing and not answered yet, hint them to answer first, or just show it? 
-                     // Logic: "Mistake Book" implies they already got it wrong before. 
-                     // So we show the explanation.
-                    
                     explanationHtml = `
-                        <div class="mt-8 bg-white/60 p-6 rounded-2xl border border-orange-200 animate-fade-in-up">
-                            <div class="flex items-start gap-4">
-                                <div class="bg-orange-100 p-3 rounded-full flex-shrink-0">
-                                    <i class="fas fa-lightbulb text-orange-600 text-2xl"></i>
-                                </div>
+                        <div class="mt-6 bg-orange-50/50 p-5 rounded-xl border border-orange-100 animate-fade-in-up">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-lightbulb text-orange-500 text-xl mt-1"></i>
                                 <div>
-                                    <span class="font-bold text-orange-700 block mb-3 text-lg md:text-xl">解析：</span>
-                                    <p class="text-gray-800 ${fontSizeExplain} leading-9 text-justify font-medium">${q.explanation}</p>
+                                    <span class="font-bold text-orange-800 block mb-1">解析：</span>
+                                    <p class="text-gray-700 ${fontSizeExplain} leading-relaxed text-justify">${q.explanation}</p>
                                 </div>
                             </div>
                         </div>
@@ -607,13 +639,11 @@
             const isFav = idx !== -1;
             const starIcon = document.getElementById(`star-${qId}`);
 
-            // Optimistic UI Update
             if (isFav) {
                 // Remove
                 currentState.favorites.splice(idx, 1);
-                if(starIcon) {
-                    starIcon.className = 'fas fa-star text-2xl text-gray-300 hover:text-yellow-300';
-                }
+                if(starIcon) starIcon.className = 'fas fa-star text-2xl text-gray-200 hover:text-amber-300';
+                
                 if (isFirebaseReady && currentState.username) {
                     const userRef = doc(db, COLLECTION_NAME, currentState.username);
                     updateDoc(userRef, { favorites: arrayRemove(qId) }).catch(console.error);
@@ -621,24 +651,20 @@
             } else {
                 // Add
                 currentState.favorites.push(qId);
-                if(starIcon) {
-                    starIcon.className = 'fas fa-star text-2xl text-yellow-400 star-animate';
-                }
+                if(starIcon) starIcon.className = 'fas fa-star text-2xl text-amber-400 star-animate';
+                
                 if (isFirebaseReady && currentState.username) {
                     const userRef = doc(db, COLLECTION_NAME, currentState.username);
                     updateDoc(userRef, { favorites: arrayUnion(qId) }).catch(console.error);
                 }
             }
             
-            // If we are IN favorites mode, we need to refresh the list to remove the item
+            // Refresh counts on Dashboard
+            renderDashboard();
+
+            // If in favorites mode, remove the card visually
             if (currentState.filterMode === 'favorites') {
-                setTimeout(() => renderWaterfallQuiz(), 300); // Small delay for animation
-            } else {
-                // Update badge only
-                const favCount = currentState.favorites.length;
-                ui.badgeFavorites.textContent = favCount;
-                if(favCount > 0) ui.badgeFavorites.classList.remove('hidden');
-                else ui.badgeFavorites.classList.add('hidden');
+                setTimeout(() => renderWaterfallQuiz(), 200);
             }
         }
 
@@ -646,28 +672,19 @@
             const q = questionsData.find(x => x.id === qId);
             if(!q) return;
 
-            // 1. Update State
             currentState.answers[q.id] = selectedIdx;
             
-            // 2. Mistake Logic (Cumulative)
             const isCorrect = selectedIdx === q.answer;
             if (!isCorrect) {
                 if (!currentState.mistakes.includes(q.id)) {
                     currentState.mistakes.push(q.id);
-                    // Cloud update for mistakes
                     if (isFirebaseReady && currentState.username) {
                         const userRef = doc(db, COLLECTION_NAME, currentState.username);
                         updateDoc(userRef, { mistakes: arrayUnion(q.id) }).catch(console.error);
                     }
                 }
-            } else {
-                // Optional: If they get it right later, do we remove it from mistakes? 
-                // Usually "Mistake Book" keeps it until manually removed or specific logic.
-                // The prompt says: "History remains until manually cleared or system reset".
-                // So we do NOT remove it here automatically.
             }
 
-            // 3. Save Progress (Answers)
             if (isFirebaseReady && currentState.username) {
                 const userRef = doc(db, COLLECTION_NAME, currentState.username);
                 setDoc(userRef, { 
@@ -678,21 +695,18 @@
                 }, { merge: true }).catch(console.error);
             }
 
-            // 4. Update UI
             renderWaterfallQuiz();
             updateStats();
+            renderDashboard(); // Update dashboard counts
         }
 
         window.resetCurrentAnswers = function() {
-            if(confirm("確定要重置「當前作答狀態」嗎？\n(您的錯題本紀錄與最愛收藏將會保留)")) {
+            if(confirm("確定要重置「當前作答狀態」嗎？")) {
                 currentState.answers = {};
-                
-                // Cloud update
                 if (isFirebaseReady && currentState.username) {
                     const userRef = doc(db, COLLECTION_NAME, currentState.username);
                     updateDoc(userRef, { "progress.answers": {} }).catch(console.error);
                 }
-
                 renderWaterfallQuiz();
                 updateStats();
             }
@@ -701,8 +715,6 @@
         function updateStats() {
             let correct = 0;
             let wrong = 0;
-            
-            // Calculate stats based on current session answers
             Object.keys(currentState.answers).forEach(qId => {
                 const q = questionsData.find(x => x.id == qId);
                 if (q) {
@@ -710,24 +722,12 @@
                     else wrong++;
                 }
             });
-
-            // Animate numbers
             ui.statCorrect.textContent = correct;
             ui.statWrong.textContent = wrong;
-            
-            // Update Badges counts in UI
-            if(currentState.mistakes.length > 0) {
-                ui.badgeMistakes.textContent = currentState.mistakes.length;
-                ui.badgeMistakes.classList.remove('hidden');
-            }
-             if(currentState.favorites.length > 0) {
-                ui.badgeFavorites.textContent = currentState.favorites.length;
-                ui.badgeFavorites.classList.remove('hidden');
-            }
         }
 
         window.logout = function() {
-            if (confirm("確定要登出嗎？進度已自動儲存。")) {
+            if (confirm("確定要登出嗎？")) {
                 if (currentUserUnsubscribe) currentUserUnsubscribe();
                 currentState.username = '';
                 currentState.answers = {};
@@ -736,24 +736,19 @@
                 currentState.filterMode = 'all';
                 ui.usernameInput.value = '';
                 
-                // Reset UI Mode
-                window.setFilterMode('all');
-                
                 switchView('login');
             }
         }
         
         window.goHome = function() {
             if (currentState.username) {
-               // Already logged in
+               switchView('dashboard');
             } else {
                 switchView('login');
             }
         }
 
-        // Start
         init();
-
     </script>
 </body>
 </html>
