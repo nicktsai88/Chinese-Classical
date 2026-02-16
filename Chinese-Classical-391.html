@@ -182,10 +182,20 @@
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
                     <i class="fas fa-hat-wizard text-2xl mr-3 text-orange-300"></i>
-                    <span class="font-bold text-xl tracking-wider font-serif">古文互動教室 <span class="text-xs text-orange-300 font-sans ml-1">GitHub 版</span></span>
+                    <span class="font-bold text-xl tracking-wider font-serif">古文互動教室 <span class="text-xs text-orange-300 font-sans ml-1">AI 旗艦版</span></span>
                 </div>
-                <div class="hidden md:block text-sm opacity-80">
-                    深度學習：第50篇 戴高帽
+                <div class="flex items-center">
+                    <div class="hidden md:block text-sm opacity-80 mr-4">
+                        深度學習：第50篇 戴高帽
+                    </div>
+                    <!-- 返回總部按鈕 -->
+                    <a href="index.html" 
+                       class="btn btn-gray transform hover:scale-105 transition-transform duration-200 shadow-md" 
+                       style="text-decoration: none; padding: 8px 16px;
+                              background: linear-gradient(135deg, #ff4081 0%, #d81b60 100%);
+                              color: white; border-radius: 999px; display: inline-block; font-size: 0.85rem;">
+                        🏠 返回古文學習 App 總部
+                    </a>
                 </div>
             </div>
         </div>
@@ -491,7 +501,7 @@
                     case 'quiz': renderQuiz(container); break;
                     case 'story': 
                         renderStory(container); 
-                        preloadStoryImages(); 
+                        // preloadStoryImages(); // Removed to avoid missing function error
                         break;
                 }
                 container.style.opacity = '1';
@@ -901,7 +911,7 @@
             if(!window.currentStoryNode) window.currentStoryNode = 'start';
             const node = storyNodes[window.currentStoryNode];
             const localPath = `Chinese-Classical-391-images/rpg_${window.currentStoryNode}.jpg`;
-            
+
             let imageContent = `
                 <div class="w-full overflow-hidden rounded-t-xl bg-gray-100">
                     <img src="${localPath}" class="w-full h-auto fade-in-image" alt="場景圖" onerror="this.src='https://placehold.co/600x400?text=Image+Not+Found';">
