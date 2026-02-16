@@ -91,7 +91,6 @@
     <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl">
         
         <!-- View: Login -->
-        <!-- 修改：加寬至 max-w-2xl，增加內距 p-12，加大所有文字 -->
         <div id="view-login" class="fade-in max-w-2xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden mt-10 border-t-8 border-orange-500">
             <div class="p-12">
                 <div class="text-center mb-10">
@@ -116,7 +115,7 @@
                         開始刷題 <i class="fas fa-arrow-right ml-3"></i>
                     </button>
 
-                    <!-- Quick Login Section (已縮小) -->
+                    <!-- Quick Login Section -->
                     <div id="quick-login-area" class="hidden pt-6 border-t border-gray-100">
                         <p class="text-lg text-gray-500 mb-4 font-bold">歷史挑戰者</p>
                         <div id="recent-users-list" class="flex flex-wrap gap-2 max-h-48 overflow-y-auto"></div>
@@ -164,7 +163,8 @@
             <!-- Dashboard / Stats Sticky Header -->
             <div class="bg-white p-5 rounded-xl shadow-md border border-gray-200 mb-8 sticky top-20 z-40 flex flex-wrap justify-between items-center gap-4 transition-all">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">
+                    <!-- H2 Title will be updated dynamically -->
+                    <h2 class="text-2xl font-bold text-gray-800 flex items-center">
                         <span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span>
                         <span class="text-lg text-gray-500 font-normal">共 25 題</span>
                     </h2>
@@ -206,11 +206,9 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
         // --- Configuration ---
-        // Change collection name to ensure separation from previous data
         const COLLECTION_NAME = 'Chinese-Classical-394';
         const DOC_GLOBAL = 'global';
 
-        // TODO: Replace with your actual Firebase config
         const firebaseConfig = {
           apiKey: "AIzaSyAxQFt76ZPXE7d0i1XeNZ1yiiD2WYNIfHs",
           authDomain: "chinese-learning-47f4d.firebaseapp.com",
@@ -276,6 +274,7 @@
             answers: {}, // { questionId: selectedOptionIndex }
             mistakes: [], 
             favorites: [],
+            viewMode: 'all', // 'all', 'wrong', 'favorite'
         };
 
         const ui = {
@@ -332,7 +331,6 @@
                 ui.recentUsersList.innerHTML = '';
                 users.forEach(user => {
                     const btn = document.createElement('button');
-                    // 縮小快速登入按鈕
                     btn.className = 'px-4 py-2 bg-white hover:bg-orange-50 text-gray-700 rounded-lg text-base border border-gray-200 transition mb-2 shadow-sm font-medium flex items-center';
                     btn.innerHTML = `<i class="fas fa-user-circle mr-2 text-orange-400 text-xl"></i>${user}`;
                     btn.onclick = () => {
@@ -383,7 +381,7 @@
                     ui.dashFavCount.textContent = currentState.favorites.length;
 
                     if (data.progress) {
-                          currentState.answers = data.progress.answers || {};
+                           currentState.answers = data.progress.answers || {};
                     }
                 } else {
                     // New User
@@ -408,24 +406,12 @@
         }
 
         window.startExam = function() {
-            // Logic handled by Listener mostly, but check finish state
-            // if (currentState.isFinished === false && Object.keys(currentState.answers).length > 0) {
-            //     const resume = confirm(`系統發現您上次作答到第 ${currentState.questionIndex + 1} 題，是否繼續？`);
-            //     if (resume) {
-            //         switchView('quiz');
-            //         loadQuestion(currentState.questionIndex);
-            //         return;
-            //     }
-            // }
-            
-            // Start New Session
-            // window.restartQuiz();
+            currentState.viewMode = 'all';
             switchView('quiz');
             renderWaterfallQuiz();
         }
 
         window.showDashboard = function() {
-            // Counts are updated by onSnapshot
             switchView('dashboard');
         }
 
@@ -443,10 +429,38 @@
             const container = ui.quizListContainer;
             container.innerHTML = ''; 
 
+            let questionsToRender = questionsData;
+            let titleHtml = '';
+
+            // Filter questions based on viewMode
+            if (currentState.viewMode === 'wrong') {
+                questionsToRender = questionsData.filter(q => currentState.mistakes.includes(q.id));
+                titleHtml = `<span class="text-red-600 mr-2"><i class="fas fa-times-circle"></i> 錯題本複習</span><span class="text-lg text-gray-500 font-normal">共 ${questionsToRender.length} 題</span>`;
+                
+                if (questionsToRender.length === 0) {
+                    container.innerHTML = `<div class="text-center py-20"><i class="fas fa-check-circle text-6xl text-green-200 mb-4"></i><p class="text-2xl text-gray-500">太棒了！目前沒有錯題紀錄。</p></div>`;
+                }
+            } else if (currentState.viewMode === 'favorite') {
+                questionsToRender = questionsData.filter(q => currentState.favorites.includes(q.id));
+                titleHtml = `<span class="text-amber-500 mr-2"><i class="fas fa-star"></i> 我的最愛</span><span class="text-lg text-gray-500 font-normal">共 ${questionsToRender.length} 題</span>`;
+                
+                if (questionsToRender.length === 0) {
+                    container.innerHTML = `<div class="text-center py-20"><i class="far fa-star text-6xl text-gray-200 mb-4"></i><p class="text-2xl text-gray-500">目前沒有收藏的題目。</p></div>`;
+                }
+            } else {
+                // Default 'all'
+                questionsToRender = questionsData;
+                titleHtml = `<span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span><span class="text-lg text-gray-500 font-normal">共 ${questionsData.length} 題</span>`;
+            }
+
+            // Update Header Title
+            const headerTitleEl = document.querySelector('#view-quiz h2');
+            if(headerTitleEl) headerTitleEl.innerHTML = titleHtml;
+
             let correctCount = 0;
             let wrongCount = 0;
 
-            questionsData.forEach((q, index) => {
+            questionsToRender.forEach((q) => {
                 const userAnswer = currentState.answers[q.id];
                 const isAnswered = userAnswer !== undefined;
                 const isCorrect = isAnswered && userAnswer === q.answer;
@@ -474,11 +488,12 @@
                 card.className = `relative rounded-2xl shadow-sm border-2 p-6 md:p-8 transition-all duration-300 ${borderColor} ${bgColor}`;
                 
                 // Header (加大字體)
+                // Note: Using #${q.id} so the ID is consistent regardless of filter
                 const headerHtml = `
                     <div class="flex justify-between items-start mb-6">
                         <div class="flex items-start gap-4">
                             <span class="flex-shrink-0 bg-orange-500 text-white font-bold rounded px-3 py-1.5 text-base shadow-sm">
-                                #${index + 1}
+                                #${q.id}
                             </span>
                             <h3 class="text-2xl md:text-3xl font-bold text-gray-800 leading-relaxed tracking-wide font-serif">
                                 ${q.question}
@@ -547,7 +562,7 @@
                 container.appendChild(card);
             });
 
-            // Update Stats
+            // Update Stats (Calculated based on currently displayed questions)
             ui.statCorrect.textContent = correctCount;
             ui.statWrong.textContent = wrongCount;
         }
@@ -580,6 +595,34 @@
             
             saveUserData('favorites');
             renderWaterfallQuiz(); 
+        }
+
+        // --- Implementation of Review Modes ---
+        window.showReview = function(type) {
+            if (!currentState.username) return;
+
+            if (type === 'wrong') {
+                if (currentState.mistakes.length === 0) {
+                    alert("目前沒有錯題紀錄！太棒了！");
+                    return;
+                }
+                currentState.viewMode = 'wrong';
+            } else if (type === 'favorite') {
+                if (currentState.favorites.length === 0) {
+                    alert("目前沒有收藏任何題目。");
+                    return;
+                }
+                currentState.viewMode = 'favorite';
+            } else {
+                currentState.viewMode = 'all';
+            }
+            
+            switchView('quiz');
+            renderWaterfallQuiz();
+        }
+
+        window.showAllQuestions = function() {
+            window.startExam();
         }
 
         // --- Persistence Helpers ---
@@ -619,17 +662,17 @@
         window.goHome = function() {
             if (currentState.username) {
                 window.scrollTo({top:0, behavior:'smooth'});
+                // Reset to dashboard if needed, or just scroll up
+                // To be safe and consistent with user expectation, show Dashboard if going home
+                // or just keep them in the quiz list but scrolled up. 
+                // The original code reloaded if no username, or scrolled up.
+                // Let's modify slightly to offer return to Dashboard if in a sub-view?
+                // For now, keeping original behavior (scroll top).
+                // Actually, let's make it go to Dashboard if logged in.
+                switchView('dashboard');
             } else {
                 window.location.reload();
             }
-        }
-
-        // Placeholder functions for Review modes (to avoid console errors in Dashboard)
-        window.showReview = function(type) {
-            alert("錯題本與最愛功能在本版本中尚未實作 (Waterfall Mode 優先)");
-        }
-        window.showAllQuestions = function() {
-            window.startExam();
         }
 
         const style = document.createElement('style');
