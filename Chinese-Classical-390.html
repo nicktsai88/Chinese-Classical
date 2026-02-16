@@ -38,7 +38,7 @@
 
         /* 狀態燈號 */
         .status-dot {
-            height: 12px; /* 稍微加大燈號 */
+            height: 12px;
             width: 12px;
             border-radius: 50%;
             display: inline-block;
@@ -57,7 +57,6 @@
 </head>
 <body class="min-h-screen flex flex-col text-gray-800">
 
-    <!-- Header -->
     <header class="bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <h1 class="text-2xl font-bold tracking-wider flex items-center gap-2" onclick="goHome()" style="cursor: pointer;">
@@ -67,7 +66,6 @@
             </h1>
             
             <div class="flex items-center gap-6">
-                <!-- Status Indicator (加大) -->
                 <div id="connection-status" class="hidden sm:flex items-center text-base bg-black/20 px-3 py-1.5 rounded-lg transition-opacity duration-500 font-medium">
                     <span id="status-dot" class="status-dot status-loading"></span>
                     <span id="status-text">連線中...</span>
@@ -78,7 +76,6 @@
                         <i class="fas fa-user mr-2 text-amber-200"></i>
                         <span id="username-span" class="font-bold"></span>
                     </div>
-                    <!-- 按鈕加大字體 -->
                     <button onclick="window.logout()" class="text-lg font-bold bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition shadow-md border border-red-400">
                         登出
                     </button>
@@ -87,11 +84,8 @@
         </div>
     </header>
 
-    <!-- Main Content (加寬 max-w-6xl) -->
     <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl">
         
-        <!-- View: Login -->
-        <!-- 修改：加寬至 max-w-2xl，增加內距 p-12，加大所有文字 -->
         <div id="view-login" class="fade-in max-w-2xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden mt-10 border-t-8 border-orange-500">
             <div class="p-12">
                 <div class="text-center mb-10">
@@ -116,7 +110,6 @@
                         開始刷題 <i class="fas fa-arrow-right ml-3"></i>
                     </button>
 
-                    <!-- Quick Login Section (加大) -->
                     <div id="quick-login-area" class="hidden pt-8 border-t border-gray-100">
                         <p class="text-2xl text-gray-600 mb-6 font-bold">歷史挑戰者</p>
                         <div id="recent-users-list" class="flex flex-wrap gap-4 max-h-60 overflow-y-auto"></div>
@@ -125,7 +118,6 @@
             </div>
         </div>
 
-        <!-- View: Dashboard -->
         <div id="view-dashboard" class="hidden fade-in max-w-lg mx-auto mt-6">
             <div class="bg-white rounded-2xl shadow-xl overflow-hidden border-t-4 border-amber-500 p-8">
                 <div class="text-center mb-8">
@@ -158,10 +150,8 @@
             </div>
         </div>
 
-        <!-- View: Quiz List (Waterfall) -->
         <div id="view-quiz" class="hidden fade-in pb-20">
             
-            <!-- Dashboard / Stats Sticky Header -->
             <div class="bg-white p-5 rounded-xl shadow-md border border-gray-200 mb-8 sticky top-20 z-40 flex flex-wrap justify-between items-center gap-4 transition-all">
                 <div>
                     <h2 class="text-2xl font-bold text-gray-800">
@@ -184,10 +174,8 @@
                 </button>
             </div>
 
-            <!-- Questions Container -->
             <div id="quiz-list-container" class="space-y-10">
-                <!-- Questions will be injected here -->
-            </div>
+                </div>
 
         </div>
 
@@ -275,6 +263,7 @@
             answers: {}, // { questionId: selectedOptionIndex }
             mistakes: [], 
             favorites: [],
+            currentMode: 'all' // 新增此狀態來追蹤目前的模式
         };
 
         const ui = {
@@ -331,7 +320,6 @@
                 ui.recentUsersList.innerHTML = '';
                 users.forEach(user => {
                     const btn = document.createElement('button');
-                    // 加大快速登入按鈕
                     btn.className = 'px-6 py-4 bg-white hover:bg-orange-50 text-gray-700 rounded-2xl text-2xl border border-gray-200 transition mb-3 shadow-sm font-medium flex items-center';
                     btn.innerHTML = `<i class="fas fa-user-circle mr-3 text-orange-400 text-3xl"></i>${user}`;
                     btn.onclick = () => {
@@ -407,24 +395,12 @@
         }
 
         window.startExam = function() {
-            // Logic handled by Listener mostly, but check finish state
-            // if (currentState.isFinished === false && Object.keys(currentState.answers).length > 0) {
-            //      const resume = confirm(`系統發現您上次作答到第 ${currentState.questionIndex + 1} 題，是否繼續？`);
-            //      if (resume) {
-            //          switchView('quiz');
-            //          loadQuestion(currentState.questionIndex);
-            //          return;
-            //      }
-            // }
-            
-            // Start New Session
-            // window.restartQuiz();
+            currentState.currentMode = 'all'; // 確保進去時是全部模式
             switchView('quiz');
             renderWaterfallQuiz();
         }
 
         window.showDashboard = function() {
-            // Counts are updated by onSnapshot
             switchView('dashboard');
         }
 
@@ -437,6 +413,26 @@
             }
         }
 
+        // --- Review Actions ---
+        window.showReview = function(type) {
+            if (type === 'wrong' && currentState.mistakes.length === 0) {
+                alert("目前沒有任何錯題紀錄喔！快去挑戰看看吧！");
+                return;
+            }
+            if (type === 'favorite' && currentState.favorites.length === 0) {
+                alert("目前沒有收藏任何題目喔！");
+                return;
+            }
+            
+            currentState.currentMode = type; // 設定過濾模式
+            switchView('quiz');
+            renderWaterfallQuiz();
+        }
+        
+        window.showAllQuestions = function() {
+            window.startExam();
+        }
+
         // --- Waterfall Render Logic ---
         function renderWaterfallQuiz() {
             const container = ui.quizListContainer;
@@ -445,7 +441,37 @@
             let correctCount = 0;
             let wrongCount = 0;
 
-            questionsData.forEach((q, index) => {
+            // 根據目前模式來決定要渲染哪些題目
+            let displayQuestions = questionsData;
+            if (currentState.currentMode === 'wrong') {
+                displayQuestions = questionsData.filter(q => currentState.mistakes.includes(q.id));
+            } else if (currentState.currentMode === 'favorite') {
+                displayQuestions = questionsData.filter(q => currentState.favorites.includes(q.id));
+            }
+
+            // 動態更新上方的標題與題數
+            const titleSpan = document.querySelector('#view-quiz h2 span:first-child');
+            const countSpan = document.querySelector('#view-quiz h2 span:last-child');
+            if (titleSpan && countSpan) {
+                if (currentState.currentMode === 'wrong') {
+                    titleSpan.innerHTML = '<i class="fas fa-times-circle"></i> 錯題本';
+                } else if (currentState.currentMode === 'favorite') {
+                    titleSpan.innerHTML = '<i class="fas fa-star"></i> 我的最愛';
+                } else {
+                    titleSpan.innerHTML = '<i class="fas fa-list-ol"></i> 全真模擬試題';
+                }
+                countSpan.textContent = `共 ${displayQuestions.length} 題`;
+            }
+
+            // 防呆機制：若過濾後沒有題目
+            if (displayQuestions.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 text-2xl py-10 font-bold">目前沒有相關題目喔！</div>';
+                ui.statCorrect.textContent = 0;
+                ui.statWrong.textContent = 0;
+                return;
+            }
+
+            displayQuestions.forEach((q) => { // 取消用陣列的 index，改用題目的真實 q.id 顯示
                 const userAnswer = currentState.answers[q.id];
                 const isAnswered = userAnswer !== undefined;
                 const isCorrect = isAnswered && userAnswer === q.answer;
@@ -472,12 +498,12 @@
                 const card = document.createElement('div');
                 card.className = `relative rounded-2xl shadow-sm border-2 p-6 md:p-8 transition-all duration-300 ${borderColor} ${bgColor}`;
                 
-                // Header (加大字體)
+                // Header (加大字體，改用 q.id 維持題目編號一致)
                 const headerHtml = `
                     <div class="flex justify-between items-start mb-6">
                         <div class="flex items-start gap-4">
                             <span class="flex-shrink-0 bg-orange-500 text-white font-bold rounded px-3 py-1.5 text-base shadow-sm">
-                                #${index + 1}
+                                #${q.id}
                             </span>
                             <h3 class="text-2xl md:text-3xl font-bold text-gray-800 leading-relaxed tracking-wide font-serif">
                                 ${q.question}
@@ -621,14 +647,6 @@
             } else {
                 window.location.reload();
             }
-        }
-
-        // Placeholder functions for Review modes (to avoid console errors in Dashboard)
-        window.showReview = function(type) {
-            alert("錯題本與最愛功能在本版本中尚未實作 (Waterfall Mode 優先)");
-        }
-        window.showAllQuestions = function() {
-            window.startExam();
         }
 
         const style = document.createElement('style');
