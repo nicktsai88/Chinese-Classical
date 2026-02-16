@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>(推與敲) 第52篇 致沅弟書 - 互動式古文學習 (GitHub版)</title>
+    <title>(推與敲) 第52篇 致沅弟書 - 互動式古文學習 (語音優化版)</title>
     <!-- 載入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 載入 Marked.js -->
@@ -171,6 +171,17 @@
         .disabled-label {
             cursor: not-allowed !important;
             opacity: 0.7;
+        }
+
+        /* 正在播放音頻時的按鈕動畫 */
+        .playing-audio {
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+            background-color: #fbbf24 !important; /* amber-400 */
+        }
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
         }
     </style>
 </head>
@@ -498,6 +509,12 @@
         function switchTab(tabId) {
             currentTab = tabId;
             closeNote();
+            // 停止任何正在播放的語音
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                if (currentSpeechTimeout) clearTimeout(currentSpeechTimeout);
+            }
+            document.querySelectorAll('.playing-audio').forEach(btn => btn.classList.remove('playing-audio'));
 
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`tab-${tabId}`).classList.add('active');
@@ -565,7 +582,7 @@
                         <div class="flex items-center justify-between mb-3">
                             <span class="text-xs font-bold text-amber-800 bg-amber-100 px-2 py-1 rounded uppercase tracking-widest">段落 ${idx + 1}</span>
                             <div class="flex gap-2">
-                                <button onclick="playAudio('${seg.audioText}')" class="w-8 h-8 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center hover:bg-orange-200 transition shadow-sm" title="朗讀">
+                                <button onclick="playAudio('${seg.audioText}', this)" class="audio-btn w-8 h-8 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center hover:bg-orange-200 transition shadow-sm focus:outline-none" title="溫暖女聲朗讀">
                                     <i class="fas fa-volume-up text-sm"></i>
                                 </button>
                             </div>
@@ -974,7 +991,7 @@
                         <span class="block text-green-700 font-bold mt-1">正確答案：${correctOption}</span>
                     </div>
                     <div class="pt-2 border-t border-red-200 mt-2 text-gray-700">
-                        <strong><i class="fas fa-lightbulb text-yellow-500 mr-1"></i>解析：</strong>${q.exp}
+                        <strong><i class="fas fa-lightbulb text-yellow-500 mr-1"></i>解析：</strong>${qData.exp}
                     </div>
                 `;
                 feedbackEl.classList.add('bg-red-50', 'border-red-200', 'text-gray-800');
@@ -1062,22 +1079,130 @@
             return processedText;
         }
 
-        function playAudio(text) {
-            if (!('speechSynthesis' in window)) { showError("您的瀏覽器不支援語音朗讀功能。"); return; }
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'zh-TW'; 
-            utterance.rate = 0.85; 
-            utterance.pitch = 1.0;
-            const voices = window.speechSynthesis.getVoices();
-            let targetVoice = voices.find(v => (v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW') && (v.name.includes('Google') || v.name.includes('Hanhan') || v.name.includes('Mei-Jia') || v.name.includes('Yating')));
-            if (!targetVoice) { targetVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW'); }
-            if (!targetVoice) { targetVoice = voices.find(v => v.lang.startsWith('zh')); }
-            if (targetVoice) { utterance.voice = targetVoice; }
-            utterance.onerror = (e) => { console.error("Speech synthesis error:", e); showError("語音播放發生錯誤，可能是瀏覽器限制或網路問題。"); };
-            window.speechSynthesis.speak(utterance);
+        // -------------------------------------------------------------------------
+        //  語音朗讀核心優化 (Text-to-Speech Optimization)
+        // -------------------------------------------------------------------------
+        
+        let currentSpeechTimeout = null; // 用於管理 setTimeout 斷句
+
+        // 1. 優先選擇高品質女聲的演算法
+        function getPreferredVoice(voices) {
+            // 定義優先級列表 (包含常見的高品質中文語音)
+            const preferredVoices = [
+                "Google 國語",      // Chrome (Android/Desktop) - 非常自然
+                "Mei-Jia",          // Edge/Windows - 微軟神經網路語音 (高品質)
+                "Microsoft Hanhan", // Windows - 傳統高品質
+                "Ting-Ting",        // macOS/iOS - 蘋果中文女聲
+                "Lili",             // macOS - 蘋果中文
+                "HiuGaai",          // iOS (粵語，但有時會被混用，放在後面)
+                "Ya-Ting"           // Android 常見
+            ];
+
+            let selectedVoice = null;
+            
+            // 第一步：嘗試匹配優先列表中的名稱
+            for (let name of preferredVoices) {
+                selectedVoice = voices.find(v => v.name.includes(name));
+                if (selectedVoice) break;
+            }
+
+            // 第二步：如果找不到，尋找任何台灣繁體中文 (zh-TW)
+            if (!selectedVoice) {
+                selectedVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW');
+            }
+
+            // 第三步：再找不到，隨便找個中文語音 (zh)
+            if (!selectedVoice) {
+                selectedVoice = voices.find(v => v.lang.startsWith('zh'));
+            }
+
+            return selectedVoice;
         }
-        window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+
+        // 2. 播放音頻主函式
+        function playAudio(text, btnElement) {
+            if (!('speechSynthesis' in window)) { 
+                showError("您的瀏覽器不支援語音朗讀功能。"); 
+                return; 
+            }
+
+            // 停止當前所有語音
+            window.speechSynthesis.cancel();
+            if (currentSpeechTimeout) clearTimeout(currentSpeechTimeout);
+            
+            // UI 狀態更新
+            document.querySelectorAll('.playing-audio').forEach(btn => btn.classList.remove('playing-audio'));
+            if(btnElement) btnElement.classList.add('playing-audio');
+
+            const voices = window.speechSynthesis.getVoices();
+            const targetVoice = getPreferredVoice(voices);
+
+            // 3. 擬真斷句處理：根據標點符號分割字串
+            // 使用 Regex 分割，並保留標點符號以判斷停頓時間
+            // 匹配句號、問號、驚嘆號、分號、冒號作為主要斷點
+            const segments = text.split(/([。！？；：\n]+)/).filter(s => s.trim().length > 0);
+            
+            let queue = [];
+            // 將文字與其後的標點符號重新組合成小段落
+            for (let i = 0; i < segments.length; i += 2) {
+                let seg = segments[i];
+                let punct = segments[i+1] || ""; 
+                if (seg.trim()) {
+                    queue.push({ text: seg + punct, punctuation: punct });
+                }
+            }
+            
+            // 如果沒有標點符號（短句），直接整句加入
+            if (queue.length === 0 && text.trim().length > 0) {
+                queue.push({ text: text, punctuation: "" });
+            }
+
+            let index = 0;
+
+            function speakSegment() {
+                if (index >= queue.length) {
+                    // 播放結束
+                    if(btnElement) btnElement.classList.remove('playing-audio');
+                    return;
+                }
+
+                const item = queue[index];
+                const utterance = new SpeechSynthesisUtterance(item.text);
+
+                // 設定參數 (依照需求微調)
+                if (targetVoice) utterance.voice = targetVoice;
+                utterance.lang = 'zh-TW';
+                utterance.rate = 0.85;  // 語速：中等偏慢 (說故事感)
+                utterance.pitch = 1.05; // 音調：稍高 (溫暖女聲感)
+                
+                utterance.onend = function() {
+                    index++;
+                    // 根據標點符號決定停頓時間 (增強斷句處理)
+                    let pauseTime = 100; // 預設微停頓
+                    
+                    if (/[。！？]/.test(item.punctuation)) {
+                        pauseTime = 600; // 句尾長停頓
+                    } else if (/[；：]/.test(item.punctuation)) {
+                        pauseTime = 400; // 分號冒號中停頓
+                    } else if (/[，、]/.test(item.text)) { 
+                        // 雖然瀏覽器會處理逗號，但這裡作為保險
+                        pauseTime = 150; 
+                    }
+
+                    // 使用 setTimeout 創造真實的停頓感
+                    currentSpeechTimeout = setTimeout(speakSegment, pauseTime);
+                };
+
+                utterance.onerror = function(e) {
+                    console.error("Audio error", e);
+                    if(btnElement) btnElement.classList.remove('playing-audio');
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+
+            speakSegment();
+        }
 
         function showError(msg) {
             const toast = document.getElementById('error-toast');
