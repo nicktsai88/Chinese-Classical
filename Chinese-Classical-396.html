@@ -509,8 +509,10 @@
                 let optionsHtml = '<div class="grid gap-4">';
                 q.options.forEach((opt, optIdx) => {
                     const letter = ['A','B','C','D'][optIdx];
-                    let btnClass = "option-btn w-full text-left p-5 rounded-xl border flex items-center group transition-colors ";
-                    let badgeClass = "w-10 h-10 flex items-center justify-center rounded-full font-bold mr-4 text-lg flex-shrink-0 ";
+                    // 修改處：p-5 -> p-6 (增加內距)
+                    let btnClass = "option-btn w-full text-left p-6 rounded-xl border flex items-center group transition-colors ";
+                    // 修改處：w-10 h-10 -> w-12 h-12, text-lg -> text-xl, mr-4 -> mr-5 (加大選項編號圈圈)
+                    let badgeClass = "w-12 h-12 flex items-center justify-center rounded-full font-bold mr-5 text-xl flex-shrink-0 ";
                     
                     if (isAnswered) {
                         if (optIdx === q.answer) {
@@ -531,12 +533,13 @@
                     const clickAction = isAnswered ? "" : `onclick="window.handleAnswer(${q.id}, ${optIdx})"`;
                     const cursor = isAnswered ? "cursor-default" : "cursor-pointer";
 
+                    // 修改處：text-xl -> text-2xl (加大選項文字)
                     optionsHtml += `
                         <button ${clickAction} class="${btnClass} ${cursor}" ${isAnswered ? 'disabled' : ''}>
                             <span class="${badgeClass}">${letter}</span>
-                            <span class="font-medium text-xl">${opt}</span>
-                            ${(isAnswered && optIdx === q.answer) ? '<i class="fas fa-check-circle ml-auto text-green-600 text-2xl"></i>' : ''}
-                            ${(isAnswered && optIdx === userAnswer && optIdx !== q.answer) ? '<i class="fas fa-times-circle ml-auto text-red-500 text-2xl"></i>' : ''}
+                            <span class="font-medium text-2xl leading-relaxed">${opt}</span>
+                            ${(isAnswered && optIdx === q.answer) ? '<i class="fas fa-check-circle ml-auto text-green-600 text-3xl"></i>' : ''}
+                            ${(isAnswered && optIdx === userAnswer && optIdx !== q.answer) ? '<i class="fas fa-times-circle ml-auto text-red-500 text-3xl"></i>' : ''}
                         </button>
                     `;
                 });
