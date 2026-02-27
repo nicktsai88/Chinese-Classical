@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文言文推與敲 - 第62篇 晚遊六橋待月記 (模擬試題)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+        }
+        
+        .serif {
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 選項按鈕基礎樣式 */
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        /* 狀態燈號 */
+        .status-dot {
+            height: 12px; /* 稍微加大燈號 */
+            width: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-loading { background-color: #fbbf24; box-shadow: 0 0 5px #fbbf24; }
+        .status-success { background-color: #34d399; box-shadow: 0 0 5px #34d399; }
+        .status-error { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
+
+        /* 滾動條美化 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-wider flex items-center gap-2" onclick="goHome()" style="cursor: pointer;">
+                <i class="fas fa-scroll text-amber-200"></i>
+                <span class="hidden sm:inline">文言文推與敲 - </span>
+                <span>晚遊六橋待月記</span>
+            </h1>
+            
+            <div class="flex items-center gap-6">
+                <!-- Status Indicator (加大) -->
+                <div id="connection-status" class="hidden sm:flex items-center text-base bg-black/20 px-3 py-1.5 rounded-lg transition-opacity duration-500 font-medium">
+                    <span id="status-dot" class="status-dot status-loading"></span>
+                    <span id="status-text">連線中...</span>
+                </div>
+
+                <div id="user-display" class="hidden flex items-center gap-4">
+                    <div class="text-lg bg-white/20 px-4 py-2 rounded-full flex items-center backdrop-blur-sm shadow-sm">
+                        <i class="fas fa-user mr-2 text-amber-200"></i>
+                        <span id="username-span" class="font-bold"></span>
+                    </div>
+                    <!-- 按鈕加大字體 -->
+                    <button onclick="window.logout()" class="text-lg font-bold bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition shadow-md border border-red-400">
+                        登出
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content (加寬 max-w-6xl) -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl">
+        
+        <!-- View: Login -->
+        <div id="view-login" class="fade-in max-w-2xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden mt-10 border-t-8 border-orange-500">
+            <div class="p-12">
+                <div class="text-center mb-10">
+                    <div class="inline-block p-5 rounded-full bg-orange-100 text-orange-600 mb-6">
+                        <i class="fas fa-book-reader text-5xl"></i>
+                    </div>
+                    <h2 class="text-5xl font-bold text-gray-900 mb-4">文言文推與敲</h2>
+                    <p class="text-orange-600 font-bold text-3xl">第62篇 晚遊六橋待月記</p>
+                    <p class="text-gray-500 text-xl mt-4">瀑布流刷題模式 • 即時解析</p>
+                </div>
+                
+                <div class="space-y-8">
+                    <div>
+                        <label for="username" class="block text-2xl font-bold text-gray-700 mb-4">請輸入姓名開始</label>
+                        <input type="text" id="username" 
+                            class="w-full pl-6 pr-6 py-5 text-2xl border border-gray-200 rounded-2xl focus:ring-4 focus:ring-orange-500 focus:border-orange-500 transition-all bg-gray-50 focus:bg-white" 
+                            placeholder="例如：王小明"
+                            onkeypress="if(event.key === 'Enter') window.attemptLogin()">
+                    </div>
+                    
+                    <button onclick="window.attemptLogin()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-5 px-8 rounded-2xl text-3xl font-bold shadow-lg transform active:scale-95 transition duration-200">
+                        開始刷題 <i class="fas fa-arrow-right ml-3"></i>
+                    </button>
+
+                    <!-- Quick Login Section -->
+                    <div id="quick-login-area" class="hidden pt-6 border-t border-gray-100">
+                        <p class="text-lg text-gray-500 mb-4 font-bold">歷史挑戰者</p>
+                        <div id="recent-users-list" class="flex flex-wrap gap-2 max-h-48 overflow-y-auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Dashboard -->
+        <div id="view-dashboard" class="hidden fade-in max-w-2xl mx-auto mt-10">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-t-8 border-amber-500 p-10">
+                <div class="text-center mb-10">
+                    <h2 class="text-4xl font-bold text-gray-800">歡迎回來，<span id="dashboard-username" class="text-orange-600"></span></h2>
+                    <p class="text-gray-500 text-xl mt-3">請選擇您要進行的項目</p>
+                </div>
+
+                <div class="space-y-6">
+                    <button onclick="window.startExam()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-6 px-8 rounded-2xl transition duration-200 font-bold shadow-md hover:shadow-lg flex items-center justify-between group">
+                        <span class="flex items-center text-3xl"><i class="fas fa-pen-nib mr-4 w-10 text-center"></i> 開始測驗</span>
+                        <i class="fas fa-chevron-right opacity-50 group-hover:opacity-100 transition-opacity text-2xl"></i>
+                    </button>
+
+                    <button onclick="window.showReview('wrong')" class="w-full bg-white border-2 border-red-100 text-red-600 hover:bg-red-50 py-6 px-8 rounded-2xl transition duration-200 font-bold shadow-sm hover:shadow-md flex items-center justify-between group">
+                        <span class="flex items-center text-3xl"><i class="fas fa-times-circle mr-4 w-10 text-center"></i> 錯題本</span>
+                        <span class="text-xl bg-red-100 px-4 py-2 rounded-lg text-red-600 min-w-[3rem] text-center" id="dash-wrong-count">0</span>
+                    </button>
+
+                    <button onclick="window.showReview('favorite')" class="w-full bg-white border-2 border-amber-100 text-amber-600 hover:bg-amber-50 py-6 px-8 rounded-2xl transition duration-200 font-bold shadow-sm hover:shadow-md flex items-center justify-between group">
+                        <span class="flex items-center text-3xl"><i class="fas fa-star mr-4 w-10 text-center"></i> 我的最愛</span>
+                        <span class="text-xl bg-amber-100 px-4 py-2 rounded-lg text-amber-600 min-w-[3rem] text-center" id="dash-fav-count">0</span>
+                    </button>
+
+                    <div class="pt-6 border-t border-gray-100 mt-6">
+                        <button onclick="window.showAllQuestions()" class="w-full bg-gray-50 text-gray-600 hover:bg-gray-100 py-4 px-6 rounded-xl transition duration-200 font-medium text-xl flex items-center justify-center">
+                            <i class="fas fa-list-ul mr-3"></i> 題目一覽表 (快速刷題)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Quiz List (Waterfall) -->
+        <div id="view-quiz" class="hidden fade-in pb-20">
+            
+            <!-- Dashboard / Stats Sticky Header -->
+            <div class="bg-white p-5 rounded-xl shadow-md border border-gray-200 mb-8 sticky top-20 z-40 flex flex-wrap justify-between items-center gap-4 transition-all">
+                <div>
+                    <!-- H2 Title will be updated dynamically -->
+                    <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                        <span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span>
+                        <span class="text-lg text-gray-500 font-normal">共 25 題</span>
+                    </h2>
+                </div>
+                <div class="flex gap-6 text-lg font-medium">
+                    <div class="flex items-center text-green-600 bg-green-50 px-5 py-2.5 rounded-full border border-green-200 shadow-sm">
+                        <span class="mr-2 font-bold">答對:</span>
+                        <span id="stat-correct" class="font-bold text-2xl">0</span>
+                    </div>
+                    <div class="flex items-center text-red-600 bg-red-50 px-5 py-2.5 rounded-full border border-red-200 shadow-sm">
+                        <span class="mr-2 font-bold">答錯:</span>
+                        <span id="stat-wrong" class="font-bold text-2xl">0</span>
+                    </div>
+                </div>
+                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-gray-400 hover:text-orange-500 transition px-4 py-2 border border-transparent hover:border-orange-200 rounded-lg">
+                    <i class="fas fa-arrow-up text-2xl"></i>
+                </button>
+            </div>
+
+            <!-- Questions Container -->
+            <div id="quiz-list-container" class="space-y-10">
+                <!-- Questions will be injected here -->
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 mt-auto py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-500 font-medium mb-2 text-lg">文言文推與敲 - 晚遊六橋待月記</p>
+            <p class="text-gray-400 text-sm">&copy; 2026 道明中學國二國文模擬試題</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+
+        // --- Configuration ---
+        const COLLECTION_NAME = 'Chinese-Classical-416';
+        const DOC_GLOBAL = 'global';
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyAxQFt76ZPXE7d0i1XeNZ1yiiD2WYNIfHs",
+          authDomain: "chinese-learning-47f4d.firebaseapp.com",
+          projectId: "chinese-learning-47f4d",
+          storageBucket: "chinese-learning-47f4d.firebasestorage.app",
+          messagingSenderId: "76289812052",
+          appId: "1:76289812052:web:898384a916f9f341f62fc1"
+        };
+
+        let app, db, auth;
+        let isFirebaseReady = false;
+        let currentUserUnsubscribe = null;
+
+        // Initialize Firebase
+        try {
+            if(firebaseConfig.apiKey) {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                signInAnonymously(auth).catch(console.error);
+                isFirebaseReady = true;
+            } else {
+                console.warn("Firebase Config missing.");
+                updateConnectionStatus('error', '未連線');
+            }
+        } catch (e) {
+            console.error("Firebase init error:", e);
+            updateConnectionStatus('error', '連線錯誤');
+        }
+
+        // --- Questions Data (晚遊六橋待月記) ---
+        const questionsData = [
+            { id: 1, category: "字音辨識", question: "下列選項「」中的字，何者讀音正確？", options: ["夕「嵐」：ㄈㄥ", "石「簣」：ㄍㄨㄟˋ", "夕「舂」：ㄔㄨㄥ", "羅「紈」：ㄐㄧㄡ"], answer: 2, explanation: "(C)正確，讀作ㄔㄨㄥ。(A)應讀作ㄌㄢˊ (山林間的霧氣)。(B)應讀作ㄎㄨㄟˋ (裝土的竹器，此為人名)。(D)應讀作ㄨㄢˊ (細緻的絲織品)。" },
+            { id: 2, category: "字義辨析", question: "下列「為」字的意思，何者與「梅花為寒所勒」的「為」字相同？", options: ["歌吹「為」風", "舌一吐而二蟲盡「為」所吞", "始齔，齔「為」兩髫", "不足「為」外人道也"], answer: 1, explanation: "題幹中的「為」表示被動，解作「被」。(B)「盡為所吞」亦是被動用法（沈復〈兒時記趣〉），解作被。(A)成為、化作。(C)綁成、作為。(D)向、對。" },
+            { id: 3, category: "詞性分析", question: "「夕舂未下」中「夕舂」原本指傍晚搗米，此處借代為夕陽。下列文句「」中的詞語，何者「並未」使用借代修辭？", options: ["「羅紈」之盛", "「歌吹」為風", "山容「水意」", "傅「金吾」"], answer: 2, explanation: "(C)「水意」是運用轉化（擬人）修辭，賦予水情意，並非借代。(A)借代穿著華麗絲織品的遊客。(B)借代音樂與歌聲。(D)金吾原為官名，此處借代具有該官職的人。" },
+            { id: 4, category: "修辭辨析", question: "關於「綠煙紅霧，彌漫二十餘里」的修辭說明，下列何者正確？", options: ["以「綠煙」借代梅花，「紅霧」借代杏花", "運用了視覺上的色彩對比與譬喻，形容柳樹如煙、桃花似霧", "實寫西湖的自然氣象，春天多霧霾的景象", "使用轉化修辭，賦予煙霧生命的動態"], answer: 1, explanation: "(B)正確。作者以「綠」指代柳樹，「紅」指代桃花，並以「煙、霧」譬喻其繁盛茂密、如夢似幻的姿態。" },
+            { id: 5, category: "文意理解", question: "「梅花為寒所勒，與杏桃相次開發，尤為奇觀。」作者認為這是「奇觀」的原因為何？", options: ["梅花與杏桃原本花期不同，卻因春寒而同時綻放", "梅花被嚴寒凍死，只剩下杏桃盛開，景象淒涼", "杏桃的顏色被梅花染白，形成紅白相間的奇景", "氣候變遷導致梅花在夏天才與杏桃一起盛開"], answer: 0, explanation: "(A)正確。梅花通常在冬末初春開放，杏桃在仲春開放。因為「春雪甚盛」的嚴寒抑制（勒）了梅花的綻放，導致梅花延後，正好與杏桃同時盛開，故成「奇觀」。" },
+            { id: 6, category: "寫作手法", question: "作者在第二段提到「石簣數為余言，傅金吾園中梅……急往觀之」，卻又接續「余時為桃花所戀，竟不忍去湖上」。這樣的寫作安排有何用意？", options: ["凸顯作者重朋友之情，最終仍去了傅金吾園中", "暗示桃花的價值遠勝過玉照堂的梅花古蹟", "以梅花之盛「反襯」桃花之美，強調西湖春景對作者的強烈吸引力", "批評石簣的品味庸俗，不懂得欣賞西湖之美"], answer: 2, explanation: "(C)正確。連歷史名園（玉照堂）的梅花古蹟都無法讓作者離開西湖，藉此反面襯托出西湖桃花的魅力極大，讓作者「不忍去（離開）」。" },
+            { id: 7, category: "季節與時間", question: "文中提到「然杭人遊湖，止午、未、申三時」，這「三時」大約是現代的什麼時間？", options: ["早上七點到下午一點", "上午十一點到下午五點", "下午三點到晚上九點", "凌晨一點到早上七點"], answer: 1, explanation: "(B)正確。十二時辰中，午時為 11-13 點，未時為 13-15 點，申時為 15-17 點。故涵蓋上午十一點到下午五點。" },
+            { id: 8, category: "作者觀點與態度", question: "關於「此樂留與山僧、遊客受用，安可為俗士道哉！」一句的分析，下列何者「錯誤」？", options: ["「此樂」指的是欣賞西湖朝嵐、夕舂與月景的樂趣", "展現了作者自命清高、與眾不同的文人雅趣", "「俗士」指的是那些只懂得在午、未、申三時湊熱鬧的杭人", "作者認為真正的美景應該透過政府大力宣傳，讓所有俗士都能體會"], answer: 3, explanation: "(D)錯誤。作者的態度是「安可為俗士道哉（怎麼能對那些凡夫俗子說呢）」，顯示他認為這種高雅的審美趣味是專屬少數知音（山僧、遊客）的，並不期望也不認為俗士能懂。" },
+            { id: 9, category: "國學常識", question: "本文作者袁宏道為明代「公安派」的代表人物。下列關於「公安派」文學主張的敘述，何者正確？", options: ["提倡「文必秦漢，詩必盛唐」，具有強烈的擬古傾向", "主張「獨抒性靈，不拘格套」，強調文學應表達真實情感", "致力於復興古文，與韓愈、柳宗元同為古文運動的先驅", "以華麗的辭藻與嚴格的對仗聞名，被稱為「西崑體」"], answer: 1, explanation: "(B)正確。公安派（三袁）反對明代前後七子的擬古主義，提倡「獨抒性靈，不拘格套」，是晚明小品文的核心精神。" },
+            { id: 10, category: "字義比較", question: "下列各組「」中的字，何者前後意義「相同」？", options: ["石簣「數」為余言 / 夾岸「數」百步", "竟不忍「去」湖上 / 乃記之而「去」", "夕舂未「下」 / 煙花三月「下」揚州", "綠煙紅霧，「彌」漫二十餘里 / 仰之「彌」高"], answer: 1, explanation: "(B)皆為「離開」之意。(A)屢次 / 幾個。(C)落下 / 前往、順流而下。(D)滿佈 / 更加。" },
+            { id: 11, category: "修辭判別", question: "「歌吹為風，粉汗為雨」一句中，以「風」、「雨」來比喻音樂的飄蕩與遊客的汗水。下列何者也使用了相同的「誇飾」與「譬喻」交錯的手法？", options: ["揮汗成雨，比肩繼踵", "白髮三千丈，緣愁似箇長", "飛流直下三千尺，疑是銀河落九天", "千山鳥飛絕，萬徑人蹤滅"], answer: 0, explanation: "(A)正確。「揮汗成雨」同樣是以「雨」來誇張並譬喻眾人流汗之多，與「粉汗為雨」修辭手法與意境如出一轍。" },
+            { id: 12, category: "文本對比", question: "若將本文與歐陽脩〈醉翁亭記〉相比，兩者在寫作風格與情感表達上有何異同？", options: ["兩者皆極力描寫夜晚的月景之美", "歐陽脩著重於「與民同樂」的政治抱負；袁宏道則偏向個人「獨抒性靈」的審美情趣", "兩者皆批判了當時遊客破壞自然環境的惡劣行徑", "袁宏道抒發了被貶謫的苦悶，歐陽脩則表現了退隱江湖的決心"], answer: 1, explanation: "(B)正確。〈醉翁亭記〉雖寫山水，但核心在「太守之樂其樂」的儒家治世理想；〈晚遊六橋待月記〉則是典型的晚明小品，純粹展現個人的高雅品味與避世情趣。" },
+            { id: 13, category: "結構分析", question: "本文名為〈晚遊六橋待月記〉，但首段與次段卻大篇幅描寫春天的梅桃與白天的遊湖盛況。這種寫作手法稱為何者？", options: ["開門見山", "畫龍點睛", "側面烘托，欲揚先抑", "層層鋪墊，以春景、朝夕之美來襯托「待月」的最高境界"], answer: 3, explanation: "(D)正確。作者以層層遞進的手法：先寫春景之美，再寫朝嵐夕舂之妙，最後才帶出「月景尤不可言」，以白天的喧鬧與美景來強力反襯夜晚月景的獨特與極致。" },
+            { id: 14, category: "語法還原", question: "「梅花為寒所勒」是一個被動句。下列古文句式中，何者「並未」表示被動？", options: ["不者，若屬皆且「為」所虜", "舌一吐而二蟲盡「為」所吞", "此中人語云：不足「為」外人道也", "兔不可復得，而身「為」宋國笑"], answer: 2, explanation: "(C)「不足為外人道也」的「為」意為「對、向」，非被動用法。其餘皆為文言文常見的被動標記（為...所、為...）。" },
+            { id: 15, category: "細節賞析", question: "作者說「然杭人遊湖，止午、未、申三時」，又說「此樂留與山僧、遊客受用，安可為俗士道哉！」這反映出當時杭州社會的何種風氣？", options: ["杭人注重養生，認為早晚遊湖容易感染風寒", "遊湖成為一種盲從的社交流行，大眾只在特定時間湊熱鬧，卻不懂得欣賞真正的自然之美", "杭州治安不佳，早晚時分經常有盜賊出沒", "西湖的規定嚴格，一般市民只能在中午到下午時段進入"], answer: 1, explanation: "(B)正確。作者敏銳地觀察到多數杭人遊湖只是為了看人、聽歌、炫耀服飾（羅紈之盛），盲目跟風在最熱鬧的時段擠在一起，而非真正為了欣賞自然之美。" },
+            { id: 16, category: "詩文對應", question: "「綠煙紅霧，彌漫二十餘里」所描繪的西湖春景，與下列哪一首詩句的意境最為契合？", options: ["孤山寺北賈亭西，水面初平雲腳低", "亂花漸欲迷人眼，淺草才能沒馬蹄", "欲把西湖比西子，淡妝濃抹總相宜", "接天蓮葉無窮碧，映日荷花別樣紅"], answer: 1, explanation: "(B)正確。白居易的「亂花漸欲迷人眼」精準對應了春季百花（綠煙紅霧）盛開、令人目眩神迷的繁盛景象。" },
+            { id: 17, category: "字義測驗", question: "「山嵐設色之妙」中的「設色」，在藝術領域中通常指什麼動作？", options: ["調配顏料", "構思畫作", "著色、塗色", "裝裱畫作"], answer: 2, explanation: "(C)正確。「設色」是中國畫的專業術語，意指在畫作上敷彩著色。此處將大自然擬人化為畫家，替西湖的山水塗抹上奇妙的色彩。" },
+            { id: 18, category: "句意解讀", question: "「花態柳情，山容水意，別是一種趣味」這句話運用了轉化（擬人）修辭。其文學效果為何？", options: ["說明植物與水文的生長需要人類的感情灌溉", "賦予自然景物人的情感與姿態，展現月光下西湖景致的柔美與空靈", "暗示作者在月光下思念遠方的親人，景物皆染上哀愁", "諷刺當時文人過度賦予自然事物不切實際的幻想"], answer: 1, explanation: "(B)正確。作者以「態、情、容、意」賦予花柳山水生命，生動傳達出在清幽月光照耀下，西湖景物彷彿皆有靈性，展現出遠超乎白日的迷人風韻。" },
+            { id: 19, category: "文意推論", question: "從「余時為桃花所戀，竟不忍去湖上」可以推知作者的性格特徵為何？", options: ["隨波逐流，喜歡跟隨大眾的腳步", "喜新厭舊，對事物只有三分鐘熱度", "率性癡情，容易被當下的美好事物所深深吸引", "優柔寡斷，無法在朋友與美景之間做出選擇"], answer: 2, explanation: "(C)正確。「為...所戀」、「不忍去」展現了袁宏道身為性靈派文人，率性而為、深情於山水的真性情。" },
+            { id: 20, category: "斷句測驗", question: "關於下列文句的標點斷句，何者最符合文意？", options: ["其實湖光，染翠之工山嵐，設色之妙皆在朝日。", "其實湖光染翠之工，山嵐設色之妙，皆在朝日始出，夕舂未下，始極其濃媚。", "其實湖光染翠，之工山嵐設色，之妙皆在朝日，始出夕舂未下。", "其實，湖光染翠之工山，嵐設色之妙皆在，朝日始出夕舂。"], answer: 1, explanation: "(B)為正確的句讀。將「湖光染翠之工」與「山嵐設色之妙」對仗並列，再點出其最佳的觀賞時間為「朝日始出，夕舂未下」。" },
+            { id: 21, category: "代詞辨析", question: "「此樂留與山僧、遊客受用」中的「此樂」具體包含了哪些內容？", options: ["僅指在玉照堂觀賞古代梅花的樂趣", "僅指與「村莊野婦」、「俗士」一起湊熱鬧的樂趣", "指欣賞西湖朝煙、夕嵐與月下美景的樂趣", "指在午、未、申三時聽歌吹、賞羅紈的樂趣"], answer: 2, explanation: "(C)正確。「此樂」總結了前文所述的「朝日始出，夕舂未下」之美，以及「月景尤不可言」的極致境界。" },
+            { id: 22, category: "詞語替換", question: "「豔冶極矣」中的「豔冶」可以用下列哪一個詞語替換而文意不變？", options: ["俗氣", "嬌豔", "荒涼", "悲壯"], answer: 1, explanation: "(B)正確。「豔冶」形容色彩艷麗、姿態嬌媚，常用來形容花朵盛開或女子妝容。此處用以總結西湖春日花繁人眾的綺麗景象。" },
+            { id: 23, category: "寫作風格比較", question: "晚明小品文（如本文）與唐宋古文（如韓愈、歐陽脩的作品）在寫作目的上有何顯著差異？", options: ["晚明小品多為載道之作，唐宋古文則純粹抒發個人情感", "晚明小品篇幅短小、注重個人生活情趣與性靈抒發；唐宋古文則多關注國家社會、具有強烈的道德與政治使命感", "晚明小品嚴格遵守平仄對仗，唐宋古文則完全不受格律限制", "晚明小品專寫神仙鬼怪，唐宋古文專寫市井小民"], answer: 1, explanation: "(B)正確。唐宋古文運動的核心精神是「文以載道」；而晚明公安派則強調「獨抒性靈」，追求解放束縛，書寫個人真實的生活情趣與遊記體驗。" },
+            { id: 24, category: "綜合理解", question: "關於這篇遊記的空間與時間推移，下列敘述何者正確？", options: ["空間上從玉照堂寫到蘇堤，時間上從傍晚寫到深夜", "時間上以「春、月」為主軸，將一日之美分為朝、夕、夜三個層次，層層遞進", "空間上從斷橋出發，最終抵達普陀山進香", "時間上從冬季的梅花寫到夏季的蓮花，展現四季更迭"], answer: 1, explanation: "(B)正確。文章開頭即破題「為春為月」、「為朝煙，為夕嵐」，隨後依序鋪陳春景（花開）、白晝遊人、朝夕之美，最終將高潮留在月景，層次分明。" },
+            { id: 25, category: "文意對比", question: "作者將「杭人」與「山僧、遊客（此處特指如作者般真正懂得欣賞的雅客）」進行了對比。這種對比的真正用意是什麼？", options: ["證明杭州本地人比外地遊客更懂得保護西湖的生態", "批評山僧不守清規，整天在西湖遊山玩水", "凸顯世俗之人只看重表面的熱鬧，而擁有高雅品味的文人才能領略自然幽微深沉的美", "表達作者想要出家為僧、永遠留在西湖的決心"], answer: 2, explanation: "(C)正確。透過「俗（杭人）」與「雅（山僧、遊客）」的強烈對比，作者強調了真正的自然之美（朝夕與月夜）是喧囂的世俗之人所無法體會的，藉此彰顯文人的清高與審美獨特性。" }
+        ];
+
+        // --- State Management ---
+        let currentState = {
+            username: '',
+            answers: {}, // { questionId: selectedOptionIndex }
+            mistakes: [], 
+            favorites: [],
+            viewMode: 'all', // 'all', 'wrong', 'favorite'
+        };
+
+        const ui = {
+            usernameInput: document.getElementById('username'),
+            userDisplay: document.getElementById('user-display'),
+            usernameSpan: document.getElementById('username-span'),
+            dashboardUsername: document.getElementById('dashboard-username'),
+            dashWrongCount: document.getElementById('dash-wrong-count'),
+            dashFavCount: document.getElementById('dash-fav-count'),
+            quickLoginArea: document.getElementById('quick-login-area'),
+            recentUsersList: document.getElementById('recent-users-list'),
+            statCorrect: document.getElementById('stat-correct'),
+            statWrong: document.getElementById('stat-wrong'),
+            quizListContainer: document.getElementById('quiz-list-container'),
+            statusDot: document.getElementById('status-dot'),
+            statusText: document.getElementById('status-text'),
+            views: {
+                login: document.getElementById('view-login'),
+                dashboard: document.getElementById('view-dashboard'),
+                quiz: document.getElementById('view-quiz')
+            }
+        };
+
+        // --- Initialization ---
+        function init() {
+            if (isFirebaseReady) {
+                const globalRef = doc(db, COLLECTION_NAME, DOC_GLOBAL);
+                onSnapshot(globalRef, (docSnap) => {
+                    updateConnectionStatus('success', '已同步');
+                    if (docSnap.exists()) {
+                        renderRecentUsers(docSnap.data().users || []);
+                    }
+                }, (error) => {
+                    console.error("Global listen error", error);
+                    updateConnectionStatus('error', '雲端同步失敗');
+                });
+            } else {
+                updateConnectionStatus('error', '未連線');
+                renderRecentUsers([]); 
+            }
+        }
+
+        function updateConnectionStatus(type, text) {
+            ui.statusText.textContent = text;
+            ui.statusDot.className = 'status-dot';
+            if (type === 'loading') ui.statusDot.classList.add('status-loading');
+            else if (type === 'success') ui.statusDot.classList.add('status-success');
+            else if (type === 'error') ui.statusDot.classList.add('status-error');
+        }
+
+        function renderRecentUsers(users) {
+            if (users && users.length > 0) {
+                ui.quickLoginArea.classList.remove('hidden');
+                ui.recentUsersList.innerHTML = '';
+                users.forEach(user => {
+                    const btn = document.createElement('button');
+                    btn.className = 'px-4 py-2 bg-white hover:bg-orange-50 text-gray-700 rounded-lg text-base border border-gray-200 transition mb-2 shadow-sm font-medium flex items-center';
+                    btn.innerHTML = `<i class="fas fa-user-circle mr-2 text-orange-400 text-xl"></i>${user}`;
+                    btn.onclick = () => {
+                        ui.usernameInput.value = user;
+                        window.attemptLogin();
+                    };
+                    ui.recentUsersList.appendChild(btn);
+                });
+            } else {
+                 ui.quickLoginArea.classList.add('hidden');
+            }
+        }
+
+        // --- Login Logic ---
+        window.attemptLogin = async function() {
+            const name = ui.usernameInput.value.trim();
+            if (!name) { alert('請輸入姓名'); return; }
+            
+            currentState.username = name;
+            
+            if (isFirebaseReady) {
+                const globalRef = doc(db, COLLECTION_NAME, DOC_GLOBAL);
+                setDoc(globalRef, { users: arrayUnion(name) }, { merge: true })
+                    .catch(e => console.error("Global user update error:", e));
+                startUserListener(name);
+            }
+
+            ui.userDisplay.classList.remove('hidden');
+            ui.userDisplay.classList.add('flex');
+            ui.usernameSpan.textContent = name;
+            
+            switchView('dashboard');
+        }
+
+        function startUserListener(username) {
+            if (currentUserUnsubscribe) currentUserUnsubscribe();
+
+            const userRef = doc(db, COLLECTION_NAME, username);
+            
+            currentUserUnsubscribe = onSnapshot(userRef, (docSnap) => {
+                updateConnectionStatus('success', '資料同步');
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    currentState.favorites = data.favorites || [];
+                    currentState.mistakes = data.mistakes || [];
+                    ui.dashWrongCount.textContent = currentState.mistakes.length;
+                    ui.dashFavCount.textContent = currentState.favorites.length;
+
+                    if (data.progress) {
+                           currentState.answers = data.progress.answers || {};
+                    }
+                } else {
+                    // New User
+                    currentState.favorites = [];
+                    currentState.mistakes = [];
+                    currentState.answers = {};
+                    ui.dashWrongCount.textContent = 0;
+                    ui.dashFavCount.textContent = 0;
+                }
+                // Render the quiz list with new data
+                renderWaterfallQuiz();
+            }, (error) => {
+                console.error("User listen error", error);
+                updateConnectionStatus('error', '同步失敗');
+            });
+        }
+
+        function switchView(viewName) {
+            Object.values(ui.views).forEach(el => el.classList.add('hidden'));
+            ui.views[viewName].classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        window.startExam = function() {
+            currentState.viewMode = 'all';
+            switchView('quiz');
+            renderWaterfallQuiz();
+        }
+
+        window.showDashboard = function() {
+            switchView('dashboard');
+        }
+
+        window.restartQuiz = function() {
+            if (confirm("確定要重新開始測驗嗎？\n這將清除本回的作答紀錄，但不會刪除錯題本與收藏。")) {
+                currentState.answers = {};
+                saveProgress();
+                renderWaterfallQuiz();
+                window.scrollTo({top:0, behavior:'smooth'});
+            }
+        }
+
+        // --- Waterfall Render Logic ---
+        function renderWaterfallQuiz() {
+            const container = ui.quizListContainer;
+            container.innerHTML = ''; 
+
+            let questionsToRender = questionsData;
+            let titleHtml = '';
+
+            // Filter questions based on viewMode
+            if (currentState.viewMode === 'wrong') {
+                questionsToRender = questionsData.filter(q => currentState.mistakes.includes(q.id));
+                titleHtml = `<span class="text-red-600 mr-2"><i class="fas fa-times-circle"></i> 錯題本複習</span><span class="text-lg text-gray-500 font-normal">共 ${questionsToRender.length} 題</span>`;
+                
+                if (questionsToRender.length === 0) {
+                    container.innerHTML = `<div class="text-center py-20"><i class="fas fa-check-circle text-6xl text-green-200 mb-4"></i><p class="text-2xl text-gray-500">太棒了！目前沒有錯題紀錄。</p></div>`;
+                }
+            } else if (currentState.viewMode === 'favorite') {
+                questionsToRender = questionsData.filter(q => currentState.favorites.includes(q.id));
+                titleHtml = `<span class="text-amber-500 mr-2"><i class="fas fa-star"></i> 我的最愛</span><span class="text-lg text-gray-500 font-normal">共 ${questionsToRender.length} 題</span>`;
+                
+                if (questionsToRender.length === 0) {
+                    container.innerHTML = `<div class="text-center py-20"><i class="far fa-star text-6xl text-gray-200 mb-4"></i><p class="text-2xl text-gray-500">目前沒有收藏的題目。</p></div>`;
+                }
+            } else {
+                // Default 'all'
+                questionsToRender = questionsData;
+                titleHtml = `<span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span><span class="text-lg text-gray-500 font-normal">共 ${questionsData.length} 題</span>`;
+            }
+
+            // Update Header Title
+            const headerTitleEl = document.querySelector('#view-quiz h2');
+            if(headerTitleEl) headerTitleEl.innerHTML = titleHtml;
+
+            let correctCount = 0;
+            let wrongCount = 0;
+
+            questionsToRender.forEach((q) => {
+                const userAnswer = currentState.answers[q.id];
+                const isAnswered = userAnswer !== undefined;
+                const isCorrect = isAnswered && userAnswer === q.answer;
+                
+                if (isAnswered) {
+                    if (isCorrect) correctCount++;
+                    else wrongCount++;
+                }
+
+                // Determine Card Border Color
+                let borderColor = 'border-gray-200';
+                let bgColor = 'bg-white';
+                if (isAnswered) {
+                    if (isCorrect) {
+                        borderColor = 'border-green-400';
+                        bgColor = 'bg-green-50/10';
+                    } else {
+                        borderColor = 'border-red-400';
+                        bgColor = 'bg-red-50/10';
+                    }
+                }
+
+                // Card Element
+                const card = document.createElement('div');
+                card.className = `relative rounded-2xl shadow-sm border-2 p-6 md:p-8 transition-all duration-300 ${borderColor} ${bgColor}`;
+                
+                // Header (加大字體)
+                // Note: Using #${q.id} so the ID is consistent regardless of filter
+                const headerHtml = `
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="flex items-start gap-4">
+                            <span class="flex-shrink-0 bg-orange-500 text-white font-bold rounded px-3 py-1.5 text-base shadow-sm">
+                                #${q.id}
+                            </span>
+                            <h3 class="text-2xl md:text-3xl font-bold text-gray-800 leading-relaxed tracking-wide font-serif">
+                                ${q.question}
+                            </h3>
+                        </div>
+                        <button onclick="window.toggleFavorite(${q.id})" class="text-3xl transition transform hover:scale-110 ${currentState.favorites.includes(q.id) ? 'text-amber-400' : 'text-gray-200 hover:text-amber-300'}">
+                            <i class="${currentState.favorites.includes(q.id) ? 'fas' : 'far'} fa-star"></i>
+                        </button>
+                    </div>
+                `;
+
+                // Options (加大字體)
+                let optionsHtml = '<div class="grid gap-4">';
+                q.options.forEach((opt, optIdx) => {
+                    const letter = ['A','B','C','D'][optIdx];
+                    // 加大內距
+                    let btnClass = "option-btn w-full text-left p-6 rounded-xl border flex items-center group transition-colors ";
+                    // 加大選項編號圈圈
+                    let badgeClass = "w-12 h-12 flex items-center justify-center rounded-full font-bold mr-5 text-xl flex-shrink-0 ";
+                    
+                    if (isAnswered) {
+                        if (optIdx === q.answer) {
+                            btnClass += "bg-green-100 border-green-500 text-green-900";
+                            badgeClass += "bg-green-500 text-white";
+                        } else if (optIdx === userAnswer) {
+                            btnClass += "bg-red-100 border-red-500 text-red-900";
+                            badgeClass += "bg-red-500 text-white";
+                        } else {
+                            btnClass += "bg-white border-gray-100 text-gray-400 opacity-60";
+                            badgeClass += "bg-gray-100 text-gray-400";
+                        }
+                    } else {
+                        btnClass += "bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700";
+                        badgeClass += "bg-gray-100 text-gray-500 group-hover:bg-orange-500 group-hover:text-white transition-colors";
+                    }
+
+                    const clickAction = isAnswered ? "" : `onclick="window.handleAnswer(${q.id}, ${optIdx})"`;
+                    const cursor = isAnswered ? "cursor-default" : "cursor-pointer";
+
+                    // 加大選項文字
+                    optionsHtml += `
+                        <button ${clickAction} class="${btnClass} ${cursor}" ${isAnswered ? 'disabled' : ''}>
+                            <span class="${badgeClass}">${letter}</span>
+                            <span class="font-medium text-2xl leading-relaxed">${opt}</span>
+                            ${(isAnswered && optIdx === q.answer) ? '<i class="fas fa-check-circle ml-auto text-green-600 text-3xl"></i>' : ''}
+                            ${(isAnswered && optIdx === userAnswer && optIdx !== q.answer) ? '<i class="fas fa-times-circle ml-auto text-red-500 text-3xl"></i>' : ''}
+                        </button>
+                    `;
+                });
+                optionsHtml += '</div>';
+
+                // Explanation Block (加大字體)
+                let explanationHtml = '';
+                if (isAnswered) {
+                    explanationHtml = `
+                        <div class="mt-6 bg-orange-50 p-6 rounded-xl border border-orange-100 animate-fade-in-up">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-lightbulb text-orange-500 mt-1 text-2xl"></i>
+                                <div>
+                                    <span class="font-bold text-orange-700 block mb-2 text-xl">解析：</span>
+                                    <p class="text-gray-700 text-xl leading-8 text-justify">${q.explanation}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = headerHtml + optionsHtml + explanationHtml;
+                container.appendChild(card);
+            });
+
+            // Update Stats (Calculated based on currently displayed questions)
+            ui.statCorrect.textContent = correctCount;
+            ui.statWrong.textContent = wrongCount;
+        }
+
+        window.handleAnswer = function(qId, selectedIdx) {
+            if (!currentState.username) return;
+
+            currentState.answers[qId] = selectedIdx;
+            
+            const q = questionsData.find(x => x.id === qId);
+            const isCorrect = q.answer === selectedIdx;
+            
+            if (!isCorrect) {
+                if (!currentState.mistakes.includes(qId)) {
+                    currentState.mistakes.push(qId);
+                    saveUserData('mistakes');
+                }
+            }
+
+            saveProgress();
+            renderWaterfallQuiz();
+        }
+
+        window.toggleFavorite = function(qId) {
+            if (!currentState.username) return;
+            
+            const idx = currentState.favorites.indexOf(qId);
+            if (idx === -1) currentState.favorites.push(qId);
+            else currentState.favorites.splice(idx, 1);
+            
+            saveUserData('favorites');
+            renderWaterfallQuiz(); 
+        }
+
+        // --- Implementation of Review Modes ---
+        window.showReview = function(type) {
+            if (!currentState.username) return;
+
+            if (type === 'wrong') {
+                if (currentState.mistakes.length === 0) {
+                    alert("目前沒有錯題紀錄！太棒了！");
+                    return;
+                }
+                currentState.viewMode = 'wrong';
+            } else if (type === 'favorite') {
+                if (currentState.favorites.length === 0) {
+                    alert("目前沒有收藏任何題目。");
+                    return;
+                }
+                currentState.viewMode = 'favorite';
+            } else {
+                currentState.viewMode = 'all';
+            }
+            
+            switchView('quiz');
+            renderWaterfallQuiz();
+        }
+
+        window.showAllQuestions = function() {
+            window.startExam();
+        }
+
+        // --- Persistence Helpers ---
+        function saveProgress() {
+            if (!isFirebaseReady || !currentState.username) return;
+            const userRef = doc(db, COLLECTION_NAME, currentState.username);
+            const progressData = {
+                answers: currentState.answers,
+                timestamp: new Date().getTime()
+            };
+            setDoc(userRef, { progress: progressData }, { merge: true });
+        }
+
+        function saveUserData(type) {
+            if (!isFirebaseReady || !currentState.username) return;
+            const userRef = doc(db, COLLECTION_NAME, currentState.username);
+            const data = {};
+            data[type] = currentState[type];
+            setDoc(userRef, data, { merge: true });
+        }
+
+        window.clearLocalAndLogout = function() {
+            if(confirm("警告：此操作將清除本機暫存並登出，若有未同步的資料可能會遺失。")) {
+                window.logout();
+            }
+        }
+
+        window.logout = function() {
+            if (currentUserUnsubscribe) currentUserUnsubscribe();
+            currentState.username = '';
+            ui.views.login.classList.remove('hidden');
+            ui.views.dashboard.classList.add('hidden');
+            ui.views.quiz.classList.add('hidden');
+            document.getElementById('username').value = '';
+        }
+        
+        window.goHome = function() {
+            if (currentState.username) {
+                window.scrollTo({top:0, behavior:'smooth'});
+                switchView('dashboard');
+            } else {
+                window.location.reload();
+            }
+        }
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-in-up {
+                animation: fadeInUp 0.3s ease-out forwards;
+            }
+        `;
+        document.head.appendChild(style);
+
+        init();
+
+    </script>
+</body>
+</html>
