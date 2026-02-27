@@ -319,7 +319,7 @@
                         "惰": { zhuyin: "ㄉㄨㄛˋ", type: "形容詞", def: "懶惰。" }
                     },
                     // Modified image path for GitHub Pages
-                    imageData: "images/reading_segment_1.jpg"
+                    imageData: "Chinese-Classical-363-images/reading_segment_1.jpg"
                 },
                 {
                     original: "農夫曰：「予莫知所以耕，子可示我以耕之術乎?」行者解衣下田，一息而數鋤，一鋤盡一身之力。",
@@ -330,7 +330,7 @@
                         "所以": { zhuyin: "ㄙㄨㄛˇ ㄧˇ", type: "連詞", def: "如何、...的方法。" },
                         "術": { zhuyin: "ㄕㄨˋ", type: "名詞", def: "技術。" }
                     },
-                    imageData: "images/reading_segment_2.jpg"
+                    imageData: "Chinese-Classical-363-images/reading_segment_2.jpg"
                 },
                 {
                     original: "未及移時，氣竭汗流，且仆於田，謂農夫曰：「今而後知耕田之難也。」農夫曰：「非耕難，乃子之術誤矣!人之處事亦然，欲速則不達也。」行者服而退。",
@@ -341,7 +341,7 @@
                         "氣竭": { zhuyin: "ㄑㄧˋ ㄐㄧㄝˊ", type: "形容詞", def: "力盡。" },
                         "欲速則不達": { zhuyin: "ㄩˋ ㄙㄨˋ ㄗㄜˊ ㄅㄨˋ ㄉㄚˊ", type: "成語", def: "過於性急圖快，反而不能達到目的。" }
                     },
-                    imageData: "images/reading_segment_3.jpg"
+                    imageData: "Chinese-Classical-363-images/reading_segment_3.jpg"
                 }
             ],
             quiz: [
@@ -769,7 +769,7 @@
                 id: 'start',
                 text: "你是一位路過的行者，看到田裡有個農夫在耕田。他的動作非常慢，鋤一下，要喘好幾口氣才鋤第二下。你看得心急，決定...",
                 // Modified for GitHub Pages
-                imageData: "images/rpg_start.jpg",
+                imageData: "Chinese-Classical-363-images/rpg_start.jpg",
                 choices: [
                     { text: "嘲笑他懶惰 (見而哂之)", next: "mock" },
                     { text: "默默觀察，不多管閒事", next: "observe" }
@@ -778,7 +778,7 @@
             observe: {
                 id: 'observe',
                 text: "你選擇靜靜觀察。你發現農夫雖然慢，但節奏穩定，一天下來也耕了不少地。你領悟到了「慢工出細活」的道理，繼續趕路。",
-                imageData: "images/rpg_observe.jpg",
+                imageData: "Chinese-Classical-363-images/rpg_observe.jpg",
                 choices: [{ text: "重來，試試別的選項", next: "start" }],
                 isEnding: true,
                 win: true
@@ -786,7 +786,7 @@
             mock: {
                 id: 'mock',
                 text: "你忍不住嘲笑：「你也太懶了吧！這樣耕田，一個月也耕不完啊！」農夫停下來，看著你說：「我不懂耕田的方法，不如您示範一下？」",
-                imageData: "images/rpg_mock.jpg",
+                imageData: "Chinese-Classical-363-images/rpg_mock.jpg",
                 choices: [
                     { text: "接受挑戰，證明給他看！(解衣下田)", next: "challenge" },
                     { text: "我是讀書人，不幹粗活", next: "refuse" }
@@ -795,14 +795,14 @@
             refuse: {
                 id: 'refuse',
                 text: "你拒絕下田，只會在岸上指揮。農夫不理你，繼續按自己的節奏耕作。你感到無趣，悻悻然離開。",
-                imageData: "images/rpg_refuse.jpg",
+                imageData: "Chinese-Classical-363-images/rpg_refuse.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             challenge: {
                 id: 'challenge',
                 text: "你脫掉上衣跳下田，心想：「看我的！」你深吸一口氣，鋤頭揮得飛快，每一鋤都用盡全力。農夫在一旁靜靜看著。",
-                imageData: "images/rpg_challenge.jpg",
+                imageData: "Chinese-Classical-363-images/rpg_challenge.jpg",
                 choices: [
                     { text: "保持這個速度，一口氣耕完！", next: "exhausted" },
                     { text: "放慢速度，調整呼吸", next: "adjust" }
@@ -811,14 +811,14 @@
             adjust: {
                 id: 'adjust',
                 text: "【Normal Ending: 修正錯誤】你發現這樣太累了，於是放慢速度。雖然比剛才慢，但比農夫快一點。你明白了自己的體力極限，不再逞強。",
-                imageData: "images/rpg_adjust.jpg",
+                imageData: "Chinese-Classical-363-images/rpg_adjust.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             exhausted: {
                 id: 'exhausted',
                 text: "沒過多久（未及移時），你覺得胸口發悶，汗如雨下，手腳發軟，直接癱倒在田裡（仆於田）。你氣喘吁吁地說：「原來耕田這麼難啊...」",
-                imageData: "images/rpg_exhausted.jpg",
+                imageData: "Chinese-Classical-363-images/rpg_exhausted.jpg",
                 choices: [
                     { text: "聽農夫怎麼說", next: "lesson" }
                 ]
@@ -826,7 +826,7 @@
             lesson: {
                 id: 'lesson',
                 text: "【True Ending: 欲速則不達】農夫笑著說：「不是耕田難，是你的方法錯了！做事也一樣，想求快反而達不到目的。」你聽了心服口服（服而退），學到了寶貴的一課。",
-                imageData: "images/rpg_lesson.jpg",
+                imageData: "Chinese-Classical-363-images/rpg_lesson.jpg",
                 choices: [{ text: "重新體驗", next: "start" }],
                 isEnding: true,
                 win: true

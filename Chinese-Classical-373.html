@@ -330,14 +330,14 @@
                     translation: "微風輕拂著岸邊的細草，高聳桅杆的孤舟在夜裡停泊。原野遼闊，遠方的星星彷彿低垂至地面；長江奔流，月影在波濤中湧動。",
                     audioText: "細草微風岸，危檣獨夜舟。星垂平野闊，月湧大江流。",
                     notes: {},
-                    imagePath: "images/reading_segment_1.jpg"
+                    imagePath: "Chinese-Classical-373-images/reading_segment_1.jpg"
                 },
                 {
                     original: "名豈文章著，官應老病休。<br>飄飄何所似? 天地一沙鷗。",
                     translation: "我的名聲難道是因為文章才顯著的嗎？做官本就應該因為年老多病而罷休。這飄泊不定的一生像什麼呢？就像那廣闊天地間的一隻孤單沙鷗。",
                     audioText: "名豈文章著，官應老病休。飄飄何所似? 天地一沙鷗。",
                     notes: {},
-                    imagePath: "images/reading_segment_2.jpg"
+                    imagePath: "Chinese-Classical-373-images/reading_segment_2.jpg"
                 }
             ],
             // 隨堂測驗 (高難度 - 20題)
@@ -408,7 +408,7 @@
             start: {
                 id: 'start',
                 text: "你是杜甫，一個月黑風高的夜晚，你獨自坐在停泊於長江岸邊的小舟上。微風吹拂著岸邊的細草，高聳的桅杆在夜色中顯得格外孤獨。你的心情沉重，此時你會...",
-                imagePath: "images/rpg_start.jpg",
+                imagePath: "Chinese-Classical-373-images/rpg_start.jpg",
                 choices: [
                     { text: "抬頭仰望星空，觀察四周景色", next: "view_scenery" },
                     { text: "低頭沉思自己的官場生涯", next: "reflect_career" }
@@ -417,7 +417,7 @@
             view_scenery: {
                 id: 'view_scenery',
                 text: "你抬頭望去，只見原野遼闊無邊，星星彷彿低垂到了地面；江水奔騰湧動，月影在波濤中起伏。面對如此壯麗卻又蒼茫的景色，你感到...",
-                imagePath: "images/rpg_view_scenery.jpg",
+                imagePath: "Chinese-Classical-373-images/rpg_view_scenery.jpg",
                 choices: [
                     { text: "感嘆宇宙浩瀚，自身渺小 (進入寫詩)", next: "write_poem" },
                     { text: "覺得景色恐懼，躲回船艙 (結束)", next: "bad_end_1" }
@@ -426,7 +426,7 @@
             reflect_career: {
                 id: 'reflect_career',
                 text: "你想起自己一生顛沛流離，雖有濟世之志，卻始終未能如願。如今名聲雖因文章而顯，但這真的是你想要的嗎？老病纏身，被迫辭官...",
-                imagePath: "images/rpg_reflect_career.jpg",
+                imagePath: "Chinese-Classical-373-images/rpg_reflect_career.jpg",
                 choices: [
                     { text: "憤世嫉俗，痛罵時局", next: "bad_end_2" },
                     { text: "將這份悲涼化為詩句 (進入寫詩)", next: "write_poem" }
@@ -435,21 +435,21 @@
             bad_end_1: {
                 id: 'bad_end_1',
                 text: "【Bad Ending: 逃避現實】你無法面對這無邊的孤寂，躲進船艙蒙頭大睡。這份深刻的感觸未能化為千古名句，世間少了一首偉大的詩篇。",
-                imagePath: "images/rpg_bad_end_1.jpg",
+                imagePath: "Chinese-Classical-373-images/rpg_bad_end_1.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             bad_end_2: {
                 id: 'bad_end_2',
                 text: "【Bad Ending: 鬱鬱而終】你沉浸在憤怒中無法自拔，氣血攻心，病情加重。你沒有寫下這首詩，只留下了一聲長嘆。",
-                imagePath: "images/rpg_bad_end_2.jpg",
+                imagePath: "Chinese-Classical-373-images/rpg_bad_end_2.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             write_poem: {
                 id: 'write_poem',
                 text: "景觸情生，你提筆寫下：「名豈文章著，官應老病休。」看著江面上飛過的一隻沙鷗，你覺得那就像你自己...「飄飄何所似？天地一沙鷗。」",
-                imagePath: "images/rpg_write_poem.jpg",
+                imagePath: "Chinese-Classical-373-images/rpg_write_poem.jpg",
                 choices: [
                     { text: "完成詩作，擲筆長嘆", next: "happy_end" }
                 ]
@@ -457,7 +457,7 @@
             happy_end: {
                 id: 'happy_end',
                 text: "【True Ending: 詩聖千古】你寫下了《旅夜書懷》。雖然你的肉體依然漂泊，但你的靈魂已透過這首詩與天地共存，成為後世傳頌的千古絕唱。",
-                imagePath: "images/rpg_happy_end.jpg",
+                imagePath: "Chinese-Classical-373-images/rpg_happy_end.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true,
                 win: true

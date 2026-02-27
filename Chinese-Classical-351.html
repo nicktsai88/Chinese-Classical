@@ -263,8 +263,8 @@
                         "本": { zhuyin: "ㄅㄣˇ", type: "副詞", def: "本來。" },
                         "無心": { zhuyin: "ㄨˊ ㄒㄧㄣ", type: "形容詞", def: "不在意、沒意圖。" }
                     },
-                    // Modified: using images/ prefix
-                    imageData: "images/reading_segment_1.jpg"
+                    // Modified: using Chinese-Classical-351-images/ prefix
+                    imageData: "Chinese-Classical-351-images/reading_segment_1.jpg"
                 },
                 {
                     original: "請來醫生將病治，反說氣病治非易。",
@@ -276,7 +276,7 @@
                         "氣病": { zhuyin: "ㄑㄧˋ ㄅㄧㄥˋ", type: "名詞", def: "因氣而生的病。" },
                         "非易": { zhuyin: "ㄈㄟ ㄧˋ", type: "形容詞", def: "不容易。" }
                     },
-                    imageData: "images/reading_segment_2.jpg"
+                    imageData: "Chinese-Classical-351-images/reading_segment_2.jpg"
                 },
                 {
                     original: "倘若生氣中他計，氣出病來無人替。",
@@ -288,7 +288,7 @@
                         "計": { zhuyin: "ㄐㄧˋ", type: "名詞", def: "計謀。" },
                         "替": { zhuyin: "ㄊㄧˋ", type: "動詞", def: "代替。" }
                     },
-                    imageData: "images/reading_segment_3.jpg"
+                    imageData: "Chinese-Classical-351-images/reading_segment_3.jpg"
                 },
                 {
                     original: "氣字危害真可懼，誠恐因病把命棄。",
@@ -301,7 +301,7 @@
                         "因": { zhuyin: "ㄧㄣ", type: "連詞", def: "因為。" },
                         "棄": { zhuyin: "ㄑㄧˋ", type: "動詞", def: "拋棄、喪失。" }
                     },
-                    imageData: "images/reading_segment_4.jpg"
+                    imageData: "Chinese-Classical-351-images/reading_segment_4.jpg"
                 },
                 {
                     original: "我今嘗過氣中味，不氣不氣真不氣。",
@@ -312,7 +312,7 @@
                         "嘗": { zhuyin: "ㄔㄤˊ", type: "動詞", def: "曾經體驗。" },
                         "味": { zhuyin: "ㄨㄟˋ", type: "名詞", def: "滋味、後果。" }
                     },
-                    imageData: "images/reading_segment_5.jpg"
+                    imageData: "Chinese-Classical-351-images/reading_segment_5.jpg"
                 }
             ],
             quiz: [
@@ -433,7 +433,7 @@
                     displayHtml = displayHtml.replace(key, `<span class="interactive-word" onclick="showNote('${key}', ${idx}, this, event)">${key}</span>`);
                 });
 
-                // Modified: using images/ prefix and removing placeholder logic since images are guaranteed
+                // Modified: using Chinese-Classical-351-images/ prefix and removing placeholder logic since images are guaranteed
                 let imageSection = `<div class="mt-6 rounded-lg overflow-hidden shadow-lg animate-fade-in"><img src="${seg.imageData}" class="w-full h-auto rounded-lg shadow-md" alt="段落插圖" onerror="this.style.display='none'"></div>`;
 
                 return `
@@ -684,8 +684,8 @@
             start: {
                 id: 'start',
                 text: "你是一個忙碌的商人，今天生意不好，心情正煩躁。走在路上，一個路人沒長眼睛撞了你一下，連句道歉都沒有就走了。",
-                // Modified: using images/ prefix
-                imageData: "images/rpg_start.jpg",
+                // Modified: using Chinese-Classical-351-images/ prefix
+                imageData: "Chinese-Classical-351-images/rpg_start.jpg",
                 choices: [
                     { text: "大聲叫罵，追上去理論", next: "anger" },
                     { text: "深呼吸，想著「他人生氣我不氣」", next: "calm" }
@@ -694,7 +694,7 @@
             anger: {
                 id: 'anger',
                 text: "你氣不過，衝上去跟他大吵一架。兩人推擠之中，你突然覺得胸口一陣悶痛，頭暈目眩...",
-                imageData: "images/rpg_anger.jpg",
+                imageData: "Chinese-Classical-351-images/rpg_anger.jpg",
                 choices: [
                     { text: "繼續罵，不能輸了氣勢", next: "bad_sick" },
                     { text: "停下來，趕快去看醫生", next: "doctor" }
@@ -703,7 +703,7 @@
             calm: {
                 id: 'calm',
                 text: "你拍拍身上的灰塵，心想：「我本無心他來氣，何必拿別人的錯誤懲罰自己？」你轉身離開，心情反而變好了。",
-                imageData: "images/rpg_calm.jpg",
+                imageData: "Chinese-Classical-351-images/rpg_calm.jpg",
                 choices: [
                     { text: "去茶樓喝杯茶", next: "good_tea" }
                 ]
@@ -711,7 +711,7 @@
             doctor: {
                 id: 'doctor',
                 text: "你來到醫館。大夫把了脈，搖搖頭說：「這是氣急攻心，傷了肝臟。氣病治非易啊！得好好調養，不能再動怒了。」",
-                imageData: "images/rpg_doctor.jpg",
+                imageData: "Chinese-Classical-351-images/rpg_doctor.jpg",
                 choices: [
                     { text: "聽醫生的話，修身養性", next: "recover" },
                     { text: "生氣醫生收費太貴", next: "bad_worse" }
@@ -720,21 +720,21 @@
             bad_sick: {
                 id: 'bad_sick',
                 text: "【Bad Ending: 氣出病來】你越罵越激動，突然眼前一黑，倒在地上。醒來後發現自己中風了，躺在床上動彈不得。這真是「氣出病來無人替」。",
-                imageData: "images/rpg_bad_sick.jpg",
+                imageData: "Chinese-Classical-351-images/rpg_bad_sick.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             bad_worse: {
                 id: 'bad_worse',
                 text: "【Bad Ending: 因病棄命】你連看醫生都在生氣，病情加重。沒過多久，就因為這口「閒氣」一命嗚呼了。真是「誠恐因病把命棄」。",
-                imageData: "images/rpg_bad_worse.jpg",
+                imageData: "Chinese-Classical-351-images/rpg_bad_worse.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             good_tea: {
                 id: 'good_tea',
                 text: "【Good Ending: 不氣真不氣】你在茶樓聽著小曲，覺得人生美好。剛才那個撞你的人，聽說後來跟別人打架被抓進官府了。你慶幸自己沒有「中他計」。",
-                imageData: "images/rpg_good_tea.jpg",
+                imageData: "Chinese-Classical-351-images/rpg_good_tea.jpg",
                 choices: [{ text: "重新體驗", next: "start" }],
                 isEnding: true,
                 win: true
@@ -742,7 +742,7 @@
             recover: {
                 id: 'recover',
                 text: "【Good Ending: 嘗過氣中味】經過一段時間的調養，身體終於康復。你深刻體會到「氣字危害真可懼」，從此變成了一個心平氣和的人。",
-                imageData: "images/rpg_recover.jpg",
+                imageData: "Chinese-Classical-351-images/rpg_recover.jpg",
                 choices: [{ text: "重新體驗", next: "start" }],
                 isEnding: true,
                 win: true

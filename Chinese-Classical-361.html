@@ -337,7 +337,7 @@
                         "當": { zhuyin: "ㄉㄤ", type: "助動詞", def: "應當、將會。" }
                     },
                     // Modified image path for GitHub
-                    imageData: "images/reading_segment_1.jpg"
+                    imageData: "Chinese-Classical-361-images/reading_segment_1.jpg"
                 },
                 {
                     original: "時有一人來至王所，王語之言：「此之樹上將生美果，汝能食不？」",
@@ -348,7 +348,7 @@
                         "語": { zhuyin: "ㄩˋ", type: "動詞", def: "告訴。" },
                         "不": { zhuyin: "ㄈㄡˇ", type: "助詞", def: "嗎？" }
                     },
-                    imageData: "images/reading_segment_2.jpg"
+                    imageData: "Chinese-Classical-361-images/reading_segment_2.jpg"
                 },
                 {
                     original: "即答王言：「此樹高廣，雖欲食之，何由能得？」",
@@ -358,7 +358,7 @@
                         "何由": { zhuyin: "ㄏㄜˊ ㄧㄡˊ", type: "疑問詞", def: "從何、如何。" },
                         "雖": { zhuyin: "ㄙㄨㄟ", type: "連詞", def: "雖然。" }
                     },
-                    imageData: "images/reading_segment_3.jpg"
+                    imageData: "Chinese-Classical-361-images/reading_segment_3.jpg"
                 },
                 {
                     original: "即便斷樹望得其果，既無所獲，徒自勞苦，",
@@ -369,7 +369,7 @@
                         "斷": { zhuyin: "ㄉㄨㄢˋ", type: "動詞", def: "砍斷。" },
                         "徒": { zhuyin: "ㄊㄨˊ", type: "副詞", def: "白白地。" }
                     },
-                    imageData: "images/reading_segment_4.jpg"
+                    imageData: "Chinese-Classical-361-images/reading_segment_4.jpg"
                 },
                 {
                     original: "後還欲竪，樹已枯死都無生理。",
@@ -380,7 +380,7 @@
                         "都": { zhuyin: "ㄉㄨ", type: "副詞", def: "完全。" },
                         "生理": { zhuyin: "ㄕㄥ ㄌㄧˇ", type: "名詞", def: "生機。" }
                     },
-                    imageData: "images/reading_segment_5.jpg"
+                    imageData: "Chinese-Classical-361-images/reading_segment_5.jpg"
                 }
             ],
             quiz: [
@@ -822,7 +822,7 @@
                 id: 'start',
                 text: "你是那個來到國王花園的人。你看著眼前高大宏偉的樹木，聽說它將結出絕世美味的果實。但樹實在太高了，根本爬不上去。你心裡想...",
                 // Modified for GitHub Pages
-                imageData: "images/rpg_start.jpg",
+                imageData: "Chinese-Classical-361-images/rpg_start.jpg",
                 choices: [
                     { text: "耐心等待果實成熟掉落", next: "wait" },
                     { text: "想辦法現在就拿到果實", next: "impatient" }
@@ -831,7 +831,7 @@
             wait: {
                 id: 'wait',
                 text: "你決定在樹下搭個棚子住下來，耐心等待。日復一日，你守護著這棵樹，幫它澆水施肥。",
-                imageData: "images/rpg_wait.jpg",
+                imageData: "Chinese-Classical-361-images/rpg_wait.jpg",
                 choices: [
                     { text: "繼續等待", next: "good_end" },
                     { text: "等到不耐煩了，還是砍了吧", next: "regret_cut" }
@@ -840,7 +840,7 @@
             impatient: {
                 id: 'impatient',
                 text: "你實在等不及了，心想：「只要把樹砍倒，果子不就唾手可得嗎？」於是你找來斧頭...",
-                imageData: "images/rpg_impatient.jpg",
+                imageData: "Chinese-Classical-361-images/rpg_impatient.jpg",
                 choices: [
                     { text: "動手砍樹！", next: "cut" },
                     { text: "猶豫一下，找梯子", next: "ladder" }
@@ -849,14 +849,14 @@
             ladder: {
                 id: 'ladder',
                 text: "【Normal Ending: 徒勞】你找來梯子，但樹太高了，梯子根本夠不到。你爬上爬下累得半死，最後只好放棄離開。",
-                imageData: "images/rpg_ladder.jpg",
+                imageData: "Chinese-Classical-361-images/rpg_ladder.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             cut: {
                 id: 'cut',
                 text: "轟隆一聲，大樹倒下了。你興沖沖地跑過去找果子，卻發現...",
-                imageData: "images/rpg_cut.jpg",
+                imageData: "Chinese-Classical-361-images/rpg_cut.jpg",
                 choices: [
                     { text: "查看樹枝", next: "fail" }
                 ]
@@ -864,7 +864,7 @@
             fail: {
                 id: 'fail',
                 text: "樹上只有青澀的小果子，根本不能吃！而且樹倒了，以後再也不會結果了。你「徒自勞苦」，什麼也沒得到。",
-                imageData: "images/rpg_fail.jpg",
+                imageData: "Chinese-Classical-361-images/rpg_fail.jpg",
                 choices: [
                     { text: "試著把樹種回去 (還欲竪)", next: "bad_end" }
                 ]
@@ -872,21 +872,21 @@
             regret_cut: {
                 id: 'regret_cut',
                 text: "你等了一半失去耐心，還是把樹砍了。結果和之前一樣，前功盡棄。",
-                imageData: "images/rpg_regret_cut.jpg",
+                imageData: "Chinese-Classical-361-images/rpg_regret_cut.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             bad_end: {
                 id: 'bad_end',
                 text: "【Bad Ending: 枯死無生】你試圖把斷樹豎起來，但根基已斷，「樹已枯死都無生理」。你因為一時的貪婪，毀掉了長遠的利益，被後人嘲笑。",
-                imageData: "images/rpg_bad_end.jpg",
+                imageData: "Chinese-Classical-361-images/rpg_bad_end.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             good_end: {
                 id: 'good_end',
                 text: "【Good Ending: 瓜熟蒂落】終於，果實成熟了，一顆顆香甜的勝果掉落下來。你享受了美味，還把種子種下，得到了一整片果園。",
-                imageData: "images/rpg_good_end.jpg",
+                imageData: "Chinese-Classical-361-images/rpg_good_end.jpg",
                 choices: [{ text: "重新體驗", next: "start" }],
                 isEnding: true,
                 win: true

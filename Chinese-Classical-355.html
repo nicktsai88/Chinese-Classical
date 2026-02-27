@@ -314,7 +314,7 @@
                         "門人": { zhuyin: "ㄇㄣˊ ㄖㄣˊ", type: "名詞", def: "僕人。" },
                         "鑽火": { zhuyin: "ㄗㄨㄢ ㄏㄨㄛˇ", type: "動詞", def: "鑽木取火。" }
                     },
-                    imageData: "images/reading_segment_1.jpg"
+                    imageData: "Chinese-Classical-355-images/reading_segment_1.jpg"
                 },
                 {
                     original: "其夜陰暝，不得火，催之急，",
@@ -325,7 +325,7 @@
                         "不得": { zhuyin: "ㄅㄨˋ ㄉㄜˊ", type: "動詞", def: "無法取得。" },
                         "急": { zhuyin: "ㄐㄧˊ", type: "副詞", def: "急切。" }
                     },
-                    imageData: "images/reading_segment_2.jpg"
+                    imageData: "Chinese-Classical-355-images/reading_segment_2.jpg"
                 },
                 {
                     original: "門人忿然曰：「君責人亦太無禮，今暗如漆，何以不把火照我，我當得覓鑽火具，然後易得耳。」",
@@ -337,7 +337,7 @@
                         "把火": { zhuyin: "ㄅㄚˇ ㄏㄨㄛˇ", type: "動詞", def: "拿火照明。" },
                         "覓": { zhuyin: "ㄇㄧˋ", type: "動詞", def: "尋找。" }
                     },
-                    imageData: "images/reading_segment_3.jpg"
+                    imageData: "Chinese-Classical-355-images/reading_segment_3.jpg"
                 },
                 {
                     original: "孔文舉聞之曰：「責人當以其方也。」",
@@ -347,7 +347,7 @@
                         "孔文舉": { zhuyin: "ㄎㄨㄥˇ ㄨㄣˊ ㄐㄩˇ", type: "名詞", def: "孔融。" },
                         "方": { zhuyin: "ㄈㄤ", type: "名詞", def: "方法、道理。" }
                     },
-                    imageData: "images/reading_segment_4.jpg"
+                    imageData: "Chinese-Classical-355-images/reading_segment_4.jpg"
                 }
             ],
             quiz: [
@@ -836,7 +836,7 @@
             start: {
                 id: 'start',
                 text: "你是某甲的門人。今天晚上，主人突然大叫肚子痛（暴疾），痛得在床上打滾。外面一片漆黑，伸手不見五指。",
-                imageData: "images/rpg_start.jpg",
+                imageData: "Chinese-Classical-355-images/rpg_start.jpg",
                 choices: [
                     { text: "趕快找東西生火", next: "find_tool" },
                     { text: "太黑了，我也沒辦法", next: "complain" }
@@ -845,7 +845,7 @@
             find_tool: {
                 id: 'find_tool',
                 text: "你試著在黑暗中摸索鑽火的工具。但因為太黑了（陰暝），你什麼都看不見，還撞到了桌腳。主人痛得大罵：「快點！你想痛死我嗎？（催之急）」",
-                imageData: "images/rpg_find_tool.jpg",
+                imageData: "Chinese-Classical-355-images/rpg_find_tool.jpg",
                 choices: [
                     { text: "繼續摸索，努力嘗試", next: "fail" },
                     { text: "忍不住回嘴", next: "argue" }
@@ -854,20 +854,20 @@
             complain: {
                 id: 'complain',
                 text: "你抱怨說看不見。主人大怒，說你沒用。你心裡也來氣了。",
-                imageData: "images/rpg_complain.jpg",
+                imageData: "Chinese-Classical-355-images/rpg_complain.jpg",
                 choices: [{ text: "回嘴", next: "argue" }]
             },
             fail: {
                 id: 'fail',
                 text: "【Bad Ending: 徒勞無功】你在黑暗中忙了半天，什麼都沒找到。主人痛得昏過去了，你也因為辦事不力被處罰。",
-                imageData: "images/rpg_fail.jpg",
+                imageData: "Chinese-Classical-355-images/rpg_fail.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             argue: {
                 id: 'argue',
                 text: "你氣不過，大聲說：「主人你也太不講理了！現在黑得像漆一樣，你為什麼不拿火照著我？這樣我不就很容易找到鑽火工具了嗎？」",
-                imageData: "images/rpg_argue.jpg",
+                imageData: "Chinese-Classical-355-images/rpg_argue.jpg",
                 choices: [
                     { text: "覺得自己說得很有道理", next: "logic_fail" }
                 ]
@@ -875,7 +875,7 @@
             logic_fail: {
                 id: 'logic_fail',
                 text: "【True Ending: 邏輯鬼才】主人聽了你的話，氣得說不出話來。這件事傳了出去，孔文舉聽到了，笑著說：「責人當以其方也。」你成了大家的笑柄。",
-                imageData: "images/rpg_logic_fail.jpg",
+                imageData: "Chinese-Classical-355-images/rpg_logic_fail.jpg",
                 choices: [{ text: "重新體驗", next: "start" }],
                 isEnding: true,
                 win: true

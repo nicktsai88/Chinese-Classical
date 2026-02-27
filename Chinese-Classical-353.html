@@ -315,7 +315,7 @@
                         "攫": { zhuyin: "ㄐㄩㄝˊ", type: "動詞", def: "搶奪。" }
                     },
                     // GitHub Path
-                    imageData: "images/reading_segment_1.jpg"
+                    imageData: "Chinese-Classical-353-images/reading_segment_1.jpg"
                 },
                 {
                     original: "吏捕得之。問曰：「人皆在焉，子攫人之金何？」",
@@ -327,7 +327,7 @@
                         "焉": { zhuyin: "ㄧㄢ", type: "代詞", def: "那裡（指現場）。" },
                         "子": { zhuyin: "ㄗˇ", type: "代詞", def: "你。" }
                     },
-                    imageData: "images/reading_segment_2.jpg"
+                    imageData: "Chinese-Classical-353-images/reading_segment_2.jpg"
                 },
                 {
                     original: "對曰：「取金之時，不見人，徒見金。」",
@@ -336,7 +336,7 @@
                     notes: {
                         "徒": { zhuyin: "ㄊㄨˊ", type: "副詞", def: "只、僅僅。" }
                     },
-                    imageData: "images/reading_segment_3.jpg"
+                    imageData: "Chinese-Classical-353-images/reading_segment_3.jpg"
                 }
             ],
             quiz: [
@@ -792,7 +792,7 @@
             start: {
                 id: 'start',
                 text: "你是齊國的一個普通人。今天早上起床，你看著鏡子裡的自己，突然覺得自己應該要很有錢。你想要金子。",
-                imageData: "images/rpg_start.jpg",
+                imageData: "Chinese-Classical-353-images/rpg_start.jpg",
                 choices: [
                     { text: "穿戴整齊去市集看看", next: "market" },
                     { text: "在家做白日夢", next: "dream" }
@@ -801,14 +801,14 @@
             dream: {
                 id: 'dream',
                 text: "你躺回床上繼續做夢。夢裡你有了金子，但醒來還是一場空。肚子餓了，還是得面對現實。",
-                imageData: "images/rpg_dream.jpg",
+                imageData: "Chinese-Classical-353-images/rpg_dream.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             market: {
                 id: 'market',
                 text: "你「衣冠而之市」，穿得整整齊齊來到熱鬧的市集。人群熙熙攘攘，你看到了一個賣金子的攤位。",
-                imageData: "images/rpg_market.jpg",
+                imageData: "Chinese-Classical-353-images/rpg_market.jpg",
                 choices: [
                     { text: "走過去看看", next: "stall" },
                     { text: "太貴了，還是回家吧", next: "go_home" }
@@ -824,7 +824,7 @@
             stall: {
                 id: 'stall',
                 text: "你站在金子攤位前，看著那閃閃發光的金子，心跳加速。你的眼裡似乎只剩下金子了...",
-                imageData: "images/rpg_stall.jpg",
+                imageData: "Chinese-Classical-353-images/rpg_stall.jpg",
                 choices: [
                     { text: "不管了，伸手就抓！(攫其金)", next: "grab" },
                     { text: "冷靜下來，看看周圍", next: "calm_down" }
@@ -833,7 +833,7 @@
             calm_down: {
                 id: 'calm_down',
                 text: "你深吸一口氣，發現周圍都是人，還有官差在巡邏。你意識到搶劫是愚蠢的，於是轉身離開。",
-                imageData: "images/rpg_calm_down.jpg",
+                imageData: "Chinese-Classical-353-images/rpg_calm_down.jpg",
                 choices: [{ text: "重新體驗", next: "start" }],
                 isEnding: true,
                 win: true
@@ -841,7 +841,7 @@
             grab: {
                 id: 'grab',
                 text: "你「因攫其金而去」，抓了金子轉身就跑！但沒跑幾步，就被一群人圍住，官差立刻把你抓了起來。",
-                imageData: "images/rpg_grab.jpg",
+                imageData: "Chinese-Classical-353-images/rpg_grab.jpg",
                 choices: [
                     { text: "束手就擒", next: "captured" }
                 ]
@@ -849,7 +849,7 @@
             captured: {
                 id: 'captured',
                 text: "官差問你：「人皆在焉，子攫人之金何？」（大家都看著，你為什麼敢搶？）你該怎麼回答？",
-                imageData: "images/rpg_captured.jpg",
+                imageData: "Chinese-Classical-353-images/rpg_captured.jpg",
                 choices: [
                     { text: "我只看見金子，沒看見人 (徒見金)", next: "bad_end" },
                     { text: "我...我一時糊塗", next: "regret" }
@@ -858,14 +858,14 @@
             regret: {
                 id: 'regret',
                 text: "【Normal Ending: 悔不當初】你痛哭流涕，承認錯誤。雖然免不了刑罰，但至少你找回了理智。",
-                imageData: "images/rpg_regret.jpg",
+                imageData: "Chinese-Classical-353-images/rpg_regret.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             bad_end: {
                 id: 'bad_end',
                 text: "【True Ending: 利令智昏】你說出了千古名言：「取金之時，不見人，徒見金。」你的故事被列子記錄下來，成為後世嘲笑的對象。",
-                imageData: "images/rpg_bad_end.jpg",
+                imageData: "Chinese-Classical-353-images/rpg_bad_end.jpg",
                 choices: [{ text: "重新體驗", next: "start" }],
                 isEnding: true
             }

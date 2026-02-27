@@ -322,7 +322,7 @@
                         "蘭澤": { zhuyin: "ㄌㄢˊ ㄗㄜˊ", type: "名詞", def: "生有蘭草的沼澤。" }
                     },
                     // GitHub Path
-                    imageData: "images/reading_segment_1.jpg"
+                    imageData: "Chinese-Classical-437-images/reading_segment_1.jpg"
                 },
                 {
                     original: "采之欲遺誰? 所思在遠道。",
@@ -332,7 +332,7 @@
                         "遺": { zhuyin: "ㄨㄟˋ", type: "動詞", def: "贈送。" },
                         "遠道": { zhuyin: "ㄩㄢˇ ㄉㄠˋ", type: "名詞", def: "遠方。" }
                     },
-                    imageData: "images/reading_segment_2.jpg"
+                    imageData: "Chinese-Classical-437-images/reading_segment_2.jpg"
                 },
                 {
                     original: "還顧望舊鄉，長路漫浩浩。",
@@ -342,7 +342,7 @@
                         "還顧": { zhuyin: "ㄏㄨㄢˊ ㄍㄨˋ", type: "動詞", def: "回頭看。" },
                         "浩浩": { zhuyin: "ㄏㄠˋ ㄏㄠˋ", type: "形容詞", def: "廣大無邊貌。" }
                     },
-                    imageData: "images/reading_segment_3.jpg"
+                    imageData: "Chinese-Classical-437-images/reading_segment_3.jpg"
                 },
                 {
                     original: "同心而離居，憂傷以終老。",
@@ -352,7 +352,7 @@
                         "同心": { zhuyin: "ㄊㄨㄥˊ ㄒㄧㄣ", type: "形容詞", def: "心意相通。" },
                         "終老": { zhuyin: "ㄓㄨㄥ ㄌㄠˇ", type: "動詞", def: "直到老死。" }
                     },
-                    imageData: "images/reading_segment_4.jpg"
+                    imageData: "Chinese-Classical-437-images/reading_segment_4.jpg"
                 }
             ],
             quiz: [
@@ -788,7 +788,7 @@
                 id: 'start',
                 text: "你是一位獨在異鄉的遊子。秋風起，你在河邊看到盛開的芙蓉花（荷花），心中泛起對遠方故鄉的思念...",
                 // Modified for GitHub
-                imageData: "images/rpg_start.jpg",
+                imageData: "Chinese-Classical-437-images/rpg_start.jpg",
                 choices: [
                     { text: "採摘一朵芙蓉，寄託相思", next: "pick_flower" },
                     { text: "覺得徒增傷感，轉身離開", next: "leave" }
@@ -797,14 +797,14 @@
             leave: {
                 id: 'leave',
                 text: "【Normal Ending: 壓抑情感】你選擇逃避這份思念，繼續在異鄉為了生活奔波。雖然少了一時的感傷，但心中的空虛卻永遠無法填補。",
-                imageData: "images/rpg_leave.jpg",
+                imageData: "Chinese-Classical-437-images/rpg_leave.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             pick_flower: {
                 id: 'pick_flower',
                 text: "你涉水採下了一朵最美的芙蓉花。花香襲人，你想要把它送給心裡最重要的人。但是，那個人在哪裡呢？",
-                imageData: "images/rpg_pick_flower.jpg",
+                imageData: "Chinese-Classical-437-images/rpg_pick_flower.jpg",
                 choices: [
                     { text: "想起遠在故鄉的妻子/知己", next: "miss_home" },
                     { text: "試圖找個路人送出去", next: "random_gift" }
@@ -813,14 +813,14 @@
             random_gift: {
                 id: 'random_gift',
                 text: "【Bad Ending: 錯付】你隨便把花送給了一個路人。路人覺得莫名其妙，隨手就把花丟了。你的心意被踐踏，感到更加孤獨。",
-                imageData: "images/rpg_random_gift.jpg",
+                imageData: "Chinese-Classical-437-images/rpg_random_gift.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             miss_home: {
                 id: 'miss_home',
                 text: "你想起了遠方的她。回頭望向故鄉的方向，只見道路漫長無邊（長路漫浩浩），根本看不到盡頭。你感到...",
-                imageData: "images/rpg_miss_home.jpg",
+                imageData: "Chinese-Classical-437-images/rpg_miss_home.jpg",
                 choices: [
                     { text: "絕望，覺得再也回不去了", next: "despair" },
                     { text: "雖然痛苦，但深信兩心相通", next: "good_end" }
@@ -829,14 +829,14 @@
             despair: {
                 id: 'despair',
                 text: "【Bad Ending: 憂憤而終】你被巨大的孤獨感吞噬，終日鬱鬱寡歡，最後在異鄉病倒，再也沒能回去。",
-                imageData: "images/rpg_despair.jpg",
+                imageData: "Chinese-Classical-437-images/rpg_despair.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             good_end: {
                 id: 'good_end',
                 text: "【True Ending: 同心離居】你明白了「同心而離居」的無奈，但也確認了彼此的感情。你決定帶著這份思念，堅強地活下去，以此花見證你們永恆的情誼。",
-                imageData: "images/rpg_good_end.jpg",
+                imageData: "Chinese-Classical-437-images/rpg_good_end.jpg",
                 choices: [{ text: "重新體驗", next: "start" }],
                 isEnding: true,
                 win: true

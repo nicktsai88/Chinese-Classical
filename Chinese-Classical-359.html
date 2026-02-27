@@ -338,7 +338,7 @@
                         "蔭蔽": { zhuyin: "ㄧㄣˋ ㄅㄧˋ", type: "動詞", def: "遮蔽。" }
                     },
                     // Modified image path for GitHub Pages
-                    imageData: "images/reading_segment_1.jpg"
+                    imageData: "Chinese-Classical-359-images/reading_segment_1.jpg"
                 },
                 {
                     original: "秋來雨風滴瀝，枕上聞之，心與俱碎。",
@@ -349,7 +349,7 @@
                         "聞": { zhuyin: "ㄨㄣˊ", type: "動詞", def: "聽見。" },
                         "俱碎": { zhuyin: "ㄐㄩˋ ㄙㄨㄟˋ", type: "動詞", def: "一起破碎。" }
                     },
-                    imageData: "images/reading_segment_2.jpg"
+                    imageData: "Chinese-Classical-359-images/reading_segment_2.jpg"
                 },
                 {
                     original: "一日，余戲題斷句葉上云：是誰多事種芭蕉? 早也瀟瀟，晚也瀟瀟。",
@@ -360,7 +360,7 @@
                         "多事": { zhuyin: "ㄉㄨㄛ ㄕˋ", type: "形容詞", def: "沒事找事。" },
                         "瀟瀟": { zhuyin: "ㄒㄧㄠ ㄒㄧㄠ", type: "擬聲詞", def: "風雨聲。" }
                     },
-                    imageData: "images/reading_segment_3.jpg"
+                    imageData: "Chinese-Classical-359-images/reading_segment_3.jpg"
                 },
                 {
                     original: "明日，見葉上續書數行云：是君心緒太無聊，種了芭蕉，又怨芭蕉。",
@@ -371,7 +371,7 @@
                         "無聊": { zhuyin: "ㄨˊ ㄌㄧㄠˊ", type: "形容詞", def: "煩悶無依。" },
                         "怨": { zhuyin: "ㄩㄢˋ", type: "動詞", def: "埋怨。" }
                     },
-                    imageData: "images/reading_segment_4.jpg"
+                    imageData: "Chinese-Classical-359-images/reading_segment_4.jpg"
                 },
                 {
                     original: "字畫柔媚，此秋芙戲筆也。然余於此，悟入正復不淺。",
@@ -382,7 +382,7 @@
                         "悟入": { zhuyin: "ㄨˋ ㄖㄨˋ", type: "動詞", def: "領悟。" },
                         "不淺": { zhuyin: "ㄅㄨˋ ㄑㄧㄢˇ", type: "形容詞", def: "很深。" }
                     },
-                    imageData: "images/reading_segment_5.jpg"
+                    imageData: "Chinese-Classical-359-images/reading_segment_5.jpg"
                 }
             ],
             quiz: [
@@ -820,7 +820,7 @@
                 id: 'start',
                 text: "你是蔣坦。秋夜微涼，窗外風雨交加，雨打芭蕉之聲不絕於耳。你躺在床上，心裡感到一陣莫名的煩悶...",
                 // Modified image path for GitHub Pages
-                imageData: "images/rpg_start.jpg",
+                imageData: "Chinese-Classical-359-images/rpg_start.jpg",
                 choices: [
                     { text: "起身寫詩發洩情緒", next: "write_poem" },
                     { text: "蒙頭大睡，不理會", next: "sleep" }
@@ -836,7 +836,7 @@
             write_poem: {
                 id: 'write_poem',
                 text: "你起身走到院子裡，看到那幾株芭蕉葉大成蔭。你一時興起，在葉子上題了一首打油詩：「是誰多事種芭蕉？早也瀟瀟，晚也瀟瀟。」寫完後你覺得...",
-                imageData: "images/rpg_write_poem.jpg",
+                imageData: "Chinese-Classical-359-images/rpg_write_poem.jpg",
                 choices: [
                     { text: "心裡舒坦多了，回房休息", next: "next_day" },
                     { text: "覺得還不夠，把芭蕉砍了", next: "cut_tree" }
@@ -845,14 +845,14 @@
             cut_tree: {
                 id: 'cut_tree',
                 text: "【Bad Ending: 焚琴煮鶴】你一時衝動把芭蕉砍了。第二天秋芙看到心愛的芭蕉被毀，傷心地哭了，好幾天都不理你。真是殺風景啊！",
-                imageData: "images/rpg_cut_tree.jpg",
+                imageData: "Chinese-Classical-359-images/rpg_cut_tree.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             next_day: {
                 id: 'next_day',
                 text: "第二天早上，你來到庭院，想看看昨晚的題詩。卻發現葉子上多出了幾行字，字跡柔媚，一看就是秋芙寫的。",
-                imageData: "images/rpg_next_day.jpg",
+                imageData: "Chinese-Classical-359-images/rpg_next_day.jpg",
                 choices: [
                     { text: "仔細閱讀", next: "read_reply" }
                 ]
@@ -860,7 +860,7 @@
             read_reply: {
                 id: 'read_reply',
                 text: "只見上面寫著：「是君心緒太無聊，種了芭蕉，又怨芭蕉。」你讀完後，心中作何感想？",
-                imageData: "images/rpg_read_reply.jpg",
+                imageData: "Chinese-Classical-359-images/rpg_read_reply.jpg",
                 choices: [
                     { text: "惱羞成怒，覺得妻子不給面子", next: "angry" },
                     { text: "恍然大悟，佩服妻子的智慧", next: "good_end" }
@@ -869,14 +869,14 @@
             angry: {
                 id: 'angry',
                 text: "【Normal Ending: 不解風情】你覺得面子掛不住，擦掉了字跡。秋芙見你如此小氣，嘆了口氣。你們錯過了一次心靈交流的機會。",
-                imageData: "images/rpg_angry.jpg",
+                imageData: "Chinese-Classical-359-images/rpg_angry.jpg",
                 choices: [{ text: "重來", next: "start" }],
                 isEnding: true
             },
             good_end: {
                 id: 'good_end',
                 text: "【Good Ending: 琴瑟和鳴】你大笑：「知我者，秋芙也！」你明白了境由心生的道理，心中的愁緒煙消雲散。從此你們夫妻感情更加深厚，這段佳話也流傳千古。",
-                imageData: "images/rpg_good_end.jpg",
+                imageData: "Chinese-Classical-359-images/rpg_good_end.jpg",
                 choices: [{ text: "重新體驗", next: "start" }],
                 isEnding: true,
                 win: true
