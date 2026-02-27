@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>(推與敲) 第39篇 穿胸國 - 互動式古文學習</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 載入 Marked.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- 載入 FontAwesome 圖標 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 載入 Canvas Confetti (特效) -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #fdfbf7; /* 米紙色 */
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .font-serif {
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        /* 自定義滾動條 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d97706; 
+            border-radius: 4px;
+        }
+
+        /* 標籤樣式 */
+        .tab-btn {
+            position: relative;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background-color: #b45309;
+            transition: width 0.3s ease;
+        }
+        .tab-btn.active {
+            color: #92400e;
+            background-color: #fffbeb;
+        }
+        .tab-btn.active::after {
+            width: 100%;
+        }
+
+        /* 互動文字樣式 */
+        .interactive-word {
+            cursor: pointer;
+            border-bottom: 2px dotted #d97706;
+            transition: all 0.2s;
+            padding-bottom: 1px;
+            position: relative;
+            z-index: 20;
+            color: #92400e;
+            font-weight: 600;
+        }
+        .interactive-word:hover {
+            background-color: #fef3c7;
+            color: #b45309;
+            border-bottom-style: solid;
+        }
+
+        /* 彈出註釋 */
+        .note-popup {
+            animation: fadeIn 0.2s ease-out;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px) translateX(-50%); }
+            to { opacity: 1; transform: translateY(0) translateX(-50%); }
+        }
+
+        /* 懸停翻譯效果 */
+        .hover-trans-container:hover .hover-translation {
+            display: block;
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 聊天氣泡 */
+        .chat-bubble {
+            max-width: 85%;
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            position: relative;
+            line-height: 1.6;
+        }
+        .chat-user {
+            background-color: #dbeafe; /* Blue-100 */
+            color: #1e40af;
+            align-self: flex-end;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .chat-ai {
+            background-color: #fff;
+            border: 1px solid #e5e7eb;
+            color: #374151;
+            align-self: flex-start;
+            border-bottom-left-radius: 0.25rem;
+        }
+        
+        /* AI 思考動畫 */
+        .typing-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            margin-right: 3px;
+            background-color: #9ca3af;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* 故事模式樣式 */
+        .story-choice:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .fade-in-image {
+            animation: fadeInImg 0.8s ease-out forwards;
+        }
+        @keyframes fadeInImg {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* 禁用狀態的樣式 */
+        input[type="radio"]:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .disabled-label {
+            cursor: not-allowed !important;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col">
+
+    <!-- 頂部導航欄 -->
+    <nav class="bg-amber-800 text-amber-50 shadow-lg sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-book-open text-2xl mr-3"></i>
+                    <span class="font-bold text-xl tracking-wider">古文互動教室</span>
+                </div>
+                <div class="hidden md:block text-sm opacity-80">
+                    GitHub 版
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="app" class="max-w-5xl mx-auto p-4 sm:p-6 w-full flex-grow flex flex-col">
+        
+        <!-- 課程標題卡片 -->
+        <header class="bg-white rounded-2xl shadow-md overflow-hidden mb-6 border border-amber-100">
+            <div class="bg-gradient-to-r from-amber-100 to-orange-50 p-6 sm:p-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h1 id="main-title" class="text-3xl sm:text-4xl font-serif font-bold text-amber-900 mb-2"></h1>
+                        <div class="flex items-center text-amber-700 space-x-4">
+                            <span class="flex items-center"><i class="fas fa-user-edit mr-2"></i><span id="author-name"></span></span>
+                            <span class="flex items-center"><i class="fas fa-scroll mr-2"></i><span id="source-name"></span></span>
+                        </div>
+                    </div>
+                    <div class="hidden md:block">
+                        <span class="inline-block bg-amber-200 text-amber-900 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wide">重要考試篇章</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 功能標籤 -->
+        <div class="flex flex-wrap justify-center bg-white rounded-xl shadow-sm mb-6 border border-gray-100 sticky top-20 z-40">
+            <button id="tab-overview" class="tab-btn active px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('overview')">
+                <i class="fas fa-info-circle mr-2"></i>故事總覽
+            </button>
+            <button id="tab-reading" class="tab-btn px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('reading')">
+                <i class="fas fa-glasses mr-2"></i>精讀與圖解
+            </button>
+            <button id="tab-deep" class="tab-btn px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('deep')">
+                <i class="fas fa-project-diagram mr-2"></i>深度理解與地圖
+            </button>
+            <button id="tab-story" class="tab-btn px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('story')">
+                <i class="fas fa-theater-masks mr-2"></i>抉擇之路(RPG)
+            </button>
+            <button id="tab-vocabulary" class="tab-btn px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('vocabulary')">
+                <i class="fas fa-spell-check mr-2"></i>語詞精解
+            </button>
+            <button id="tab-analysis" class="tab-btn px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('analysis')">
+                <i class="fas fa-feather-alt mr-2"></i>文義與修辭
+            </button>
+            <button id="tab-chat" class="tab-btn px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('chat')">
+                <i class="fas fa-robot mr-2"></i>AI 角色扮演
+            </button>
+            <button id="tab-quiz" class="tab-btn px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('quiz')">
+                <i class="fas fa-pen-nib mr-2"></i>隨堂測驗
+            </button>
+        </div>
+
+        <!-- 主要內容區 -->
+        <main id="content-display" class="flex-grow bg-white rounded-2xl shadow-lg p-6 sm:p-8 min-h-[500px] transition-all duration-300 relative">
+            <!-- 內容動態載入 -->
+        </main>
+        
+    </div>
+
+    <!-- 註釋彈出框模板 -->
+    <div id="note-template" class="note-popup absolute bg-white border-l-4 border-amber-500 rounded-r-lg shadow-2xl p-4 z-50 hidden w-72" onclick="event.stopPropagation()">
+        <!-- 關閉按鈕 -->
+        <button onclick="closeNote()" class="absolute top-2 right-2 text-gray-400 hover:text-amber-600 transition">
+            <i class="fas fa-times"></i>
+        </button>
+        <div id="note-content">
+            <!-- 內容動態填充 -->
+        </div>
+    </div>
+
+    <!-- 結果模態框 (Score Modal) -->
+    <div id="score-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 shadow-2xl transform transition-all scale-100">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-amber-100 mb-4">
+                    <i class="fas fa-trophy text-2xl text-amber-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">測驗結果</h3>
+                <p class="text-gray-500 mb-6" id="score-text">你的得分是...</p>
+                <button onclick="closeScoreModal()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-amber-600 text-base font-medium text-white hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 sm:text-sm">
+                    查看詳細解析
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 錯誤提示 -->
+    <div id="error-toast" class="fixed bottom-6 right-6 bg-red-50 border border-red-200 text-red-600 px-6 py-4 rounded-lg shadow-xl hidden z-50 flex items-center transition-all transform translate-y-10 opacity-0">
+        <i class="fas fa-exclamation-circle mr-3 text-xl"></i>
+        <div>
+            <p class="font-bold">發生錯誤</p>
+            <p id="error-msg" class="text-sm"></p>
+        </div>
+    </div>
+
+    <script>
+        
+        // ----------------------------------------------------
+        // 1. 教材資料結構 (Content Data) - 穿胸國
+        // ----------------------------------------------------
+        const contentData = {
+            metadata: {
+                title: "(推與敲) 第39篇 穿胸國",
+                author: "李汝珍",
+                source: "《鏡花緣》"
+            },
+            summary: "唐敖一行人遊歷海外，來到了穿胸國。商人林之洋好奇為何此國國民胸口都有一個大洞，心臟究竟在何處？博學的多九公解釋道，這裡的人原本胸膛完好，但因行為不正、心術不正（偏心、歪心），導致心臟偏離本位，久而久之生出「歪心疔」和「偏心疽」，最後潰爛成洞。雖然透過祝由科用狼心狗肺修補治癒了疾病，但因狼狗之心肺本就歪斜，導致胸前大洞始終無法復原。這則寓言諷刺了世上那些「狼心狗肺」與心術不正之人。",
+            
+            meaning: "1. **諷刺心術不正**：透過「穿胸」的奇幻設定，具象化了抽象的道德概念。心歪則胸穿，直指行為不正必有惡果。\n2. **批判勢利與偏私**：文中提到的「遇事眉頭一皺，心就歪在一邊」，生動刻畫了人際交往中的勢利眼與偏私心態。\n3. **狼心狗肺的具象化**：成語「狼心狗肺」通常指人忘恩負義、兇惡殘暴，在此文中被轉化為實際的醫療情節，增強了諷刺力度。",
+            
+            rhetoric: [
+                "**諷刺 (Satire):** 全文皆為諷刺筆法，以荒誕的病理（歪心疔、偏心疽）諷刺現實中道德淪喪的現象。",
+                "**雙關 (Pun):** 「歪心」、「偏心」既指器官位置的偏移，更指道德上的偏私與不正；「狼心狗肺」既指動物器官，也指人的狠毒心腸。",
+                "**誇飾 (Hyperbole):** 形容心偏導致胸口爛成大洞，以及用狼心狗肺修補，皆為誇飾想像。",
+                "**寓言 (Allegory):** 藉由穿胸國的故事，寄託對人性的觀察與批判。"
+            ],
+            
+            // 36個詳盡語詞精解
+            vocabulary: [
+                { word: "穿胸國", zhuyin: "ㄔㄨㄢ ㄒㄩㄥ ㄍㄨㄛˊ", pos: "名詞", meaning: "《山海經》與《鏡花緣》中記載的虛構國家，國民胸前皆有大洞。" },
+                { word: "林之洋", zhuyin: "ㄌㄧㄣˊ ㄓ ㄧㄤˊ", pos: "人名", meaning: "《鏡花緣》中的商人角色，唐敖的妻舅，性格直爽市儈。" },
+                { word: "俺", zhuyin: "ㄢˇ", pos: "代詞", meaning: "我（北方方言）。" },
+                { word: "聞", zhuyin: "ㄨㄣˊ", pos: "動詞", meaning: "聽說。" },
+                { word: "正中", zhuyin: "ㄓㄥˋ ㄓㄨㄥ", pos: "名詞", meaning: "正中間的位置。" },
+                { word: "穿通", zhuyin: "ㄔㄨㄢ ㄊㄨㄥ", pos: "動詞", meaning: "穿透、貫通。" },
+                { word: "多九公", zhuyin: "ㄉㄨㄛ ㄐㄧㄡˇ ㄍㄨㄥ", pos: "人名", meaning: "《鏡花緣》中的老水手，見多識廣，常擔任解說者。" },
+                { word: "老夫", zhuyin: "ㄌㄠˇ ㄈㄨ", pos: "代詞", meaning: "年長男子的自稱。" },
+                { word: "當日", zhuyin: "ㄉㄤ ㄖˋ", pos: "時間詞", meaning: "從前、往日。" },
+                { word: "行為", zhuyin: "ㄒㄧㄥˊ ㄨㄟˊ", pos: "名詞", meaning: "舉止行動，此指道德操守。" },
+                { word: "不正", zhuyin: "ㄅㄨˊ ㄓㄥˋ", pos: "形容詞", meaning: "不端正、偏頗邪惡。" },
+                { word: "每每", zhuyin: "ㄇㄟˇ ㄇㄟˇ", pos: "副詞", meaning: "往往、經常。" },
+                { word: "眉頭", zhuyin: "ㄇㄟˊ ㄊㄡˊ", pos: "名詞", meaning: "兩眉之間。" },
+                { word: "一皺", zhuyin: "ㄧˊ ㄓㄡˋ", pos: "動詞", meaning: "收縮眉頭，文中暗示在動歪腦筋或計較算計。" },
+                { word: "歪", zhuyin: "ㄨㄞ", pos: "形容詞", meaning: "傾斜、不正。" },
+                { word: "偏", zhuyin: "ㄆㄧㄢ", pos: "形容詞", meaning: "偏頗、不公正。" },
+                { word: "本位", zhuyin: "ㄅㄣˇ ㄨㄟˋ", pos: "名詞", meaning: "原本的位置。" },
+                { word: "主宰", zhuyin: "ㄓㄨˇ ㄗㄞˇ", pos: "名詞", meaning: "支配者、控制中心。心為一身之主宰。" },
+                { word: "疔", zhuyin: "ㄉㄧㄥ", pos: "名詞", meaning: "一種毒瘡，根深形小如釘。" },
+                { word: "歪心疔", zhuyin: "ㄨㄞ ㄒㄧㄣ ㄉㄧㄥ", pos: "名詞", meaning: "文中虛構的病名，諷刺心術不正所生的毒瘡。" },
+                { word: "疽", zhuyin: "ㄐㄩ", pos: "名詞", meaning: "深度的化膿性毒瘡。" },
+                { word: "偏心疽", zhuyin: "ㄆㄧㄢ ㄒㄧㄣ ㄐㄩ", pos: "名詞", meaning: "文中虛構的病名，諷刺偏私之心所生的毒瘡。" },
+                { word: "潰爛", zhuyin: "ㄎㄨㄟˋ ㄌㄢˋ", pos: "動詞", meaning: "傷口感染腐爛。" },
+                { word: "久而久之", zhuyin: "ㄐㄧㄡˇ ㄦˊ ㄐㄧㄡˇ ㄓ", pos: "成語", meaning: "經過了很長一段時間。" },
+                { word: "相通", zhuyin: "ㄒㄧㄤ ㄊㄨㄥ", pos: "動詞", meaning: "彼此連通，指胸口前後爛穿。" },
+                { word: "醫藥", zhuyin: "ㄧ ㄧㄠˋ", pos: "名詞", meaning: "醫療藥物。" },
+                { word: "虧得", zhuyin: "ㄎㄨㄟ ˙ㄉㄜ", pos: "副詞", meaning: "幸虧、多虧。" },
+                { word: "祝由科", zhuyin: "ㄓㄨˋ ㄧㄡˊ ㄎㄜ", pos: "名詞", meaning: "古代一種用符咒治病的醫科。" },
+                { word: "符咒", zhuyin: "ㄈㄨˊ ㄓㄡˋ", pos: "名詞", meaning: "道教用來驅鬼治病的圖文和口訣。" },
+                { word: "中山狼", zhuyin: "ㄓㄨㄥ ㄕㄢ ㄌㄤˊ", pos: "名詞", meaning: "寓言故事中的狼，恩將仇報。喻忘恩負義之人。" },
+                { word: "波斯狗", zhuyin: "ㄅㄛ ㄙ ㄍㄡˇ", pos: "名詞", meaning: "外來的狗種，此處泛指狗，與狼並舉。" },
+                { word: "心肺", zhuyin: "ㄒㄧㄣ ㄈㄟˋ", pos: "名詞", meaning: "心臟和肺臟。" },
+                { word: "患處", zhuyin: "ㄏㄨㄢˋ ㄔㄨˋ", pos: "名詞", meaning: "生病受傷的地方。" },
+                { word: "復舊", zhuyin: "ㄈㄨˋ ㄐㄧㄡˋ", pos: "動詞", meaning: "恢復舊觀、復原。" },
+                { word: "至今", zhuyin: "ㄓˋ ㄐㄧㄣ", pos: "時間詞", meaning: "直到現在。" },
+                { word: "狼心狗肺", zhuyin: "ㄌㄤˊ ㄒㄧㄣ ㄍㄡˇ ㄈㄟˋ", pos: "成語", meaning: "形容人心腸兇惡狠毒，如狼狗一般。也指忘恩負義。" },
+                { word: "原來", zhuyin: "ㄩㄢˊ ㄌㄞˊ", pos: "副詞", meaning: "表示發現真實情況，恍然大悟。" }
+            ],
+
+            segments: [
+                {
+                    original: "走了幾日，過了穿胸國。林之洋道：「俺聞人心生在正中。今穿胸國胸都穿通，他心生在什麼地方？」",
+                    translation: "船行了幾天，經過了穿胸國。林之洋好奇地說：「我聽說人的心都是長在正中間的。現在這穿胸國的人胸口都穿透成一個大洞，那他們的心長在哪裡呢？」",
+                    audioText: "走了幾日，過了穿胸國。林之洋道：俺聞人心生在正中。今穿胸國胸都穿通，他心生在什麼地方？",
+                    imagePath: "images/reading_segment_1.jpg"
+                },
+                {
+                    original: "多九公道：「老夫聞他們胸前當日原是好好的；後來因他們行為不正，每每遇事把眉頭一皺，心就歪在一邊，或偏在一邊。",
+                    translation: "多九公解釋道：「老夫聽說他們胸前從前原本是好好的；後來因為他們行為不端正，往往一遇到事情就皺起眉頭（算計別人），心就歪向一邊，或者偏向一邊。",
+                    audioText: "多九公道：老夫聞他們胸前當日原是好好的；後來因他們行為不正，每每遇事把眉頭一皺，心就歪在一邊，或偏在一邊。",
+                    imagePath: "images/reading_segment_2.jpg"
+                },
+                {
+                    original: "今日也歪，明日也偏，漸漸心離本位，胸無主宰。因此前心生一大疔，名叫『歪心疔』，後心生一大疽，名叫『偏心疽』：日漸潰爛。",
+                    translation: "今天也歪，明天也偏，慢慢地心就離開了原本的位置，胸中失去了主宰。因此前胸長了一個大疔，叫『歪心疔』，後背長了一個大疽，叫『偏心疽』，並且一天天潰爛。",
+                    audioText: "今日也歪，明日也偏，漸漸心離本位，胸無主宰。因此前心生一大疔，名叫歪心疔，後心生一大疽，名叫偏心疽：日漸潰爛。",
+                    imagePath: "images/reading_segment_3.jpg"
+                },
+                {
+                    original: "久而久之，前後相通，醫藥無效。虧得有一祝由科用符咒將『中山狼』、『波斯狗』的心肺取來補那患處。",
+                    translation: "日子久了，前後傷口潰爛相通（變成一個洞），吃藥也沒用。多虧有一位祝由科的醫生，用符咒將『中山狼』和『波斯狗』的心肺取來，修補那個爛掉的地方。",
+                    audioText: "久而久之，前後相通，醫藥無效。虧得有一祝由科用符咒將中山狼、波斯狗的心肺取來補那患處。",
+                    imagePath: "images/reading_segment_4.jpg"
+                },
+                {
+                    original: "過了幾時，病雖醫好，誰知這狼的心，狗的肺，也是歪在一邊、偏在一邊的，任他醫治，胸前竟難復舊，所以至今仍是一個大洞。」",
+                    translation: "過了一段時間，病雖然治好了，誰知道這狼的心、狗的肺，本身也是長得歪一邊、偏一邊的，無論怎麼醫治，胸前竟然難以恢復原狀，所以直到現在仍然留著一個大洞。」",
+                    audioText: "過了幾時，病雖醫好，誰知這狼的心，狗的肺，也是歪在一邊、偏在一邊的，任他醫治，胸前竟難復舊，所以至今仍是一個大洞。",
+                    imagePath: "images/reading_segment_5.jpg"
+                },
+                {
+                    original: "林之洋：「原來狼心狗肺都是又歪又偏的！」",
+                    translation: "林之洋恍然大悟道：「原來所謂的狼心狗肺，都是又歪又偏的啊！」",
+                    audioText: "林之洋：原來狼心狗肺都是又歪又偏的！",
+                    imagePath: "images/reading_segment_6.jpg"
+                }
+            ],
+            // 隨堂測驗 (高難度 - 20題)
+            quiz: [
+                { q: "文中「穿胸國」人的心為何會「離本位」？", opts: ["A. 天生如此", "B. 遭受詛咒", "C. 行為不正，心思偏歪", "D. 飲食習慣不良"], ans: "C", exp: "文中多九公提到：「因他們行為不正...心就歪在一邊」。" },
+                { q: "穿胸國人胸前的大洞，最初是由什麼病症發展而來的？", opts: ["A. 肺癆與心疾", "B. 歪心疔與偏心疽", "C. 穿心毒與爛肺瘡", "D. 黑心病與無情症"], ans: "B", exp: "文中明確提到前心生「歪心疔」，後心生「偏心疽」。" },
+                { q: "「祝由科」在文中指的是什麼職業？", opts: ["A. 算命師", "B. 廚師", "C. 古代以符咒治病的醫生", "D. 掌管祭祀的官員"], ans: "C", exp: "祝由科是古代醫學十三科之一，主用符咒治病。" },
+                { q: "用來修補穿胸國人患處的材料是？", opts: ["A. 豬心羊肺", "B. 鐵石心腸", "C. 中山狼與波斯狗的心肺", "D. 熊心豹子膽"], ans: "C", exp: "文中提到取來「中山狼」、「波斯狗」的心肺。" },
+                { q: "為什麼用了狼心狗肺修補後，胸口仍有一個大洞？", opts: ["A. 醫術不高明", "B. 狼心狗肺本身也是歪偏的", "C. 符咒失效", "D. 病人體質排斥"], ans: "B", exp: "文中解釋：「誰知這狼的心，狗的肺，也是歪在一邊、偏在一邊的...胸前竟難復舊」。" },
+                { q: "「眉頭一皺」在文中暗示了什麼樣的心理活動？", opts: ["A. 思考哲學問題", "B. 擔憂國家大事", "C. 計較算計、心術不正", "D. 身體疼痛"], ans: "C", exp: "此處眉頭一皺與「心歪」相連，暗示動歪腦筋、偏私算計。" },
+                { q: "林之洋最後的感嘆「原來狼心狗肺都是又歪又偏的」，運用了什麼修辭？", opts: ["A. 雙關", "B. 倒反", "C. 轉化", "D. 頂真"], ans: "A", exp: "雙關：既指動物器官的位置不正，也指成語「狼心狗肺」喻人的心術不正。" },
+                { q: "這則故事主要諷刺了社會上的哪種人？", opts: ["A. 身體殘疾的人", "B. 醫術不精的醫生", "C. 偏私勢利、忘恩負義的人", "D. 迷信符咒的人"], ans: "C", exp: "透過心歪、偏心、狼心狗肺等意象，諷刺道德敗壞之人。" },
+                { q: "「中山狼」這個典故通常用來形容？", opts: ["A. 勇猛善戰", "B. 忘恩負義", "C. 聰明機智", "D. 孤獨寂寞"], ans: "B", exp: "源自東郭先生與狼的故事，中山狼喻恩將仇報。" },
+                { q: "文中「胸無主宰」的意思是？", opts: ["A. 胸部沒有神經", "B. 失去了良心與道德準則", "C. 身體不受控制", "D. 心臟停止跳動"], ans: "B", exp: "心為一身主宰，心離本位即指失去良知與準則。" },
+                { q: "穿胸國位於哪部古典小說的虛構世界中？", opts: ["A. 西遊記", "B. 紅樓夢", "C. 鏡花緣", "D. 封神榜"], ans: "C", exp: "本文選自《鏡花緣》。" },
+                { q: "多九公在書中的角色功能通常是？", opts: ["A. 製造麻煩", "B. 武力擔當", "C. 博學解說", "D. 經商賺錢"], ans: "C", exp: "多九公是見多識廣的老水手，常負責解釋海外奇聞。" },
+                { q: "「歪心疔」生在何處？", opts: ["A. 後背", "B. 前心", "C. 手臂", "D. 額頭"], ans: "B", exp: "文中云：「前心生一大疔」。" },
+                { q: "「久而久之，前後相通」造成的後果是？", opts: ["A. 變成透明人", "B. 形成穿胸的大洞", "C. 獲得特異功能", "D. 立即死亡"], ans: "B", exp: "前後潰爛相通，即形成穿胸之洞。" },
+                { q: "下列哪個成語最適合形容穿胸國人的病因？", opts: ["A. 剛正不阿", "B. 偏聽偏信", "C. 居心叵測/心術不正", "D. 大公無私"], ans: "C", exp: "因行為不正、偏私歪斜導致。" },
+                { q: "「虧得」一詞的意思是？", opts: ["A. 損失", "B. 幸虧、多虧", "C. 責怪", "D. 虧欠"], ans: "B", exp: "表示僥倖或感激的語氣。" },
+                { q: "這則故事展現了《鏡花緣》的什麼藝術特色？", opts: ["A. 寫實主義", "B. 浪漫愛情", "C. 諷刺與寓言", "D. 歷史演義"], ans: "C", exp: "藉海外奇談諷刺現實社會。" },
+                { q: "「日漸潰爛」的「潰」字讀音為？", opts: ["A. ㄍㄨㄟˋ", "B. ㄎㄨㄟˋ", "C. ㄏㄨㄟˋ", "D. ㄧˊ"], ans: "B", exp: "ㄎㄨㄟˋ，潰爛。" },
+                { q: "文中提到「藥石無效」後，採取了什麼療法？", opts: ["A. 針灸", "B. 開刀", "C. 祝由科符咒移心", "D. 氣功"], ans: "C", exp: "祝由科用符咒取狼心狗肺來補。" },
+                { q: "林之洋的性格特質在最後一句話中表現為？", opts: ["A. 深沉內斂", "B. 直率詼諧", "C. 嚴肅刻板", "D. 愚鈍無知"], ans: "B", exp: "他直白地點破狼心狗肺的雙關義，帶有詼諧感。" }
+            ]
+        };
+
+        // 預處理所有關鍵字
+        const allKeywords = {};
+        contentData.vocabulary.forEach((item) => {
+             allKeywords[item.word] = item;
+        });
+
+        // ----------------------------------------------------
+        // 2. 全域狀態管理
+        // ----------------------------------------------------
+        let currentTab = 'overview';
+        let chatHistory = [];
+        let currentPersona = 'duojiugong'; 
+        let userAnswers = {}; 
+
+        const personas = {
+            duojiugong: {
+                name: "多九公",
+                icon: "fas fa-book",
+                color: "amber",
+                intro: "老夫多九公，走南闖北，什麼怪事沒見過？這穿胸國的來歷，可是大有學問的。年輕人，做人可要心正啊！",
+                systemPrompt: "你現在扮演《鏡花緣》中的多九公。你是一位見多識廣、博學多聞的老水手/學者。你說話喜歡引經據典或講述奇聞，語氣蒼老但精神矍鑠。你用這則故事告誡世人不可偏心、不可做壞事，否則會像穿胸國人一樣。"
+            },
+            linzhiyang: {
+                name: "林之洋",
+                icon: "fas fa-coins",
+                color: "blue",
+                intro: "俺是林之洋，做買賣最講究實誠。哎呀！這人的胸口怎麼有個大洞？嚇死俺了！這還能活嗎？",
+                systemPrompt: "你現在扮演《鏡花緣》中的林之洋。你是一個性格直爽、有點市儈但心地善良的商人。你說話比較口語化，甚至有點粗魯（用『俺』自稱）。你對海外奇聞感到驚訝和好奇，喜歡用商人的角度或直觀的感受來評論。"
+            },
+            chuanxiong: {
+                name: "穿胸國人",
+                icon: "fas fa-user-injured",
+                color: "red",
+                intro: "咳咳...別看了！沒見過心偏的人嗎？這洞...這洞通風涼快！哼，你們這些外鄉人懂什麼！",
+                systemPrompt: "你扮演穿胸國的國民。你因為心術不正導致胸口穿洞，但你死鴨子嘴硬，不承認自己道德有問題，反而找藉口（如涼快、方便抬人）來掩飾。你性格偏激、愛強詞奪理。"
+            }
+        };
+
+        // [Tab Story] 抉擇之路 (RPG)
+        const storyNodes = {
+            start: {
+                id: 'start',
+                text: "你們的船停靠在穿胸國的港口。遠遠望去，岸上的人走路姿勢怪異，而且胸前似乎都掛著什麼東西，或者...那是空的？你決定：",
+                imagePath: "images/rpg_start.jpg",
+                choices: [
+                    { text: "跟隨多九公下船一探究竟", next: "explore" },
+                    { text: "留在船上用望遠鏡觀察", next: "observe" }
+                ]
+            },
+            explore: {
+                id: 'explore',
+                text: "你跟著多九公走上街道。天啊！這裡的人胸口真的都有一個大洞！有的人甚至用竹竿穿過胸口的洞，被人抬著走。林之洋嚇得躲在你身後。這時，一個穿胸國人向你們走來...",
+                imagePath: "images/rpg_explore.jpg",
+                choices: [
+                    { text: "禮貌詢問他為何胸口有洞", next: "ask_local" },
+                    { text: "悄悄問多九公這是怎麼回事", next: "ask_duo" }
+                ]
+            },
+            observe: {
+                id: 'observe',
+                text: "你透過望遠鏡，看到令人震驚的一幕：富人讓僕人用竿子穿過自己的胸洞抬著走，彷彿坐轎子一樣。這真是太荒謬了！多九公回來了，你趕緊問他。",
+                imagePath: "images/rpg_observe.jpg",
+                choices: [
+                    { text: "聽多九公解釋由來", next: "explanation" }
+                ]
+            },
+            ask_local: {
+                id: 'ask_local',
+                text: "那人瞪了你一眼：「少見多怪！這是貴族象徵，懂嗎？方便出行！」說完便傲慢地走了。看來他們並不覺得這是病。",
+                imagePath: "images/rpg_ask_local.jpg",
+                choices: [
+                    { text: "覺得不可理喻，轉問多九公", next: "ask_duo" }
+                ]
+            },
+            ask_duo: {
+                id: 'ask_duo',
+                text: "多九公嘆了口氣，開始講述這「歪心疔」與「偏心疽」的來歷，以及祝由科用狼心狗肺修補的故事。",
+                imagePath: "images/rpg_ask_duo.jpg",
+                choices: [
+                    { text: "專心聽講 (進入故事核心)", next: "explanation" }
+                ]
+            },
+            explanation: {
+                id: 'explanation',
+                text: "聽完多九公的解釋，林之洋大笑：「原來狼心狗肺都是又歪又偏的！」你也恍然大悟，這哪裡是病，分明是壞了良心啊！",
+                imagePath: "images/rpg_explanation.jpg",
+                choices: [
+                    { text: "離開穿胸國，繼續旅程", next: "end" }
+                ]
+            },
+            end: {
+                id: 'end',
+                text: "【Happy Ending: 警惕自省】船離開了穿胸國。看著漸行漸遠的海岸，你摸了摸自己的胸口，暗自警惕：做人一定要心正，千萬不可讓心「歪」了。",
+                imagePath: "images/rpg_end.jpg",
+                choices: [{ text: "重來", next: "start" }],
+                isEnding: true,
+                win: true
+            }
+        };
+
+        window.onload = function() {
+            document.getElementById('main-title').textContent = contentData.metadata.title;
+            document.getElementById('author-name').textContent = contentData.metadata.author;
+            document.getElementById('source-name').textContent = contentData.metadata.source;
+            switchTab('overview');
+
+            if ('speechSynthesis' in window) {
+                 window.speechSynthesis.onvoiceschanged = function() {
+                    window.speechSynthesis.getVoices();
+                };
+            }
+
+            document.addEventListener('click', (e) => {
+                const popup = document.getElementById('note-template');
+                if (!e.target.closest('.interactive-word') && !e.target.closest('.note-popup')) {
+                    closeNote();
+                }
+            });
+        };
+
+        function closeNote() {
+            const popup = document.getElementById('note-template');
+            if(popup) {
+                popup.classList.add('hidden');
+                popup.style.display = ''; 
+            }
+        }
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            closeNote();
+
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            const container = document.getElementById('content-display');
+            container.style.opacity = '0';
+            
+            setTimeout(() => {
+                switch(tabId) {
+                    case 'overview': renderOverview(container); break;
+                    case 'reading': renderReading(container); break;
+                    case 'deep': renderDeepUnderstanding(container); break;
+                    case 'vocabulary': renderVocabulary(container); break;
+                    case 'analysis': renderAnalysis(container); break;
+                    case 'chat': renderChat(container); break;
+                    case 'quiz': renderQuiz(container); break;
+                    case 'story': 
+                        renderStory(container); 
+                        break;
+                }
+                container.style.opacity = '1';
+            }, 200);
+        }
+
+        function renderOverview(container) {
+            container.innerHTML = `
+                <div class="max-w-3xl mx-auto">
+                    <div class="bg-amber-50 rounded-xl p-6 border-l-8 border-amber-600 mb-8">
+                        <h2 class="text-2xl font-bold text-amber-900 mb-4"><i class="fas fa-scroll mr-2"></i>故事大意</h2>
+                        <p class="text-lg text-gray-700 leading-loose text-justify">${contentData.summary}</p>
+                    </div>
+                    
+                    <div class="flex justify-center">
+                         <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition flex flex-col justify-center items-center text-center max-w-md w-full">
+                            <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-lightbulb text-amber-600 text-2xl"></i>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">學習重點</h3>
+                            <p class="text-gray-600 text-sm">理解「穿胸」的諷刺寓意，體會「狼心狗肺」的雙關妙用，並警惕做人不可偏心。</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderReading(container) {
+            let segmentsHtml = contentData.segments.map((seg, idx) => {
+                let displayHtml = seg.original;
+                const sortedKeys = Object.keys(allKeywords).sort((a, b) => b.length - a.length);
+                const placeholders = {};
+                let counter = 0;
+
+                sortedKeys.forEach(key => {
+                    if (displayHtml.includes(key)) {
+                        const ph = `___PH${counter}___`;
+                        placeholders[ph] = key;
+                        displayHtml = displayHtml.split(key).join(ph);
+                        counter++;
+                    }
+                });
+
+                Object.keys(placeholders).forEach(ph => {
+                    const key = placeholders[ph];
+                    displayHtml = displayHtml.split(ph).join(`<span class="interactive-word" onclick="showNote('${key}', ${idx}, this, event)">${key}</span>`);
+                });
+
+                // 靜態圖片載入邏輯
+                let imageSection = `
+                    <div class="mt-6 rounded-lg overflow-hidden shadow-lg">
+                        <img src="${seg.imagePath}" 
+                             class="w-full h-auto rounded-lg shadow-md" 
+                             alt="段落插圖"
+                             onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'h-48 bg-gray-100 flex items-center justify-center text-gray-400 border-2 border-dashed border-gray-300\'><i class=\'fas fa-image mr-2\'></i>圖片準備中...請確認 images 資料夾</div>'">
+                    </div>`;
+
+                return `
+                    <div class="group mb-12 relative pl-6 border-l-4 border-gray-200 hover:border-amber-500 transition-colors duration-300">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">段落 ${idx + 1}</span>
+                            <div class="flex gap-2">
+                                <button onclick="playAudio('${seg.audioText}')" class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center hover:bg-amber-200 transition" title="朗讀">
+                                    <i class="fas fa-volume-up text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="relative hover-trans-container cursor-help py-2">
+                            <p class="text-2xl sm:text-3xl font-serif text-gray-800 leading-relaxed relative z-10">${displayHtml}</p>
+                            <div class="hover-translation hidden absolute left-0 top-full mt-2 w-full z-20">
+                                <div class="bg-white/95 backdrop-blur-sm p-4 rounded-lg text-gray-700 text-lg leading-7 border border-amber-200 shadow-xl relative">
+                                    <div class="absolute -top-2 left-8 w-4 h-4 bg-white border-t border-l border-amber-200 transform rotate-45"></div>
+                                    <span class="font-bold text-amber-700 mr-1"><i class="fas fa-language mr-1"></i>語譯：</span> ${seg.translation}
+                                </div>
+                            </div>
+                        </div>
+                        ${imageSection}
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="max-w-3xl mx-auto">
+                    ${segmentsHtml}
+                </div>
+                <div class="text-center mt-12 pb-6 text-gray-400 text-sm space-y-1">
+                    <p><i class="fas fa-mouse-pointer mr-1"></i> 點擊底線文字查看註釋</p>
+                    <p><i class="fas fa-hand-pointer mr-1"></i> 滑鼠移過古文即可查看翻譯</p>
+                </div>
+            `;
+        }
+        
+        function renderDeepUnderstanding(container) {
+            container.innerHTML = `
+                <div class="space-y-12">
+                    <!-- Analysis Chart -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-amber-900 mb-4"><i class="fas fa-heart-broken mr-2"></i>穿胸病理圖解 (寓意分析)</h2>
+                        <div class="bg-white rounded-xl shadow-lg p-8 border-4 border-amber-200 flex justify-center items-center overflow-hidden" style="min-height: 400px;">
+                             <svg viewBox="0 0 600 400" class="w-full h-full">
+                                <defs>
+                                    <marker id="arrow-deep" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                        <polygon points="0 0, 10 3.5, 0 7" fill="#666" />
+                                    </marker>
+                                </defs>
+                                
+                                <!-- Normal Heart -->
+                                <g transform="translate(50, 50)">
+                                    <circle cx="50" cy="50" r="40" fill="#dcfce7" stroke="#16a34a" stroke-width="2" />
+                                    <text x="50" y="55" text-anchor="middle" font-weight="bold" fill="#16a34a">本心 (正中)</text>
+                                    <text x="50" y="110" text-anchor="middle" font-size="12">良知尚存</text>
+                                </g>
+
+                                <!-- Cause -->
+                                <g transform="translate(250, 20)">
+                                    <rect x="0" y="0" width="120" height="60" rx="5" fill="#fee2e2" stroke="#dc2626" />
+                                    <text x="60" y="25" text-anchor="middle" font-weight="bold" fill="#991b1b">行為不正</text>
+                                    <text x="60" y="45" text-anchor="middle" font-size="12">眉頭一皺 (算計)</text>
+                                </g>
+
+                                <!-- Symptoms -->
+                                <g transform="translate(250, 120)">
+                                    <path d="M60,0 L0,60 L120,60 Z" fill="#fef3c7" stroke="#d97706" />
+                                    <text x="60" y="40" text-anchor="middle" font-weight="bold" fill="#92400e">心歪 / 心偏</text>
+                                </g>
+                                
+                                <!-- Disease -->
+                                <g transform="translate(250, 220)">
+                                    <rect x="0" y="0" width="120" height="60" rx="5" fill="#57534e" stroke="#000" />
+                                    <text x="60" y="25" text-anchor="middle" font-weight="bold" fill="#fff">歪心疔/偏心疽</text>
+                                    <text x="60" y="45" text-anchor="middle" font-size="12" fill="#d6d3d1">潰爛穿孔</text>
+                                </g>
+
+                                <!-- Cure? -->
+                                <g transform="translate(450, 150)">
+                                    <circle cx="60" cy="60" r="50" fill="#7f1d1d" stroke="#000" stroke-width="3" stroke-dasharray="5,5" />
+                                    <text x="60" y="50" text-anchor="middle" font-weight="bold" fill="#fff">狼心狗肺</text>
+                                    <text x="60" y="70" text-anchor="middle" font-size="12" fill="#fecaca">本質亦偏</text>
+                                    <text x="60" y="90" text-anchor="middle" font-size="12" fill="#fff">難以復舊</text>
+                                </g>
+
+                                <!-- Arrows -->
+                                <path d="M100,50 L240,50" stroke="#666" stroke-width="2" marker-end="url(#arrow-deep)" stroke-dasharray="5,5" />
+                                <path d="M310,80 L310,110" stroke="#666" stroke-width="2" marker-end="url(#arrow-deep)" />
+                                <path d="M310,180 L310,210" stroke="#666" stroke-width="2" marker-end="url(#arrow-deep)" />
+                                <path d="M380,250 L440,200" stroke="#666" stroke-width="2" marker-end="url(#arrow-deep)" />
+
+                            </svg>
+                        </div>
+                    </section>
+                </div>
+            `;
+        }
+
+        function renderVocabulary(container) {
+            const cardsHtml = contentData.vocabulary.map(item => `
+                <div class="bg-white border border-amber-100 rounded-xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-2xl font-bold text-amber-900">${item.word}</h3>
+                    </div>
+                    <div class="text-sm text-gray-500 mb-2 font-mono bg-amber-50 inline-block px-2 py-1 rounded self-start">
+                        ${item.zhuyin} • <span class="text-amber-700 font-semibold">${item.pos}</span>
+                    </div>
+                    <p class="text-gray-700 text-lg leading-relaxed flex-grow">${item.meaning}</p>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="max-w-6xl mx-auto">
+                    <h2 class="text-3xl font-bold text-center mb-8 text-amber-900 font-serif">語詞精解 (共36則)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        ${cardsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAnalysis(container) {
+            const rhetoricHtml = contentData.rhetoric.map(r => `
+                <div class="flex items-start mb-4 p-4 bg-white rounded-lg border border-gray-100 shadow-sm">
+                    <div class="flex-shrink-0 mr-4">
+                        <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold">
+                            <i class="fas fa-pen-fancy"></i>
+                        </div>
+                    </div>
+                    <div>
+                        ${marked.parse(r)}
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="max-w-3xl mx-auto space-y-10">
+                    <section>
+                        <h2 class="text-2xl font-bold text-amber-900 mb-4 flex items-center">
+                            <i class="fas fa-book-reader mr-3"></i>全文主旨與寓意
+                        </h2>
+                        <div class="bg-amber-50 p-6 rounded-xl border-l-8 border-amber-600 shadow-sm text-lg text-gray-800 leading-loose">
+                            ${marked.parse(contentData.meaning)}
+                        </div>
+                    </section>
+                    <section>
+                        <h2 class="text-2xl font-bold text-amber-900 mb-4 flex items-center">
+                            <i class="fas fa-highlighter mr-3"></i>修辭與寫作技巧
+                        </h2>
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                            ${rhetoricHtml}
+                        </div>
+                    </section>
+                </div>
+            `;
+        }
+
+        function renderChat(container) {
+            const p = personas[currentPersona];
+            container.innerHTML = `
+                <div class="flex flex-col h-[600px]">
+                    <div class="bg-blue-50 p-4 rounded-t-xl border-b border-blue-100 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-blue-200 flex items-center justify-center mr-3 border-2 border-white shadow-sm">
+                                <i class="${p.icon} text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-blue-900">${p.name}</h3>
+                                <p class="text-xs text-blue-600">角色扮演中</p>
+                            </div>
+                        </div>
+                        <select onchange="switchPersona(this.value)" class="text-sm border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-2">
+                            <option value="duojiugong" ${currentPersona === 'duojiugong' ? 'selected' : ''}>多九公</option>
+                            <option value="linzhiyang" ${currentPersona === 'linzhiyang' ? 'selected' : ''}>林之洋</option>
+                            <option value="chuanxiong" ${currentPersona === 'chuanxiong' ? 'selected' : ''}>穿胸國人</option>
+                        </select>
+                    </div>
+                    
+                    <div id="chat-messages" class="flex-grow overflow-y-auto p-4 bg-gray-50 space-y-4 custom-scrollbar">
+                        <div class="chat-bubble chat-ai shadow-sm">
+                            ${p.intro}
+                        </div>
+                    </div>
+
+                    <div class="p-4 border-t border-gray-200 bg-white rounded-b-xl">
+                        <form onsubmit="handleChatSubmit(event)" class="relative">
+                            <input type="text" id="chat-input" class="w-full pl-4 pr-12 py-3 rounded-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition" placeholder="輸入你的問題...">
+                            <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 w-9 h-9 bg-blue-600 text-white rounded-full hover:bg-blue-700 flex items-center justify-center transition shadow-md">
+                                <i class="fas fa-paper-plane text-sm"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            if (chatHistory.length > 0) {
+                const msgContainer = document.getElementById('chat-messages');
+                msgContainer.innerHTML = ''; 
+                msgContainer.innerHTML = `<div class="chat-bubble chat-ai shadow-sm">${personas[currentPersona].intro}</div>`;
+                chatHistory.forEach(msg => {
+                    const div = document.createElement('div');
+                    div.className = `chat-bubble ${msg.role === 'user' ? 'chat-user' : 'chat-ai'} shadow-sm`;
+                    div.innerHTML = msg.content;
+                    msgContainer.appendChild(div);
+                });
+            }
+        }
+
+        function switchPersona(newPersona) {
+            currentPersona = newPersona;
+            chatHistory = []; 
+            renderChat(document.getElementById('content-display'));
+        }
+
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const userText = input.value.trim();
+            if (!userText) return;
+
+            // Display user message
+            const msgContainer = document.getElementById('chat-messages');
+            const userBubble = document.createElement('div');
+            userBubble.className = 'chat-bubble chat-user shadow-sm animate-fade-in';
+            userBubble.innerText = userText;
+            msgContainer.appendChild(userBubble);
+            chatHistory.push({ role: 'user', content: userText });
+            input.value = '';
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+
+            // AI Loading
+            const aiBubble = document.createElement('div');
+            aiBubble.className = 'chat-bubble chat-ai shadow-sm';
+            aiBubble.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+            msgContainer.appendChild(aiBubble);
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+
+            // Simulate AI response (Mock logic for static version)
+            setTimeout(() => {
+                let reply = "";
+                if (currentPersona === 'duojiugong') {
+                    reply = "老夫走遍天下，這等奇事見多了。這心啊，最怕的就是『偏』。一偏，這人就不正了。小友可要引以為戒啊！";
+                } else if (currentPersona === 'linzhiyang') {
+                    reply = "俺做生意最怕遇到這種狼心狗肺的人！收了貨不給錢，心都爛透了！俺看這穿胸國的人，生意是做不成了。";
+                } else {
+                    reply = "哼！你們懂什麼？這叫通透！心偏又怎樣？至少我們活得自在！別拿你們那套道德標準來衡量我們！";
+                }
+                
+                aiBubble.innerHTML = reply;
+                chatHistory.push({ role: 'ai', content: reply });
+                msgContainer.scrollTop = msgContainer.scrollHeight;
+            }, 1000);
+        }
+
+        function renderQuiz(container) {
+            let quizHtml = contentData.quiz.map((q, i) => {
+                const val = ["A","B","C","D"];
+                const isAnswered = userAnswers[i] !== undefined;
+                const userAnswer = userAnswers[i];
+                let feedback = '';
+                let cardClass = "bg-white border border-gray-200";
+                let feedbackClass = "hidden mt-4 p-3 rounded-lg text-lg bg-gray-50"; 
+                
+                if (isAnswered) {
+                    feedbackClass = "mt-4 p-3 rounded-lg text-lg animate-fade-in"; 
+                    if (userAnswer === q.ans) {
+                        feedback = `<strong class="block mb-1"><i class="fas fa-check-circle mr-1"></i>答對了！</strong>${q.exp}`;
+                        cardClass = "bg-white border border-green-500 shadow-sm";
+                        feedbackClass += " bg-green-50 text-green-800";
+                    } else {
+                        const userOption = q.opts.find((opt, idx) => ["A","B","C","D"][idx] === userAnswer);
+                        const correctOption = q.opts.find((opt, idx) => ["A","B","C","D"][idx] === q.ans);
+                        feedback = `
+                            <div class="mb-2">
+                                <span class="block font-bold text-red-600"><i class="fas fa-times-circle mr-1"></i>答錯了</span>
+                                <span class="block text-gray-600">您的答案：${userOption || userAnswer}</span>
+                                <span class="block text-green-600 font-bold">正確答案：${correctOption}</span>
+                            </div>
+                            <div class="pt-2 border-t border-gray-200">
+                                <strong>解析：</strong>${q.exp}
+                            </div>
+                        `;
+                        cardClass = "bg-white border border-red-500 shadow-sm";
+                        feedbackClass += " bg-red-50 text-gray-800";
+                    }
+                }
+
+                return `
+                <div class="${cardClass} rounded-xl p-6 mb-6 shadow-sm transition-all duration-300" id="quiz-card-${i}">
+                    <p class="font-bold text-2xl text-gray-800 mb-4"><span class="text-amber-600 mr-2">Q${i+1}.</span>${q.q}</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        ${q.opts.map((opt, optIdx) => {
+                            const val = ["A","B","C","D"][optIdx];
+                            const isChecked = userAnswer === val ? 'checked' : '';
+                            const isDisabled = isAnswered ? 'disabled' : '';
+                            const labelClass = isAnswered ? 'disabled-label' : 'hover:bg-amber-50 cursor-pointer';
+
+                            return `
+                            <label class="flex items-center p-3 rounded-lg border border-gray-100 transition group ${labelClass}">
+                                <input type="radio" name="q-${i}" value="${val}" class="mr-3 text-amber-600 focus:ring-amber-500" onchange="checkAnswer(${i}, '${val}', '${q.ans}')" ${isChecked} ${isDisabled}>
+                                <span class="text-xl group-hover:text-amber-800">${opt}</span>
+                            </label>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div id="feedback-${i}" class="${feedbackClass}">${feedback}</div>
+                </div>
+            `}).join('');
+            
+            container.innerHTML = `
+                <div class="max-w-3xl mx-auto pb-24">
+                    <h2 class="text-2xl font-bold text-center mb-8 text-gray-700">高難度挑戰 (共20題)</h2>
+                    ${quizHtml}
+                    
+                    <!-- Submit Button Area -->
+                    <div class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 shadow-lg flex justify-center items-center z-40">
+                         <button onclick="submitQuiz()" class="px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-full shadow-lg transition transform hover:scale-105 flex items-center text-lg">
+                            <i class="fas fa-paper-plane mr-2"></i> 交卷並查看成績
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStory(container) {
+            if(!window.currentStoryNode) window.currentStoryNode = 'start';
+            const node = storyNodes[window.currentStoryNode];
+
+            // 靜態載入邏輯
+            let imageContent = `<div class="w-full overflow-hidden rounded-t-xl">
+                <img src="${node.imagePath}" 
+                     class="w-full h-auto fade-in-image" 
+                     alt="場景圖"
+                     onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'h-48 bg-gray-100 flex items-center justify-center text-gray-400 border-2 border-dashed border-gray-300\'><i class=\'fas fa-image mr-2\'></i>圖片準備中...請確認 images 資料夾</div>'">
+            </div>`;
+
+            container.innerHTML = `<div class="max-w-2xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden border border-amber-100">${imageContent}<div class="p-8"><div class="flex items-center mb-4 text-amber-800 text-sm font-bold uppercase tracking-widest"><i class="fas fa-scroll mr-2"></i> 抉擇時刻</div><p class="text-xl leading-relaxed text-gray-800 mb-8 font-serif">${node.text}</p>${node.isEnding ? (node.win ? `<div class="text-center mb-6 text-green-600 font-bold text-2xl p-4 bg-green-50 rounded-lg border border-green-200"><i class="fas fa-trophy mr-2"></i>達成結局</div>` : `<div class="text-center mb-6 text-gray-600 font-bold text-2xl p-4 bg-gray-50 rounded-lg border border-gray-200">故事結束</div>`) : ''}<div class="grid gap-4">${node.choices.map(c => `<button onclick="nextStoryNode('${c.next}')" class="story-choice w-full py-4 px-6 bg-white hover:bg-amber-50 border-2 border-amber-200 hover:border-amber-400 rounded-xl text-amber-900 font-bold text-lg transition duration-200 flex items-center justify-between group"><span>${c.text}</span><i class="fas fa-chevron-right text-amber-300 group-hover:text-amber-600 transition"></i></button>`).join('')}</div></div></div>`;
+            if(node.win) { try { confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } }); } catch (e) { console.log("Confetti not loaded"); } }
+        }
+
+        function nextStoryNode(nodeId) {
+            window.currentStoryNode = nodeId;
+            renderStory(document.getElementById('content-display'));
+        }
+
+        function checkAnswer(idx, val, ans) {
+            if (userAnswers[idx] !== undefined) return; 
+
+            userAnswers[idx] = val; 
+            
+            const radios = document.getElementsByName(`q-${idx}`);
+            for (let radio of radios) {
+                radio.disabled = true;
+                radio.parentElement.classList.add('disabled-label');
+            }
+
+            const feedbackEl = document.getElementById(`feedback-${idx}`);
+            const card = document.getElementById(`quiz-card-${idx}`);
+            const qData = contentData.quiz[idx];
+            if (!feedbackEl || !card) return;
+            
+            feedbackEl.className = 'mt-4 p-3 rounded-lg text-lg animate-fade-in';
+            card.classList.remove('border-green-500', 'border-red-500');
+
+            if (val === ans) {
+                feedbackEl.innerHTML = `<strong class="block mb-1"><i class="fas fa-check-circle mr-1"></i>答對了！</strong>${qData.exp}`;
+                feedbackEl.classList.add('bg-green-50', 'text-green-800');
+                card.classList.add('border-green-500');
+            } else {
+                const correctOption = qData.opts.find((opt, i) => ["A","B","C","D"][i] === ans);
+                const userOption = qData.opts.find((opt, i) => ["A","B","C","D"][i] === val);
+                
+                feedbackEl.innerHTML = `
+                    <div class="mb-2">
+                        <span class="block font-bold text-red-600"><i class="fas fa-times-circle mr-1"></i>答錯了</span>
+                        <span class="block text-gray-600">您的答案：${userOption}</span>
+                        <span class="block text-green-600 font-bold">正確答案：${correctOption}</span>
+                    </div>
+                    <div class="pt-2 border-t border-gray-200">
+                        <strong>解析：</strong>${qData.exp}
+                    </div>
+                `;
+                feedbackEl.classList.add('bg-red-50', 'text-gray-800');
+                card.classList.add('border-red-500');
+            }
+            feedbackEl.classList.remove('hidden');
+        }
+
+        function submitQuiz() {
+            const total = contentData.quiz.length;
+            const answered = Object.keys(userAnswers).length;
+            
+            if (answered < total) {
+                showError(`您還有 ${total - answered} 題未完成，請作答完畢後再交卷！`);
+                return;
+            }
+            
+            let correctCount = 0;
+            for (let i = 0; i < total; i++) {
+                if (userAnswers[i] === contentData.quiz[i].ans) {
+                    correctCount++;
+                }
+            }
+            
+            const score = Math.round((correctCount / total) * 100);
+
+            const scoreText = document.getElementById('score-text');
+            scoreText.innerHTML = `您的總分是 <span class="text-amber-600 font-bold text-4xl">${score}</span> 分`;
+            
+            const modal = document.getElementById('score-modal');
+            modal.classList.remove('hidden');
+            
+            try {
+                confetti({
+                    particleCount: 200,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            } catch(e) {}
+        }
+
+        function closeScoreModal() {
+            const modal = document.getElementById('score-modal');
+            modal.classList.add('hidden');
+        }
+        
+        function showNote(key, segIdx, el, e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            const popup = document.getElementById('note-template');
+            const content = document.getElementById('note-content');
+            let noteData = allKeywords[key];
+            
+            if(!noteData) return;
+            
+            content.innerHTML = `
+                <div class="flex items-baseline justify-between border-b border-gray-100 pb-2 mb-2">
+                    <h4 class="text-xl font-bold text-amber-800">${key}</h4>
+                    <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded">${noteData.pos}</span>
+                </div>
+                <p class="text-sm text-gray-500 mb-1 font-mono">${noteData.zhuyin}</p>
+                <p class="text-gray-700 leading-relaxed">${noteData.meaning}</p>
+            `;
+            
+            const rect = el.getBoundingClientRect();
+            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            let left = rect.left + scrollLeft;
+            let top = rect.bottom + scrollTop + 5; 
+            
+            if (left + 300 > document.body.clientWidth) { 
+                left = document.body.clientWidth - 310; 
+            }
+            
+            popup.style.left = `${left}px`;
+            popup.style.top = `${top}px`;
+            popup.classList.remove('hidden');
+        }
+
+        function playAudio(text) {
+            if (!('speechSynthesis' in window)) { showError("您的瀏覽器不支援語音朗讀功能。"); return; }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-TW'; 
+            utterance.rate = 0.85; 
+            utterance.pitch = 1.0;
+            const voices = window.speechSynthesis.getVoices();
+            let targetVoice = voices.find(v => (v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW') && (v.name.includes('Google') || v.name.includes('Hanhan') || v.name.includes('Mei-Jia') || v.name.includes('Yating')));
+            if (!targetVoice) { targetVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW'); }
+            if (!targetVoice) { targetVoice = voices.find(v => v.lang.startsWith('zh')); }
+            if (targetVoice) { utterance.voice = targetVoice; }
+            utterance.onerror = (e) => { console.error("Speech synthesis error:", e); showError("語音播放發生錯誤，可能是瀏覽器限制或網路問題。"); };
+            window.speechSynthesis.speak(utterance);
+        }
+        window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+
+        function showError(msg) {
+            const toast = document.getElementById('error-toast');
+            document.getElementById('error-msg').innerText = msg;
+            toast.classList.remove('hidden');
+            requestAnimationFrame(() => { toast.classList.remove('translate-y-10', 'opacity-0'); });
+            setTimeout(() => { toast.classList.add('translate-y-10', 'opacity-0'); setTimeout(() => toast.classList.add('hidden'), 300); }, 4000);
+        }
+    </script>
+</body>
+</html>
