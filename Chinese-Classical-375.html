@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>(推與敲) 第42篇 塞翁失馬 - 互動式古文學習</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 載入 Marked.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- 載入 FontAwesome 圖標 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 載入 Canvas Confetti (特效) -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #fdfbf7; /* 米紙色 */
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .font-serif {
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        /* 自定義滾動條 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d97706; 
+            border-radius: 4px;
+        }
+
+        /* 標籤樣式 */
+        .tab-btn {
+            position: relative;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background-color: #b45309;
+            transition: width 0.3s ease;
+        }
+        .tab-btn.active {
+            color: #92400e;
+            background-color: #fffbeb;
+        }
+        .tab-btn.active::after {
+            width: 100%;
+        }
+
+        /* 互動文字樣式 */
+        .interactive-word {
+            cursor: pointer;
+            border-bottom: 2px dotted #d97706;
+            transition: all 0.2s;
+            padding-bottom: 1px;
+            position: relative;
+            z-index: 20;
+            color: #92400e;
+            font-weight: 600;
+        }
+        .interactive-word:hover {
+            background-color: #fef3c7;
+            color: #b45309;
+            border-bottom-style: solid;
+        }
+
+        /* 彈出註釋 */
+        .note-popup {
+            animation: fadeIn 0.2s ease-out;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px) translateX(-50%); }
+            to { opacity: 1; transform: translateY(0) translateX(-50%); }
+        }
+
+        /* 懸停翻譯效果 */
+        .hover-trans-container:hover .hover-translation {
+            display: block;
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 聊天氣泡 */
+        .chat-bubble {
+            max-width: 85%;
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            position: relative;
+            line-height: 1.6;
+        }
+        .chat-user {
+            background-color: #dbeafe; /* Blue-100 */
+            color: #1e40af;
+            align-self: flex-end;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .chat-ai {
+            background-color: #fff;
+            border: 1px solid #e5e7eb;
+            color: #374151;
+            align-self: flex-start;
+            border-bottom-left-radius: 0.25rem;
+        }
+        
+        /* AI 思考動畫 */
+        .typing-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            margin-right: 3px;
+            background-color: #9ca3af;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* 故事模式樣式 */
+        .story-choice:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .fade-in-image {
+            animation: fadeInImg 0.8s ease-out forwards;
+        }
+        @keyframes fadeInImg {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* 禁用狀態的樣式 */
+        input[type="radio"]:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .disabled-label {
+            cursor: not-allowed !important;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col">
+
+    <!-- 頂部導航欄 -->
+    <nav class="bg-amber-800 text-amber-50 shadow-lg sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-book-open text-2xl mr-3"></i>
+                    <span class="font-bold text-xl tracking-wider">古文互動教室</span>
+                </div>
+                <div class="hidden md:block text-sm opacity-80">
+                    GitHub 版
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="app" class="max-w-5xl mx-auto p-4 sm:p-6 w-full flex-grow flex flex-col">
+        
+        <!-- 課程標題卡片 -->
+        <header class="bg-white rounded-2xl shadow-md overflow-hidden mb-6 border border-amber-100">
+            <div class="bg-gradient-to-r from-amber-100 to-orange-50 p-6 sm:p-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h1 id="main-title" class="text-3xl sm:text-4xl font-serif font-bold text-amber-900 mb-2"></h1>
+                        <div class="flex items-center text-amber-700 space-x-4">
+                            <span class="flex items-center"><i class="fas fa-user-edit mr-2"></i><span id="author-name"></span></span>
+                            <span class="flex items-center"><i class="fas fa-scroll mr-2"></i><span id="source-name"></span></span>
+                        </div>
+                    </div>
+                    <div class="hidden md:block">
+                        <span class="inline-block bg-amber-200 text-amber-900 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wide">重要考試篇章</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 功能標籤 -->
+        <div class="flex flex-wrap justify-center bg-white rounded-xl shadow-sm mb-6 border border-gray-100 sticky top-20 z-40">
+            <button id="tab-overview" class="tab-btn active px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('overview')">
+                <i class="fas fa-info-circle mr-2"></i>故事總覽
+            </button>
+            <button id="tab-reading" class="tab-btn px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('reading')">
+                <i class="fas fa-glasses mr-2"></i>精讀與圖解
+            </button>
+            <button id="tab-deep" class="tab-btn px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('deep')">
+                <i class="fas fa-project-diagram mr-2"></i>深度理解與地圖
+            </button>
+            <button id="tab-story" class="tab-btn px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('story')">
+                <i class="fas fa-theater-masks mr-2"></i>抉擇之路(RPG)
+            </button>
+            <button id="tab-vocabulary" class="tab-btn px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('vocabulary')">
+                <i class="fas fa-spell-check mr-2"></i>語詞精解
+            </button>
+            <button id="tab-analysis" class="tab-btn px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('analysis')">
+                <i class="fas fa-feather-alt mr-2"></i>文義與修辭
+            </button>
+            <button id="tab-chat" class="tab-btn px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('chat')">
+                <i class="fas fa-robot mr-2"></i>AI 角色扮演
+            </button>
+            <button id="tab-quiz" class="tab-btn px-4 py-3 md:px-6 md:py-4 font-medium text-gray-600 hover:text-amber-700" onclick="switchTab('quiz')">
+                <i class="fas fa-pen-nib mr-2"></i>隨堂測驗
+            </button>
+        </div>
+
+        <!-- 主要內容區 -->
+        <main id="content-display" class="flex-grow bg-white rounded-2xl shadow-lg p-6 sm:p-8 min-h-[500px] transition-all duration-300 relative">
+            <!-- 內容動態載入 -->
+        </main>
+        
+    </div>
+
+    <!-- 註釋彈出框模板 -->
+    <div id="note-template" class="note-popup absolute bg-white border-l-4 border-amber-500 rounded-r-lg shadow-2xl p-4 z-50 hidden w-72" onclick="event.stopPropagation()">
+        <!-- 關閉按鈕 -->
+        <button onclick="closeNote()" class="absolute top-2 right-2 text-gray-400 hover:text-amber-600 transition">
+            <i class="fas fa-times"></i>
+        </button>
+        <div id="note-content">
+            <!-- 內容動態填充 -->
+        </div>
+    </div>
+
+    <!-- 結果模態框 (Score Modal) -->
+    <div id="score-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 shadow-2xl transform transition-all scale-100">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-amber-100 mb-4">
+                    <i class="fas fa-trophy text-2xl text-amber-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">測驗結果</h3>
+                <p class="text-gray-500 mb-6" id="score-text">你的得分是...</p>
+                <button onclick="closeScoreModal()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-amber-600 text-base font-medium text-white hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 sm:text-sm">
+                    查看詳細解析
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 錯誤提示 -->
+    <div id="error-toast" class="fixed bottom-6 right-6 bg-red-50 border border-red-200 text-red-600 px-6 py-4 rounded-lg shadow-xl hidden z-50 flex items-center transition-all transform translate-y-10 opacity-0">
+        <i class="fas fa-exclamation-circle mr-3 text-xl"></i>
+        <div>
+            <p class="font-bold">發生錯誤</p>
+            <p id="error-msg" class="text-sm"></p>
+        </div>
+    </div>
+
+    <script>
+        
+        // ----------------------------------------------------
+        // 1. 教材資料結構 (Content Data) - 塞翁失馬
+        // ----------------------------------------------------
+        const contentData = {
+            metadata: {
+                title: "(推與敲) 第42篇 塞翁失馬",
+                author: "劉安（主編）",
+                source: "《淮南子·人間訓》"
+            },
+            summary: "這是一則流傳千古的寓言故事，講述邊塞一位精通術數的老人（塞翁），因馬匹無故走失，鄰居來安慰，他卻說「這怎知不是福氣呢？」後來馬匹果然帶回匈奴駿馬。鄰居來祝賀，他又說「這怎知不是災禍呢？」接著兒子因騎駿馬摔斷了腿，鄰居來慰問，他再說「這怎知不是福氣呢？」最後胡人大舉入侵，壯丁多戰死沙場，兒子卻因跛腳而免於徵召，父子得以保全性命。故事旨在闡述「禍福相倚」的道家哲學。",
+            
+            meaning: "1. **禍福相倚 (Interdependence of Fortune and Misfortune)**：福與禍並非絕對，而是可以互相轉化的。壞事可能引發好事，好事也可能隱藏壞事。\n2. **處變不驚 (Equanimity)**：塞翁面對得失，始終保持平和冷靜的態度，不因一時的得失而大喜大悲，展現了超然的智慧。\n3. **長遠眼光**：看事情不能只看眼前，要將眼光放長遠，理解世事變幻莫測的道理。",
+            
+            rhetoric: [
+                "**設問 (Rhetorical Question):** 「此何遽不為福乎？」、「此何遽不能為禍乎？」接連三次的反問，不僅推進情節，更強化了禍福難料的主題。",
+                "**映襯 (Contrast):** 鄰居的「皆弔之」、「皆賀之」與塞翁的淡然反應形成強烈對比，凸顯塞翁的智慧。",
+                "**頂真 (Anadiplosis):** 事件環環相扣，馬亡->得駿馬->折髀->相保，前一事的結果成為後一事的原因。",
+                "**排比 (Parallelism):** 三次對話結構相似，層層遞進，增強了故事的節奏感。"
+            ],
+            
+            // 36個詳盡語詞精解
+            vocabulary: [
+                { word: "近", zhuyin: "ㄐㄧㄣˋ", pos: "動詞", meaning: "靠近、接近。" },
+                { word: "塞上", zhuyin: "ㄙㄞˋ ㄕㄤˋ", pos: "名詞", meaning: "邊塞地區，指長城一帶。" },
+                { word: "之人", zhuyin: "ㄓ ㄖㄣˊ", pos: "詞組", meaning: "......的人。" },
+                { word: "有", zhuyin: "ㄧㄡˇ", pos: "動詞", meaning: "存在、擁有。" },
+                { word: "善", zhuyin: "ㄕㄢˋ", pos: "動詞", meaning: "擅長、精通。" },
+                { word: "術", zhuyin: "ㄕㄨˋ", pos: "名詞", meaning: "術數，指推測吉凶禍福的方法。" },
+                { word: "者", zhuyin: "ㄓㄜˇ", pos: "代詞", meaning: "......的人。" },
+                { word: "馬", zhuyin: "ㄇㄚˇ", pos: "名詞", meaning: "馬匹。" },
+                { word: "無故", zhuyin: "ㄨˊ ㄍㄨˋ", pos: "副詞", meaning: "沒有原因。" },
+                { word: "亡", zhuyin: "ㄨㄤˊ", pos: "動詞", meaning: "逃跑、走失（古義）。" },
+                { word: "而", zhuyin: "ㄦˊ", pos: "連接詞", meaning: "表示順接，就。" },
+                { word: "入", zhuyin: "ㄖㄨˋ", pos: "動詞", meaning: "進入。" },
+                { word: "胡", zhuyin: "ㄏㄨˊ", pos: "名詞", meaning: "北方外族居住的地方。" },
+                { word: "皆", zhuyin: "ㄐㄧㄝ", pos: "副詞", meaning: "都、全。" },
+                { word: "弔", zhuyin: "ㄉㄧㄠˋ", pos: "動詞", meaning: "慰問、弔唁。" },
+                { word: "其", zhuyin: "ㄑㄧˊ", pos: "代詞", meaning: "他的。" },
+                { word: "父", zhuyin: "ㄈㄨˇ", pos: "名詞", meaning: "對老年男子的尊稱（塞翁）。" },
+                { word: "曰", zhuyin: "ㄩㄝ", pos: "動詞", meaning: "說。" },
+                { word: "此", zhuyin: "ㄘˇ", pos: "代詞", meaning: "這件事。" },
+                { word: "何遽", zhuyin: "ㄏㄜˊ ㄐㄩˋ", pos: "副詞", meaning: "怎麼就、難道。表示反問。" },
+                { word: "不為", zhuyin: "ㄅㄨˋ ㄨㄟˊ", pos: "動詞", meaning: "不能變成、不是。" },
+                { word: "福", zhuyin: "ㄈㄨˊ", pos: "名詞", meaning: "好事、福氣。" },
+                { word: "乎", zhuyin: "ㄏㄨ", pos: "助詞", meaning: "嗎、呢（疑問語氣）。" },
+                { word: "居", zhuyin: "ㄐㄩ", pos: "動詞", meaning: "經過、過了。" },
+                { word: "數月", zhuyin: "ㄕㄨˋ ㄩㄝˋ", pos: "時間詞", meaning: "幾個月。" },
+                { word: "將", zhuyin: "ㄐㄧㄤ", pos: "動詞", meaning: "帶領。" },
+                { word: "駿馬", zhuyin: "ㄐㄩㄣˋ ㄇㄚˇ", pos: "名詞", meaning: "良馬、好馬。" },
+                { word: "歸", zhuyin: "ㄍㄨㄟ", pos: "動詞", meaning: "回來。" },
+                { word: "賀", zhuyin: "ㄏㄜˋ", pos: "動詞", meaning: "祝賀。" },
+                { word: "禍", zhuyin: "ㄏㄨㄛˋ", pos: "名詞", meaning: "災禍、壞事。" },
+                { word: "家", zhuyin: "ㄐㄧㄚ", pos: "名詞", meaning: "家庭。" },
+                { word: "富", zhuyin: "ㄈㄨˋ", pos: "形容詞", meaning: "富裕、充滿（這裡指擁有許多）。" },
+                { word: "良馬", zhuyin: "ㄌㄧㄤˊ ㄇㄚˇ", pos: "名詞", meaning: "好馬。" },
+                { word: "子", zhuyin: "ㄗˇ", pos: "名詞", meaning: "兒子。" },
+                { word: "好", zhuyin: "ㄏㄠˋ", pos: "動詞", meaning: "喜愛。" },
+                { word: "騎", zhuyin: "ㄑㄧˊ", pos: "動詞", meaning: "騎馬。" },
+                { word: "墮", zhuyin: "ㄉㄨㄛˋ", pos: "動詞", meaning: "跌落、掉下。" },
+                { word: "折", zhuyin: "ㄕㄜˊ", pos: "動詞", meaning: "折斷。" },
+                { word: "髀", zhuyin: "ㄅㄧˋ", pos: "名詞", meaning: "大腿骨。" },
+                { word: "一年", zhuyin: "ㄧ ㄋㄧㄢˊ", pos: "時間詞", meaning: "一年後。" },
+                { word: "大", zhuyin: "ㄉㄚˋ", pos: "副詞", meaning: "大規模地。" },
+                { word: "入塞", zhuyin: "ㄖㄨˋ ㄙㄞˋ", pos: "動詞", meaning: "入侵邊境。" },
+                { word: "丁壯", zhuyin: "ㄉㄧㄥ ㄓㄨㄤˋ", pos: "名詞", meaning: "壯年男子。" },
+                { word: "引弦", zhuyin: "ㄧㄣˇ ㄒㄧㄢˊ", pos: "動詞", meaning: "拉開弓弦，指作戰。" },
+                { word: "戰", zhuyin: "ㄓㄢˋ", pos: "動詞", meaning: "打仗。" },
+                { word: "死者", zhuyin: "ㄙˇ ㄓㄜˇ", pos: "名詞", meaning: "死亡的人。" },
+                { word: "十九", zhuyin: "ㄕˊ ㄐㄧㄡˇ", pos: "數量詞", meaning: "十分之九，指絕大部分。" },
+                { word: "獨", zhuyin: "ㄉㄨˊ", pos: "副詞", meaning: "唯獨。" },
+                { word: "以", zhuyin: "ㄧˇ", pos: "介詞", meaning: "因為。" },
+                { word: "跛", zhuyin: "ㄅㄛˇ", pos: "形容詞", meaning: "跛腳、殘廢。" },
+                { word: "故", zhuyin: "ㄍㄨˋ", pos: "名詞", meaning: "緣故。" },
+                { word: "相保", zhuyin: "ㄒㄧㄤ ㄅㄠˇ", pos: "動詞", meaning: "互相保全性命。" }
+            ],
+
+            segments: [
+                {
+                    original: "近塞上之人有善術者。馬無故亡而入胡，人皆弔之。",
+                    translation: "靠近邊塞居住的人中，有一位精通術數的老人。有一天，他的馬無緣無故逃跑到胡人那邊去了，鄰居們都來安慰他。",
+                    audioText: "近塞上之人有善術者。馬無故亡而入胡，人皆弔之。",
+                    imagePath: "images/reading_segment_1.jpg"
+                },
+                {
+                    original: "其父曰：「此何遽不爲福乎？」居數月，其馬將胡駿馬而歸。人皆賀之。",
+                    translation: "老人卻說：「這怎麼就不能變成福氣呢？」過了幾個月，那匹馬竟然帶領著胡人的駿馬回來了。鄰居們都來祝賀他。",
+                    audioText: "其父曰：此何遽不爲福乎？居數月，其馬將胡駿馬而歸。人皆賀之。",
+                    imagePath: "images/reading_segment_2.jpg"
+                },
+                {
+                    original: "其父曰：「此何遽不能爲禍乎？」家富良馬，其子好騎，墮而折其髀。人皆弔之。",
+                    translation: "老人又說：「這怎麼就不能變成災禍呢？」家裡有了許多好馬，他的兒子喜歡騎馬，結果不小心從馬上摔下來，折斷了大腿骨。鄰居們又來慰問他。",
+                    audioText: "其父曰：此何遽不能爲禍乎？家富良馬，其子好騎，墮而折其髀。人皆弔之。",
+                    imagePath: "images/reading_segment_3.jpg"
+                },
+                {
+                    original: "其父曰：「此何遽不爲福乎？」居一年，胡人大入塞，丁壯者引弦而戰，近塞之人，死者十九。",
+                    translation: "老人說：「這怎麼就不能變成福氣呢？」過了一年，胡人大舉入侵邊塞，壯年男子都拿起弓箭去作戰。靠近邊塞的人，十分之九都戰死了。",
+                    audioText: "其父曰：此何遽不爲福乎？居一年，胡人大入塞，丁壯者引弦而戰，近塞之人，死者十九。",
+                    imagePath: "images/reading_segment_4.jpg"
+                },
+                {
+                    original: "此獨以跛之故，父子相保。",
+                    translation: "這個兒子因為跛腳的緣故（不用去打仗），父子兩人都得以保全性命。",
+                    audioText: "此獨以跛之故，父子相保。",
+                    imagePath: "images/reading_segment_5.jpg"
+                }
+            ],
+            // 隨堂測驗 (高難度 - 20題)
+            quiz: [
+                { q: "「馬無故亡而入胡」中的「亡」字，在古文中的意思為？", opts: ["A. 死亡", "B. 滅亡", "C. 逃跑/丟失", "D. 忘記"], ans: "C", exp: "古文中「亡」常作逃跑或丟失解，如「亡羊補牢」。" },
+                { q: "「人皆弔之」的「弔」字，其本義與下列何者最接近？", opts: ["A. 懸掛", "B. 慰問/弔唁", "C. 釣魚", "D. 調查"], ans: "B", exp: "在此指慰問遭遇不幸的人。" },
+                { q: "「此何遽不為福乎」中的「何遽」意指？", opts: ["A. 為什麼", "B. 什麼時候", "C. 怎麼就/難道", "D. 多麼恐懼"], ans: "C", exp: "表示反問語氣，意為「怎麼就...」。" },
+                { q: "文中「居數月」的「居」字解釋為？", opts: ["A. 居住", "B. 經過/過了", "C. 佔據", "D. 積蓄"], ans: "B", exp: "居在此作時間副詞，指經過了一段時間。" },
+                { q: "「其馬將胡駿馬而歸」的「將」字意思為？", opts: ["A. 將軍", "B. 將要", "C. 帶領", "D. 甚至"], ans: "C", exp: "動詞，帶領之意。" },
+                { q: "「墮而折其髀」中的「髀」是指身體哪個部位？", opts: ["A. 手臂", "B. 脊椎", "C. 大腿骨", "D. 小腿"], ans: "C", exp: "髀，音ㄅㄧˋ，指大腿骨。" },
+                { q: "「丁壯者引弦而戰」的「引弦」代指什麼？", opts: ["A. 彈奏樂器", "B. 拉弓射箭（作戰）", "C. 牽著牲畜", "D. 縫補衣物"], ans: "B", exp: "借代修辭，指拿起武器上戰場。" },
+                { q: "「死者十九」的意思是？", opts: ["A. 死了十九個人", "B. 十九歲的人死了", "C. 十分之九的人戰死", "D. 第十九個人死了"], ans: "C", exp: "分數表示法，指絕大多數（十分之九）。" },
+                { q: "這則寓言主要體現了哪一家的思想？", opts: ["A. 儒家", "B. 道家", "C. 法家", "D. 墨家"], ans: "B", exp: "出自《淮南子》，體現老子「禍兮福之所倚，福兮禍之所伏」的道家辯證思想。" },
+                { q: "塞翁對於得失的態度可用下列哪個成語形容？", opts: ["A. 患得患失", "B. 寵辱不驚", "C. 幸災樂禍", "D. 杞人憂天"], ans: "B", exp: "面對福禍變化，始終保持平和，不驚不喜。" },
+                { q: "下列哪個成語與本故事寓意「相反」？", opts: ["A. 因禍得福", "B. 否極泰來", "C. 樂極生悲", "D. 墨守成規"], ans: "D", exp: "墨守成規指拘泥舊法，與禍福轉化無關；其他三者皆有關聯。" },
+                { q: "文中三次「此何遽...」的反問，在結構上起到了什麼作用？", opts: ["A. 混淆視聽", "B. 層層遞進，推動情節反轉", "C. 表現塞翁的憤怒", "D. 增加字數"], ans: "B", exp: "每次反問都預示著情節的下一次反轉。" },
+                { q: "「近塞上之人有善術者」，「善術」是指？", opts: ["A. 醫術高明", "B. 武功高強", "C. 精通術數（推測吉凶）", "D. 擅長騎馬"], ans: "C", exp: "指通曉道術、推算吉凶。" },
+                { q: "胡人大入塞時，塞翁的兒子為何能倖免於難？", opts: ["A. 武功高強", "B. 賄賂官員", "C. 因為跛腳（殘疾）", "D. 躲在山上"], ans: "C", exp: "「獨以跛之故」。" },
+                { q: "文中「家富良馬」的「富」字作何解釋？", opts: ["A. 有錢", "B. 豐富/充滿（擁有許多）", "C. 姓氏", "D. 贈送"], ans: "B", exp: "形容家裡充滿了好馬。" },
+                { q: "「父子相保」的「相保」意思為？", opts: ["A. 互相保護", "B. 互相保證", "C. 共同保全性命", "D. 擔任保鏢"], ans: "C", exp: "指兩人都活了下來。" },
+                { q: "這則故事告訴我們在面對逆境時應該？", opts: ["A. 自暴自棄", "B. 怨天尤人", "C. 保持樂觀，靜待轉機", "D. 立即放棄"], ans: "C", exp: "禍福相倚，壞事可能變成好事。" },
+                { q: "下列哪一組字在文中的意思相同？", opts: ["A. 亡 / 死", "B. 弔 / 賀", "C. 居 / 處", "D. 唯 / 獨"], ans: "D", exp: "「獨以跛之故」的獨，與唯獨意思相近。A: 亡是逃跑，死是死亡。B反義。C居是經過，處是地點。" },
+                { q: "文中對於鄰居的描寫（皆弔之、皆賀之），主要作用是？", opts: ["A. 表現鄰里和睦", "B. 襯托塞翁的與眾不同（獨具慧眼）", "C. 批評鄰居虛偽", "D. 湊熱鬧"], ans: "B", exp: "以世俗的眼光襯托塞翁的超然智慧。" },
+                { q: "成語「塞翁失馬」的下一句通常接什麼？", opts: ["A. 焉知非福", "B. 得不償失", "C. 覆水難收", "D. 在所難免"], ans: "A", exp: "塞翁失馬，焉知非福。" }
+            ]
+        }; // ContentData ends here
+
+        // 預處理所有關鍵字 (將 contentData.vocabulary 轉為 Map 結構)
+        const allKeywords = {};
+        contentData.vocabulary.forEach((item) => {
+             allKeywords[item.word] = item;
+        });
+
+        // ----------------------------------------------------
+        // 2. 全域狀態管理
+        // ----------------------------------------------------
+        let currentTab = 'overview';
+        let chatHistory = [];
+        let currentPersona = 'saiweng'; 
+        let userAnswers = {}; 
+
+        const personas = {
+            saiweng: {
+                name: "塞翁",
+                icon: "fas fa-user-tie",
+                color: "amber",
+                intro: "老夫居於塞上多年，看盡世事變幻。福兮禍所伏，禍兮福所倚。年輕人，得失之間，不必太過執著啊。",
+                systemPrompt: "你現在扮演寓言故事中的塞翁。你是一位精通術數、充滿智慧的老者。你說話語氣平和、淡定，喜歡引用道家哲理。面對得失，你總是能看到事情的另一面，不輕易下定論。"
+            },
+            son: {
+                name: "塞翁之子",
+                icon: "fas fa-user-injured",
+                color: "blue",
+                intro: "唉，想當年我騎術精湛，誰知一摔斷了腿...本以為這輩子完了，沒想到這條斷腿竟救了我一命。",
+                systemPrompt: "你扮演塞翁的兒子。你年輕時喜歡騎馬，摔斷腿後一度非常沮喪，但經歷戰爭倖存後，對父親的智慧佩服得五體投地。你現在性格也變得比較沉穩。"
+            },
+            neighbor: {
+                name: "熱心鄰居",
+                icon: "fas fa-users",
+                color: "green",
+                intro: "哎呀！老翁啊，聽說你家馬丟了？真是太不幸了！...什麼？帶回來了？恭喜恭喜啊！...什麼？腿斷了？太慘了！",
+                systemPrompt: "你扮演住在邊塞的鄰居。你是一個普通人，情緒容易受眼前發生的事情影響，喜歡大驚小怪、湊熱鬧。你代表了世俗的眼光，無法理解塞翁的深意。"
+            }
+        };
+
+        // [Tab Story] 抉擇之路 (RPG)
+        const storyNodes = {
+            start: {
+                id: 'start',
+                text: "你是塞翁，住在邊境要塞。這天清晨，你發現家裡最珍貴的一匹馬無緣無故掙脫韁繩，跑到了胡人的領地。鄰居們紛紛趕來安慰你。你會怎麼回應？",
+                imagePath: "images/rpg_start.jpg",
+                choices: [
+                    { text: "痛哭流涕，感嘆命運不公", next: "bad_end_1" },
+                    { text: "淡然一笑：這怎知不是福氣呢？", next: "horse_return" }
+                ]
+            },
+            bad_end_1: {
+                id: 'bad_end_1',
+                text: "【Bad Ending: 庸人自擾】你沉浸在失去馬匹的悲傷中，整日鬱鬱寡歡，生了一場大病。馬雖然幾個月後回來了，但你已無力照料。你錯過了領悟道家智慧的機會。",
+                imagePath: "images/rpg_bad_end_1.jpg",
+                choices: [{ text: "重來", next: "start" }],
+                isEnding: true
+            },
+            horse_return: {
+                id: 'horse_return',
+                text: "幾個月後，你的馬不僅回來了，還帶回了一群胡人的駿馬！家裡的馬廄都快裝不下了。鄰居們羨慕不已，紛紛來祝賀道喜。你心裡想...",
+                imagePath: "images/rpg_horse_return.jpg",
+                choices: [
+                    { text: "得意忘形，大擺宴席慶祝", next: "bad_end_2" },
+                    { text: "眉頭微皺：這怎知不是災禍呢？", next: "son_fall" }
+                ]
+            },
+            bad_end_2: {
+                id: 'bad_end_2',
+                text: "【Bad Ending: 樂極生悲】你太過高興，放鬆了警惕。胡人發現馬匹被誘拐，夜襲你的家，搶走了所有馬匹財物。你從大富變成了赤貧。",
+                imagePath: "images/rpg_bad_end_2.jpg",
+                choices: [{ text: "重來", next: "start" }],
+                isEnding: true
+            },
+            son_fall: {
+                id: 'son_fall',
+                text: "果然，你的兒子因為喜愛這些駿馬，整日騎乘。有一天，他不小心從馬上摔了下來，大腿骨折斷了，成了跛子。鄰居們又來同情弔唁。你看著受傷的兒子...",
+                imagePath: "images/rpg_son_fall.jpg",
+                choices: [
+                    { text: "這怎知不是福氣呢？悉心照料", next: "war_starts" },
+                    { text: "責怪兒子不小心，怨天尤人", next: "bad_end_3" }
+                ]
+            },
+            bad_end_3: {
+                id: 'bad_end_3',
+                text: "【Bad Ending: 父子反目】你整日責罵兒子，導致父子關係破裂。兒子負氣離家出走，不知所蹤。你孤獨終老，未能體會禍福相倚的真諦。",
+                imagePath: "images/rpg_bad_end_3.jpg",
+                choices: [{ text: "重來", next: "start" }],
+                isEnding: true
+            },
+            war_starts: {
+                id: 'war_starts',
+                text: "一年後，胡人大舉入侵！邊塞戰火連天。官府徵召所有壯丁上戰場，那是九死一生的慘烈戰役。鄰居家的兒子都被抓去打仗了...",
+                imagePath: "images/rpg_war_starts.jpg",
+                choices: [
+                    { text: "結局揭曉", next: "happy_end" }
+                ]
+            },
+            happy_end: {
+                id: 'happy_end',
+                text: "【True Ending: 父子相保】因為兒子跛腳，不符合徵兵條件，得以留在家中。最終，鄰居的兒子們大多戰死沙場，唯獨你們父子二人平安存活。你深刻體會到了「禍福相倚」的道理。",
+                imagePath: "images/rpg_happy_end.jpg",
+                choices: [{ text: "重來", next: "start" }],
+                isEnding: true,
+                win: true
+            }
+        };
+
+        window.onload = function() {
+            document.getElementById('main-title').textContent = contentData.metadata.title;
+            document.getElementById('author-name').textContent = contentData.metadata.author;
+            document.getElementById('source-name').textContent = contentData.metadata.source;
+            switchTab('overview');
+
+            if ('speechSynthesis' in window) {
+                 window.speechSynthesis.onvoiceschanged = function() {
+                    window.speechSynthesis.getVoices();
+                };
+            }
+
+            document.addEventListener('click', (e) => {
+                const popup = document.getElementById('note-template');
+                if (!e.target.closest('.interactive-word') && !e.target.closest('.note-popup')) {
+                    closeNote();
+                }
+            });
+        };
+
+        function closeNote() {
+            const popup = document.getElementById('note-template');
+            if(popup) {
+                popup.classList.add('hidden');
+                popup.style.display = ''; 
+            }
+        }
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            closeNote();
+
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            const container = document.getElementById('content-display');
+            container.style.opacity = '0';
+            
+            setTimeout(() => {
+                switch(tabId) {
+                    case 'overview': renderOverview(container); break;
+                    case 'reading': renderReading(container); break;
+                    case 'deep': renderDeepUnderstanding(container); break;
+                    case 'vocabulary': renderVocabulary(container); break;
+                    case 'analysis': renderAnalysis(container); break;
+                    case 'chat': renderChat(container); break;
+                    case 'quiz': renderQuiz(container); break;
+                    case 'story': 
+                        renderStory(container); 
+                        break;
+                }
+                container.style.opacity = '1';
+            }, 200);
+        }
+
+        function renderOverview(container) {
+            container.innerHTML = `
+                <div class="max-w-3xl mx-auto">
+                    <div class="bg-amber-50 rounded-xl p-6 border-l-8 border-amber-600 mb-8">
+                        <h2 class="text-2xl font-bold text-amber-900 mb-4"><i class="fas fa-scroll mr-2"></i>故事大意</h2>
+                        <p class="text-lg text-gray-700 leading-loose text-justify">${contentData.summary}</p>
+                    </div>
+                    
+                    <div class="flex justify-center">
+                         <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition flex flex-col justify-center items-center text-center max-w-md w-full">
+                            <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-lightbulb text-amber-600 text-2xl"></i>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">學習重點</h3>
+                            <p class="text-gray-600 text-sm">體會「禍福相倚」的道家智慧，學習面對得失時保持平和的心態。</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderReading(container) {
+            let segmentsHtml = contentData.segments.map((seg, idx) => {
+                let displayHtml = seg.original;
+                const sortedKeys = Object.keys(allKeywords).sort((a, b) => b.length - a.length);
+                const placeholders = {};
+                let counter = 0;
+
+                sortedKeys.forEach(key => {
+                    if (displayHtml.includes(key)) {
+                        const ph = `___PH${counter}___`;
+                        placeholders[ph] = key;
+                        displayHtml = displayHtml.split(key).join(ph);
+                        counter++;
+                    }
+                });
+
+                Object.keys(placeholders).forEach(ph => {
+                    const key = placeholders[ph];
+                    displayHtml = displayHtml.split(ph).join(`<span class="interactive-word" onclick="showNote('${key}', ${idx}, this, event)">${key}</span>`);
+                });
+
+                // 靜態圖片載入邏輯
+                let imageSection = `
+                    <div class="mt-6 rounded-lg overflow-hidden shadow-lg">
+                        <img src="${seg.imagePath}" 
+                             class="w-full h-auto rounded-lg shadow-md" 
+                             alt="段落插圖"
+                             onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'h-48 bg-gray-100 flex items-center justify-center text-gray-400 border-2 border-dashed border-gray-300\'><i class=\'fas fa-image mr-2\'></i>圖片準備中...請確認 images 資料夾</div>'">
+                    </div>`;
+
+                return `
+                    <div class="group mb-12 relative pl-6 border-l-4 border-gray-200 hover:border-amber-500 transition-colors duration-300">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">段落 ${idx + 1}</span>
+                            <div class="flex gap-2">
+                                <button onclick="playAudio('${seg.audioText}')" class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center hover:bg-amber-200 transition" title="朗讀">
+                                    <i class="fas fa-volume-up text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="relative hover-trans-container cursor-help py-2">
+                            <p class="text-2xl sm:text-3xl font-serif text-gray-800 leading-relaxed relative z-10">${displayHtml}</p>
+                            <div class="hover-translation hidden absolute left-0 top-full mt-2 w-full z-20">
+                                <div class="bg-white/95 backdrop-blur-sm p-4 rounded-lg text-gray-700 text-lg leading-7 border border-amber-200 shadow-xl relative">
+                                    <div class="absolute -top-2 left-8 w-4 h-4 bg-white border-t border-l border-amber-200 transform rotate-45"></div>
+                                    <span class="font-bold text-amber-700 mr-1"><i class="fas fa-language mr-1"></i>語譯：</span> ${seg.translation}
+                                </div>
+                            </div>
+                        </div>
+                        ${imageSection}
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="max-w-3xl mx-auto">
+                    ${segmentsHtml}
+                </div>
+                <div class="text-center mt-12 pb-6 text-gray-400 text-sm space-y-1">
+                    <p><i class="fas fa-mouse-pointer mr-1"></i> 點擊底線文字查看註釋</p>
+                    <p><i class="fas fa-hand-pointer mr-1"></i> 滑鼠移過古文即可查看翻譯</p>
+                </div>
+            `;
+        }
+        
+        function renderDeepUnderstanding(container) {
+            container.innerHTML = `
+                <div class="space-y-12">
+                    <!-- Logic Chart -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-amber-900 mb-4"><i class="fas fa-project-diagram mr-2"></i>禍福轉化循環圖</h2>
+                        <div class="bg-white rounded-xl shadow-lg p-8 border-4 border-amber-200 flex justify-center items-center overflow-hidden" style="min-height: 400px;">
+                             <svg viewBox="0 0 600 400" class="w-full h-full">
+                                <defs>
+                                    <marker id="arrow-deep" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                        <polygon points="0 0, 10 3.5, 0 7" fill="#666" />
+                                    </marker>
+                                </defs>
+                                
+                                <!-- Event 1: Lose Horse -->
+                                <g transform="translate(50, 50)">
+                                    <rect x="0" y="0" width="120" height="60" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2" />
+                                    <text x="60" y="25" text-anchor="middle" font-weight="bold" fill="#991b1b">1. 失馬</text>
+                                    <text x="60" y="45" text-anchor="middle" font-size="12">似禍 (Bad)</text>
+                                </g>
+
+                                <!-- Event 2: Gain Horses -->
+                                <g transform="translate(240, 50)">
+                                    <rect x="0" y="0" width="120" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2" />
+                                    <text x="60" y="25" text-anchor="middle" font-weight="bold" fill="#166534">2. 得駿馬</text>
+                                    <text x="60" y="45" text-anchor="middle" font-size="12">似福 (Good)</text>
+                                </g>
+
+                                <!-- Event 3: Break Leg -->
+                                <g transform="translate(430, 50)">
+                                    <rect x="0" y="0" width="120" height="60" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2" />
+                                    <text x="60" y="25" text-anchor="middle" font-weight="bold" fill="#991b1b">3. 折髀</text>
+                                    <text x="60" y="45" text-anchor="middle" font-size="12">似禍 (Bad)</text>
+                                </g>
+                                
+                                <!-- Event 4: Survive War -->
+                                <g transform="translate(240, 200)">
+                                    <rect x="0" y="0" width="120" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2" />
+                                    <text x="60" y="25" text-anchor="middle" font-weight="bold" fill="#166534">4. 父子相保</text>
+                                    <text x="60" y="45" text-anchor="middle" font-size="12">真福 (Good)</text>
+                                </g>
+
+                                <!-- Core Philosophy -->
+                                <g transform="translate(200, 320)">
+                                    <circle cx="100" cy="40" r="50" fill="#fef3c7" stroke="#d97706" stroke-width="3" />
+                                    <text x="100" y="45" text-anchor="middle" font-weight="bold" fill="#92400e">禍福相倚</text>
+                                </g>
+
+                                <!-- Arrows -->
+                                <path d="M170,80 L240,80" stroke="#666" stroke-width="2" marker-end="url(#arrow-deep)" />
+                                <path d="M360,80 L430,80" stroke="#666" stroke-width="2" marker-end="url(#arrow-deep)" />
+                                <path d="M490,110 L490,150 L360,230" stroke="#666" stroke-width="2" marker-end="url(#arrow-deep)" />
+                                <path d="M300,260 L300,310" stroke="#d97706" stroke-width="2" marker-end="url(#arrow-deep)" stroke-dasharray="5,5" />
+
+                            </svg>
+                        </div>
+                    </section>
+                </div>
+            `;
+        }
+
+        function renderVocabulary(container) {
+            const cardsHtml = contentData.vocabulary.map(item => `
+                <div class="bg-white border border-amber-100 rounded-xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-2xl font-bold text-amber-900">${item.word}</h3>
+                    </div>
+                    <div class="text-sm text-gray-500 mb-2 font-mono bg-amber-50 inline-block px-2 py-1 rounded self-start">
+                        ${item.zhuyin} • <span class="text-amber-700 font-semibold">${item.pos}</span>
+                    </div>
+                    <p class="text-gray-700 text-lg leading-relaxed flex-grow">${item.meaning}</p>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="max-w-6xl mx-auto">
+                    <h2 class="text-3xl font-bold text-center mb-8 text-amber-900 font-serif">語詞精解 (共36則)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        ${cardsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAnalysis(container) {
+            const rhetoricHtml = contentData.rhetoric.map(r => `
+                <div class="flex items-start mb-4 p-4 bg-white rounded-lg border border-gray-100 shadow-sm">
+                    <div class="flex-shrink-0 mr-4">
+                        <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold">
+                            <i class="fas fa-pen-fancy"></i>
+                        </div>
+                    </div>
+                    <div>
+                        ${marked.parse(r)}
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="max-w-3xl mx-auto space-y-10">
+                    <section>
+                        <h2 class="text-2xl font-bold text-amber-900 mb-4 flex items-center">
+                            <i class="fas fa-book-reader mr-3"></i>全文主旨與寓意
+                        </h2>
+                        <div class="bg-amber-50 p-6 rounded-xl border-l-8 border-amber-600 shadow-sm text-lg text-gray-800 leading-loose">
+                            ${marked.parse(contentData.meaning)}
+                        </div>
+                    </section>
+                    <section>
+                        <h2 class="text-2xl font-bold text-amber-900 mb-4 flex items-center">
+                            <i class="fas fa-highlighter mr-3"></i>修辭與寫作技巧
+                        </h2>
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                            ${rhetoricHtml}
+                        </div>
+                    </section>
+                </div>
+            `;
+        }
+
+        function renderChat(container) {
+            const p = personas[currentPersona];
+            container.innerHTML = `
+                <div class="flex flex-col h-[600px]">
+                    <div class="bg-blue-50 p-4 rounded-t-xl border-b border-blue-100 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-blue-200 flex items-center justify-center mr-3 border-2 border-white shadow-sm">
+                                <i class="${p.icon} text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-blue-900">${p.name}</h3>
+                                <p class="text-xs text-blue-600">角色扮演中</p>
+                            </div>
+                        </div>
+                        <select onchange="switchPersona(this.value)" class="text-sm border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-2">
+                            <option value="saiweng" ${currentPersona === 'saiweng' ? 'selected' : ''}>塞翁</option>
+                            <option value="son" ${currentPersona === 'son' ? 'selected' : ''}>塞翁之子</option>
+                            <option value="neighbor" ${currentPersona === 'neighbor' ? 'selected' : ''}>熱心鄰居</option>
+                        </select>
+                    </div>
+                    
+                    <div id="chat-messages" class="flex-grow overflow-y-auto p-4 bg-gray-50 space-y-4 custom-scrollbar">
+                        <div class="chat-bubble chat-ai shadow-sm">
+                            ${p.intro}
+                        </div>
+                    </div>
+
+                    <div class="p-4 border-t border-gray-200 bg-white rounded-b-xl">
+                        <form onsubmit="handleChatSubmit(event)" class="relative">
+                            <input type="text" id="chat-input" class="w-full pl-4 pr-12 py-3 rounded-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition" placeholder="輸入你的問題...">
+                            <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 w-9 h-9 bg-blue-600 text-white rounded-full hover:bg-blue-700 flex items-center justify-center transition shadow-md">
+                                <i class="fas fa-paper-plane text-sm"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            if (chatHistory.length > 0) {
+                const msgContainer = document.getElementById('chat-messages');
+                msgContainer.innerHTML = ''; 
+                msgContainer.innerHTML = `<div class="chat-bubble chat-ai shadow-sm">${personas[currentPersona].intro}</div>`;
+                chatHistory.forEach(msg => {
+                    const div = document.createElement('div');
+                    div.className = `chat-bubble ${msg.role === 'user' ? 'chat-user' : 'chat-ai'} shadow-sm`;
+                    div.innerHTML = msg.content;
+                    msgContainer.appendChild(div);
+                });
+            }
+        }
+
+        function switchPersona(newPersona) {
+            currentPersona = newPersona;
+            chatHistory = []; 
+            renderChat(document.getElementById('content-display'));
+        }
+
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const userText = input.value.trim();
+            if (!userText) return;
+
+            // Display user message
+            const msgContainer = document.getElementById('chat-messages');
+            const userBubble = document.createElement('div');
+            userBubble.className = 'chat-bubble chat-user shadow-sm animate-fade-in';
+            userBubble.innerText = userText;
+            msgContainer.appendChild(userBubble);
+            chatHistory.push({ role: 'user', content: userText });
+            input.value = '';
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+
+            // AI Loading
+            const aiBubble = document.createElement('div');
+            aiBubble.className = 'chat-bubble chat-ai shadow-sm';
+            aiBubble.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+            msgContainer.appendChild(aiBubble);
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+
+            // Simulate AI response (Mock logic for static version)
+            setTimeout(() => {
+                let reply = "";
+                if (currentPersona === 'saiweng') {
+                    reply = "這位朋友，看事情不可只看表面。眼前的得，未必是福；眼前的失，未必是禍。且放寬心，靜觀其變吧。";
+                } else if (currentPersona === 'son') {
+                    reply = "當年摔斷腿時，我真的覺得天都塌了。但後來看到同伴們都戰死沙場，我才明白父親的深意。活著，比什麼都重要。";
+                } else {
+                    reply = "哎喲，這老翁真是怪人！馬丟了不急，馬回來了不喜，兒子腿斷了還說是福氣...我是真搞不懂他！不過最後還真被他說中了！";
+                }
+                
+                aiBubble.innerHTML = reply;
+                chatHistory.push({ role: 'ai', content: reply });
+                msgContainer.scrollTop = msgContainer.scrollHeight;
+            }, 1000);
+        }
+
+        function renderQuiz(container) {
+            let quizHtml = contentData.quiz.map((q, i) => {
+                const val = ["A","B","C","D"];
+                const isAnswered = userAnswers[i] !== undefined;
+                const userAnswer = userAnswers[i];
+                let feedback = '';
+                let cardClass = "bg-white border border-gray-200";
+                let feedbackClass = "hidden mt-4 p-3 rounded-lg text-lg bg-gray-50"; 
+                
+                if (isAnswered) {
+                    feedbackClass = "mt-4 p-3 rounded-lg text-lg animate-fade-in"; 
+                    if (userAnswer === q.ans) {
+                        feedback = `<strong class="block mb-1"><i class="fas fa-check-circle mr-1"></i>答對了！</strong>${q.exp}`;
+                        cardClass = "bg-white border border-green-500 shadow-sm";
+                        feedbackClass += " bg-green-50 text-green-800";
+                    } else {
+                        const userOption = q.opts.find((opt, idx) => ["A","B","C","D"][idx] === userAnswer);
+                        const correctOption = q.opts.find((opt, idx) => ["A","B","C","D"][idx] === q.ans);
+                        feedback = `
+                            <div class="mb-2">
+                                <span class="block font-bold text-red-600"><i class="fas fa-times-circle mr-1"></i>答錯了</span>
+                                <span class="block text-gray-600">您的答案：${userOption || userAnswer}</span>
+                                <span class="block text-green-600 font-bold">正確答案：${correctOption}</span>
+                            </div>
+                            <div class="pt-2 border-t border-gray-200">
+                                <strong>解析：</strong>${q.exp}
+                            </div>
+                        `;
+                        cardClass = "bg-white border border-red-500 shadow-sm";
+                        feedbackClass += " bg-red-50 text-gray-800";
+                    }
+                }
+
+                return `
+                <div class="${cardClass} rounded-xl p-6 mb-6 shadow-sm transition-all duration-300" id="quiz-card-${i}">
+                    <p class="font-bold text-2xl text-gray-800 mb-4"><span class="text-amber-600 mr-2">Q${i+1}.</span>${q.q}</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        ${q.opts.map((opt, optIdx) => {
+                            const val = ["A","B","C","D"][optIdx];
+                            const isChecked = userAnswer === val ? 'checked' : '';
+                            const isDisabled = isAnswered ? 'disabled' : '';
+                            const labelClass = isAnswered ? 'disabled-label' : 'hover:bg-amber-50 cursor-pointer';
+
+                            return `
+                            <label class="flex items-center p-3 rounded-lg border border-gray-100 transition group ${labelClass}">
+                                <input type="radio" name="q-${i}" value="${val}" class="mr-3 text-amber-600 focus:ring-amber-500" onchange="checkAnswer(${i}, '${val}', '${q.ans}')" ${isChecked} ${isDisabled}>
+                                <span class="text-xl group-hover:text-amber-800">${opt}</span>
+                            </label>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div id="feedback-${i}" class="${feedbackClass}">${feedback}</div>
+                </div>
+            `}).join('');
+            
+            container.innerHTML = `
+                <div class="max-w-3xl mx-auto pb-24">
+                    <h2 class="text-2xl font-bold text-center mb-8 text-gray-700">高難度挑戰 (共20題)</h2>
+                    ${quizHtml}
+                    
+                    <!-- Submit Button Area -->
+                    <div class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 shadow-lg flex justify-center items-center z-40">
+                         <button onclick="submitQuiz()" class="px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-full shadow-lg transition transform hover:scale-105 flex items-center text-lg">
+                            <i class="fas fa-paper-plane mr-2"></i> 交卷並查看成績
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStory(container) {
+            if(!window.currentStoryNode) window.currentStoryNode = 'start';
+            const node = storyNodes[window.currentStoryNode];
+
+            // 靜態載入邏輯
+            let imageContent = `<div class="w-full overflow-hidden rounded-t-xl">
+                <img src="${node.imagePath}" 
+                     class="w-full h-auto fade-in-image" 
+                     alt="場景圖"
+                     onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'h-48 bg-gray-100 flex items-center justify-center text-gray-400 border-2 border-dashed border-gray-300\'><i class=\'fas fa-image mr-2\'></i>圖片準備中...請確認 images 資料夾</div>'">
+            </div>`;
+
+            container.innerHTML = `<div class="max-w-2xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden border border-amber-100">${imageContent}<div class="p-8"><div class="flex items-center mb-4 text-amber-800 text-sm font-bold uppercase tracking-widest"><i class="fas fa-scroll mr-2"></i> 抉擇時刻</div><p class="text-xl leading-relaxed text-gray-800 mb-8 font-serif">${node.text}</p>${node.isEnding ? (node.win ? `<div class="text-center mb-6 text-green-600 font-bold text-2xl p-4 bg-green-50 rounded-lg border border-green-200"><i class="fas fa-trophy mr-2"></i>達成結局</div>` : `<div class="text-center mb-6 text-gray-600 font-bold text-2xl p-4 bg-gray-50 rounded-lg border border-gray-200">故事結束</div>`) : ''}<div class="grid gap-4">${node.choices.map(c => `<button onclick="nextStoryNode('${c.next}')" class="story-choice w-full py-4 px-6 bg-white hover:bg-amber-50 border-2 border-amber-200 hover:border-amber-400 rounded-xl text-amber-900 font-bold text-lg transition duration-200 flex items-center justify-between group"><span>${c.text}</span><i class="fas fa-chevron-right text-amber-300 group-hover:text-amber-600 transition"></i></button>`).join('')}</div></div></div>`;
+            if(node.win) { try { confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } }); } catch (e) { console.log("Confetti not loaded"); } }
+        }
+
+        function nextStoryNode(nodeId) {
+            window.currentStoryNode = nodeId;
+            renderStory(document.getElementById('content-display'));
+        }
+
+        function checkAnswer(idx, val, ans) {
+            if (userAnswers[idx] !== undefined) return; 
+
+            userAnswers[idx] = val; 
+            
+            const radios = document.getElementsByName(`q-${idx}`);
+            for (let radio of radios) {
+                radio.disabled = true;
+                radio.parentElement.classList.add('disabled-label');
+            }
+
+            const feedbackEl = document.getElementById(`feedback-${idx}`);
+            const card = document.getElementById(`quiz-card-${idx}`);
+            const qData = contentData.quiz[idx];
+            if (!feedbackEl || !card) return;
+            
+            feedbackEl.className = 'mt-4 p-3 rounded-lg text-lg animate-fade-in';
+            card.classList.remove('border-green-500', 'border-red-500');
+
+            if (val === ans) {
+                feedbackEl.innerHTML = `<strong class="block mb-1"><i class="fas fa-check-circle mr-1"></i>答對了！</strong>${qData.exp}`;
+                feedbackEl.classList.add('bg-green-50', 'text-green-800');
+                card.classList.add('border-green-500');
+            } else {
+                const correctOption = qData.opts.find((opt, i) => ["A","B","C","D"][i] === ans);
+                const userOption = qData.opts.find((opt, i) => ["A","B","C","D"][i] === val);
+                
+                feedbackEl.innerHTML = `
+                    <div class="mb-2">
+                        <span class="block font-bold text-red-600"><i class="fas fa-times-circle mr-1"></i>答錯了</span>
+                        <span class="block text-gray-600">您的答案：${userOption}</span>
+                        <span class="block text-green-600 font-bold">正確答案：${correctOption}</span>
+                    </div>
+                    <div class="pt-2 border-t border-gray-200">
+                        <strong>解析：</strong>${qData.exp}
+                    </div>
+                `;
+                feedbackEl.classList.add('bg-red-50', 'text-gray-800');
+                card.classList.add('border-red-500');
+            }
+            feedbackEl.classList.remove('hidden');
+        }
+
+        function submitQuiz() {
+            const total = contentData.quiz.length;
+            const answered = Object.keys(userAnswers).length;
+            
+            if (answered < total) {
+                showError(`您還有 ${total - answered} 題未完成，請作答完畢後再交卷！`);
+                return;
+            }
+            
+            let correctCount = 0;
+            for (let i = 0; i < total; i++) {
+                if (userAnswers[i] === contentData.quiz[i].ans) {
+                    correctCount++;
+                }
+            }
+            
+            const score = Math.round((correctCount / total) * 100);
+
+            const scoreText = document.getElementById('score-text');
+            scoreText.innerHTML = `您的總分是 <span class="text-amber-600 font-bold text-4xl">${score}</span> 分`;
+            
+            const modal = document.getElementById('score-modal');
+            modal.classList.remove('hidden');
+            
+            try {
+                confetti({
+                    particleCount: 200,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            } catch(e) {}
+        }
+
+        function closeScoreModal() {
+            const modal = document.getElementById('score-modal');
+            modal.classList.add('hidden');
+        }
+        
+        function showNote(key, segIdx, el, e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            const popup = document.getElementById('note-template');
+            const content = document.getElementById('note-content');
+            let noteData = allKeywords[key];
+            
+            if(!noteData) return;
+            
+            content.innerHTML = `
+                <div class="flex items-baseline justify-between border-b border-gray-100 pb-2 mb-2">
+                    <h4 class="text-xl font-bold text-amber-800">${key}</h4>
+                    <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded">${noteData.pos}</span>
+                </div>
+                <p class="text-sm text-gray-500 mb-1 font-mono">${noteData.zhuyin}</p>
+                <p class="text-gray-700 leading-relaxed">${noteData.meaning}</p>
+            `;
+            
+            const rect = el.getBoundingClientRect();
+            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            let left = rect.left + scrollLeft;
+            let top = rect.bottom + scrollTop + 5; 
+            
+            if (left + 300 > document.body.clientWidth) { 
+                left = document.body.clientWidth - 310; 
+            }
+            
+            popup.style.left = `${left}px`;
+            popup.style.top = `${top}px`;
+            popup.classList.remove('hidden');
+        }
+
+        function playAudio(text) {
+            if (!('speechSynthesis' in window)) { showError("您的瀏覽器不支援語音朗讀功能。"); return; }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-TW'; 
+            utterance.rate = 0.85; 
+            utterance.pitch = 1.0;
+            const voices = window.speechSynthesis.getVoices();
+            let targetVoice = voices.find(v => (v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW') && (v.name.includes('Google') || v.name.includes('Hanhan') || v.name.includes('Mei-Jia') || v.name.includes('Yating')));
+            if (!targetVoice) { targetVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW'); }
+            if (!targetVoice) { targetVoice = voices.find(v => v.lang.startsWith('zh')); }
+            if (targetVoice) { utterance.voice = targetVoice; }
+            utterance.onerror = (e) => { console.error("Speech synthesis error:", e); showError("語音播放發生錯誤，可能是瀏覽器限制或網路問題。"); };
+            window.speechSynthesis.speak(utterance);
+        }
+        window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+
+        function showError(msg) {
+            const toast = document.getElementById('error-toast');
+            document.getElementById('error-msg').innerText = msg;
+            toast.classList.remove('hidden');
+            requestAnimationFrame(() => { toast.classList.remove('translate-y-10', 'opacity-0'); });
+            setTimeout(() => { toast.classList.add('translate-y-10', 'opacity-0'); setTimeout(() => toast.classList.add('hidden'), 300); }, 4000);
+        }
+    </script>
+</body>
+</html>
