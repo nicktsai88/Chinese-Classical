@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文言文推與敲 - 第63篇 齊桓公好服紫 (模擬試題)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+        }
+        
+        .serif {
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 選項按鈕基礎樣式 */
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        /* 狀態燈號 */
+        .status-dot {
+            height: 12px; /* 稍微加大燈號 */
+            width: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-loading { background-color: #fbbf24; box-shadow: 0 0 5px #fbbf24; }
+        .status-success { background-color: #34d399; box-shadow: 0 0 5px #34d399; }
+        .status-error { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
+
+        /* 滾動條美化 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-wider flex items-center gap-2" onclick="goHome()" style="cursor: pointer;">
+                <i class="fas fa-scroll text-amber-200"></i>
+                <span class="hidden sm:inline">文言文推與敲 - </span>
+                <span>齊桓公好服紫</span>
+            </h1>
+            
+            <div class="flex items-center gap-6">
+                <!-- Status Indicator (加大) -->
+                <div id="connection-status" class="hidden sm:flex items-center text-base bg-black/20 px-3 py-1.5 rounded-lg transition-opacity duration-500 font-medium">
+                    <span id="status-dot" class="status-dot status-loading"></span>
+                    <span id="status-text">連線中...</span>
+                </div>
+
+                <div id="user-display" class="hidden flex items-center gap-4">
+                    <div class="text-lg bg-white/20 px-4 py-2 rounded-full flex items-center backdrop-blur-sm shadow-sm">
+                        <i class="fas fa-user mr-2 text-amber-200"></i>
+                        <span id="username-span" class="font-bold"></span>
+                    </div>
+                    <!-- 按鈕加大字體 -->
+                    <button onclick="window.logout()" class="text-lg font-bold bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition shadow-md border border-red-400">
+                        登出
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content (加寬 max-w-6xl) -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl">
+        
+        <!-- View: Login -->
+        <div id="view-login" class="fade-in max-w-2xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden mt-10 border-t-8 border-orange-500">
+            <div class="p-12">
+                <div class="text-center mb-10">
+                    <div class="inline-block p-5 rounded-full bg-orange-100 text-orange-600 mb-6">
+                        <i class="fas fa-book-reader text-5xl"></i>
+                    </div>
+                    <h2 class="text-5xl font-bold text-gray-900 mb-4">文言文推與敲</h2>
+                    <p class="text-orange-600 font-bold text-3xl">第63篇 齊桓公好服紫</p>
+                    <p class="text-gray-500 text-xl mt-4">瀑布流刷題模式 • 即時解析</p>
+                </div>
+                
+                <div class="space-y-8">
+                    <div>
+                        <label for="username" class="block text-2xl font-bold text-gray-700 mb-4">請輸入姓名開始</label>
+                        <input type="text" id="username" 
+                            class="w-full pl-6 pr-6 py-5 text-2xl border border-gray-200 rounded-2xl focus:ring-4 focus:ring-orange-500 focus:border-orange-500 transition-all bg-gray-50 focus:bg-white" 
+                            placeholder="例如：王小明"
+                            onkeypress="if(event.key === 'Enter') window.attemptLogin()">
+                    </div>
+                    
+                    <button onclick="window.attemptLogin()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-5 px-8 rounded-2xl text-3xl font-bold shadow-lg transform active:scale-95 transition duration-200">
+                        開始刷題 <i class="fas fa-arrow-right ml-3"></i>
+                    </button>
+
+                    <!-- Quick Login Section -->
+                    <div id="quick-login-area" class="hidden pt-6 border-t border-gray-100">
+                        <p class="text-lg text-gray-500 mb-4 font-bold">歷史挑戰者</p>
+                        <div id="recent-users-list" class="flex flex-wrap gap-2 max-h-48 overflow-y-auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Dashboard -->
+        <div id="view-dashboard" class="hidden fade-in max-w-2xl mx-auto mt-10">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-t-8 border-amber-500 p-10">
+                <div class="text-center mb-10">
+                    <h2 class="text-4xl font-bold text-gray-800">歡迎回來，<span id="dashboard-username" class="text-orange-600"></span></h2>
+                    <p class="text-gray-500 text-xl mt-3">請選擇您要進行的項目</p>
+                </div>
+
+                <div class="space-y-6">
+                    <button onclick="window.startExam()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-6 px-8 rounded-2xl transition duration-200 font-bold shadow-md hover:shadow-lg flex items-center justify-between group">
+                        <span class="flex items-center text-3xl"><i class="fas fa-pen-nib mr-4 w-10 text-center"></i> 開始測驗</span>
+                        <i class="fas fa-chevron-right opacity-50 group-hover:opacity-100 transition-opacity text-2xl"></i>
+                    </button>
+
+                    <button onclick="window.showReview('wrong')" class="w-full bg-white border-2 border-red-100 text-red-600 hover:bg-red-50 py-6 px-8 rounded-2xl transition duration-200 font-bold shadow-sm hover:shadow-md flex items-center justify-between group">
+                        <span class="flex items-center text-3xl"><i class="fas fa-times-circle mr-4 w-10 text-center"></i> 錯題本</span>
+                        <span class="text-xl bg-red-100 px-4 py-2 rounded-lg text-red-600 min-w-[3rem] text-center" id="dash-wrong-count">0</span>
+                    </button>
+
+                    <button onclick="window.showReview('favorite')" class="w-full bg-white border-2 border-amber-100 text-amber-600 hover:bg-amber-50 py-6 px-8 rounded-2xl transition duration-200 font-bold shadow-sm hover:shadow-md flex items-center justify-between group">
+                        <span class="flex items-center text-3xl"><i class="fas fa-star mr-4 w-10 text-center"></i> 我的最愛</span>
+                        <span class="text-xl bg-amber-100 px-4 py-2 rounded-lg text-amber-600 min-w-[3rem] text-center" id="dash-fav-count">0</span>
+                    </button>
+
+                    <div class="pt-6 border-t border-gray-100 mt-6">
+                        <button onclick="window.showAllQuestions()" class="w-full bg-gray-50 text-gray-600 hover:bg-gray-100 py-4 px-6 rounded-xl transition duration-200 font-medium text-xl flex items-center justify-center">
+                            <i class="fas fa-list-ul mr-3"></i> 題目一覽表 (快速刷題)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Quiz List (Waterfall) -->
+        <div id="view-quiz" class="hidden fade-in pb-20">
+            
+            <!-- Dashboard / Stats Sticky Header -->
+            <div class="bg-white p-5 rounded-xl shadow-md border border-gray-200 mb-8 sticky top-20 z-40 flex flex-wrap justify-between items-center gap-4 transition-all">
+                <div>
+                    <!-- H2 Title will be updated dynamically -->
+                    <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                        <span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span>
+                        <span class="text-lg text-gray-500 font-normal">共 25 題</span>
+                    </h2>
+                </div>
+                <div class="flex gap-6 text-lg font-medium">
+                    <div class="flex items-center text-green-600 bg-green-50 px-5 py-2.5 rounded-full border border-green-200 shadow-sm">
+                        <span class="mr-2 font-bold">答對:</span>
+                        <span id="stat-correct" class="font-bold text-2xl">0</span>
+                    </div>
+                    <div class="flex items-center text-red-600 bg-red-50 px-5 py-2.5 rounded-full border border-red-200 shadow-sm">
+                        <span class="mr-2 font-bold">答錯:</span>
+                        <span id="stat-wrong" class="font-bold text-2xl">0</span>
+                    </div>
+                </div>
+                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-gray-400 hover:text-orange-500 transition px-4 py-2 border border-transparent hover:border-orange-200 rounded-lg">
+                    <i class="fas fa-arrow-up text-2xl"></i>
+                </button>
+            </div>
+
+            <!-- Questions Container -->
+            <div id="quiz-list-container" class="space-y-10">
+                <!-- Questions will be injected here -->
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 mt-auto py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-500 font-medium mb-2 text-lg">文言文推與敲 - 齊桓公好服紫</p>
+            <p class="text-gray-400 text-sm">&copy; 2026 道明中學國二國文模擬試題</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+
+        // --- Configuration ---
+        const COLLECTION_NAME = 'Chinese-Classical-418';
+        const DOC_GLOBAL = 'global';
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyAxQFt76ZPXE7d0i1XeNZ1yiiD2WYNIfHs",
+          authDomain: "chinese-learning-47f4d.firebaseapp.com",
+          projectId: "chinese-learning-47f4d",
+          storageBucket: "chinese-learning-47f4d.firebasestorage.app",
+          messagingSenderId: "76289812052",
+          appId: "1:76289812052:web:898384a916f9f341f62fc1"
+        };
+
+        let app, db, auth;
+        let isFirebaseReady = false;
+        let currentUserUnsubscribe = null;
+
+        // Initialize Firebase
+        try {
+            if(firebaseConfig.apiKey) {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                signInAnonymously(auth).catch(console.error);
+                isFirebaseReady = true;
+            } else {
+                console.warn("Firebase Config missing.");
+                updateConnectionStatus('error', '未連線');
+            }
+        } catch (e) {
+            console.error("Firebase init error:", e);
+            updateConnectionStatus('error', '連線錯誤');
+        }
+
+        // --- Questions Data (齊桓公好服紫) ---
+        const questionsData = [
+            { id: 1, category: "字音辨識", question: "下列選項「」中的字，何者讀音正確？", options: ["吾甚「惡」紫之臭：ㄜˋ", "吾甚惡紫之「臭」：ㄔㄡˋ", "何不試勿「衣」紫也：ㄧˋ", "「少」卻：ㄕㄠˇ"], answer: 2, explanation: "(C)正確，名詞轉動詞「穿著」，讀作ㄧˋ。(A)應讀作ㄨˋ(討厭)。(B)應讀作ㄒㄧㄡˋ(氣味)。(D)應讀作ㄕㄠ(稍微)。" },
+            { id: 2, category: "字義辨析", question: "「齊桓公好服紫」中的「服」字，與下列何者意義相同？", options: ["「服」太息以掩涕兮", "以德「服」人", "一國盡「服」紫", "不「服」水土"], answer: 2, explanation: "題幹的「服」為動詞，指「穿著」。(C)穿著。(A)懷抱/深長。(B)使之屈服、信服。(D)適應。" },
+            { id: 3, category: "詞性分析", question: "下列選項「」中的字，何者詞性發生了「名詞作動詞」的轉變？", options: ["一國百姓好服紫不「已」", "何不試勿「衣」紫也", "吾甚惡紫之「臭」", "於是左右「適」有衣紫而進者"], answer: 1, explanation: "(B)「衣」原為名詞(衣服)，此處轉為動詞(穿著)。(A)動詞(停止)。(C)名詞(氣味)。(D)副詞(恰好)。" },
+            { id: 4, category: "文意推論", question: "「五素不得一紫」這句話，反映了當時齊國的何種社會或經濟現象？", options: ["白色絲綢的產量遠低於紫色絲綢", "君王嚴禁百姓穿著白色，導致紫布囤積", "紫色絲綢因為需求大增而供不應求，價格飆漲", "齊國的染料技術落後，無法染出純粹的紫色"], answer: 2, explanation: "(C)正確。「五匹白絹換不到一匹紫絹」，極言紫絹價格昂貴。這是因為齊桓公喜歡穿紫衣，全國百姓跟風，導致紫布需求大增，價格水漲船高。" },
+            { id: 5, category: "成語應用", question: "若要用一句成語來概括這篇短文的核心意旨，下列何者最為貼切？", options: ["上行下效", "標新立異", "掩耳盜鈴", "買櫝還珠"], answer: 0, explanation: "(A)正確。「上行下效」指在上位的人怎麼做，下面的人就起而效法。齊桓公穿紫衣，百姓就跟著穿；齊桓公表示討厭紫衣，百姓就不敢穿，完全體現了此成語的意思。" },
+            { id: 6, category: "典籍與思想", question: "這則寓言出自《韓非子》。根據文章內容，這反映了法家思想中的哪一個核心概念？", options: ["提倡「仁政」，以德服人", "強調君王的「勢」，君王的喜好能輕易操控臣民的行為", "主張「兼愛非攻」，反對奢靡浪費", "強調「無為而治」，讓百姓順應自然"], answer: 1, explanation: "(B)正確。法家韓非子強調「法、術、勢」。本篇藉由君王改變穿著就能瞬間改變全國風氣，說明了君王擁有極大的「勢(威權與影響力)」，這種影響力甚至比直接下令更有效。" },
+            { id: 7, category: "字義比較", question: "下列各組「」中的字，何者前後意義「相同」？", options: ["桓公「患」之 / 欲加之罪，何「患」無辭", "「當」是時也 / 銳不可「當」", "「寡」人奈何 / 「寡」不敵眾", "於是左右「適」有衣紫而進者 / 「適」得其反"], answer: 0, explanation: "(A)皆為「擔憂、發愁」之意。(B)在、正值 / 抵擋。(C)古代君侯的自謙詞(寡德之人) / 少數。(D)恰好 / 剛好(此處皆為副詞，表恰巧、正好。嚴格來說兩者意思極近，但A為最標準動詞字義相同)。" },
+            { id: 8, category: "古今字義", question: "「吾甚惡紫之臭」中的「臭」字，在先秦時期的意義為何？", options: ["專指難聞的腐敗氣味", "泛指一切氣味，為中性詞", "指香氣，與現代意思完全相反", "指衣物的染料毒性"], answer: 1, explanation: "(B)正確。「臭(ㄒㄧㄡˋ)」在古代是中性詞，泛指氣味(包含香氣與臭氣)。如《易經》「其臭如蘭」。此處管仲要齊桓公假裝討厭紫衣的「氣味」。" },
+            { id: 9, category: "句意解讀", question: "桓公對衣紫而進者說：「少卻，吾惡紫臭。」其中「少卻」的意思是什麼？", options: ["你穿得太少了", "請稍微後退一點", "減少紫色的布料", "年少的人請迴避"], answer: 1, explanation: "(B)正確。「少」通「稍」，稍微；「卻」是退卻、後退。齊桓公假裝受不了紫衣的氣味，叫穿紫衣的近臣「稍微退後一點」。" },
+            { id: 10, category: "文化常識", question: "「於是日，郎中莫衣紫」，句中的「郎中」在先秦時期指的是什麼身分？", options: ["在街頭行醫的大夫", "宮廷中的近侍、護衛或官員", "負責占卜的巫師", "地方上的富商巨賈"], answer: 1, explanation: "(B)正確。「郎中」在先秦及秦漢時期，是帝王身邊的侍衛、近臣或屬官。直到宋代以後，才逐漸變成對醫生的稱呼。" },
+            { id: 11, category: "代詞指代", question: "管仲曰：「君欲止『之』，何不試勿衣紫也？」句中的「之」字指代什麼？", options: ["紫色的布料", "管仲自己", "一國百姓好服紫不已的風氣", "齊國的商人"], answer: 2, explanation: "(C)正確。齊桓公苦惱全國百姓瘋狂穿紫衣，管仲說「君王若想停止『這種風氣(之)』」，故代指百姓好服紫的現象。" },
+            { id: 12, category: "策略分析", question: "針對齊國「紫貴甚」的問題，管仲為何不建議齊桓公直接下達禁令，而要桓公「試勿衣紫，並言惡其臭」？", options: ["因為管仲自己也從中牟取暴利，不願明令禁止", "因為齊國法律不允許干涉百姓穿著", "深知「上有所好，下必甚焉」，從源頭(君王的喜好)解決，不令而行，效果最佳", "因為齊桓公個性懦弱，不敢直接發布命令"], answer: 2, explanation: "(C)正確。管仲深諳人性與政治心理，知道百姓是為了迎合君王。若君王自己不穿並表示厭惡，風氣自然瓦解，這比強硬的禁令更有效且不擾民。" },
+            { id: 13, category: "跨文本比較", question: "〈齊桓公好服紫〉與〈楚王好細腰〉兩則寓言有異曲同工之妙。下列敘述何者正確？", options: ["兩者皆批評了百姓盲目追求時尚的愚昧", "兩者皆強調了君王的個人偏好，對國家社會風氣有著決定性的影響", "〈楚王好細腰〉是喜劇收場，〈齊桓公好服紫〉則是悲劇收場", "兩位君王最終都因為追求外表而導致亡國"], answer: 1, explanation: "(B)正確。楚王喜歡細腰，宮女餓死；齊桓公喜歡紫色，紫絹天價。兩者都說明了「上行下效」，君王的一舉一動都會引發巨大的社會連鎖效應。" },
+            { id: 14, category: "字形測驗", question: "下列選項「」中的字，何者替換後意思「改變」了？", options: ["「少」卻：稍", "吾「惡」紫臭：憎", "於是左右「適」有衣紫而進者：恰", "其「明」日，國中莫衣紫：暗"], answer: 3, explanation: "(D)意思改變。「明日」指第二天，若換成「暗」則意思完全不通。(A)通假字。(B)同義。(C)同義。" },
+            { id: 15, category: "語氣判讀", question: "齊桓公曰：「寡人好服紫，紫貴甚，一國百姓好服紫不已，寡人奈何？」這段話中，桓公表現出何種語氣？", options: ["沾沾自喜，為自己的影響力感到驕傲", "焦慮無奈，不知道該如何解決物價飆漲與盲目跟風的問題", "憤怒斥責，責怪管仲治國無方", "試探管仲，看他是否忠心"], answer: 1, explanation: "(B)正確。「寡人奈何(我該怎麼辦才好)」表現出齊桓公對於自己引發的社會問題感到苦惱、無計可施的情緒。" },
+            { id: 16, category: "詞義演變", question: "「其明日，國中莫衣紫」的「國中」，在先秦時期的主要意義為何？", options: ["國家之中(指全國)", "國家的中心地帶(指國都、京城)", "中等強國", "讀書的學校"], answer: 1, explanation: "(B)正確。先秦時期的「國」多指諸侯的都城、京城。與後文的「境內(全國)」相對應。風氣是從宮廷(郎中) -> 國都(國中) -> 全國(境內) 擴散。" },
+            { id: 17, category: "修辭辨析", question: "「於是日，郎中莫衣紫；其明日，國中莫衣紫；三日，境內莫衣紫也。」這段文字使用了何種修辭手法？", options: ["排比、層遞", "譬喻、誇飾", "轉化、借代", "對偶、雙關"], answer: 0, explanation: "(A)正確。三個句型結構相似為「排比」；影響範圍由「郎中(宮廷)」擴大到「國中(國都)」，再擴大到「境內(全國)」，時間由「是日、明日、三日」推進，為「層遞」。" },
+            { id: 18, category: "邏輯推理", question: "「五素不得一紫，桓公患之」這句話在文章結構中扮演什麼角色？", options: ["作為文章的結論，警示後人", "是故事發生的「起因」，帶出齊桓公向管仲求助的動機", "是管仲提出的解決方案", "為了稱讚齊國絲綢工業的發達"], answer: 1, explanation: "(B)正確。因為紫絹價格高昂到了不合理的地步(五素不得一紫)，成為了社會問題(患之)，才引發了後續桓公問政與管仲獻策的情節。" },
+            { id: 19, category: "省略句還原", question: "「於是左右適有衣紫而進者」為一文言文常見句型。若將其還原為現代漢語語序，下列何者正確？", options: ["於是恰好有穿著紫衣而進言的左右近臣", "於是左右兩邊恰好有人穿著紫衣前進", "於是恰好有穿著紫衣進來(見桓公)的左右近臣", "於是左右逢源的人恰好穿著紫衣進來"], answer: 2, explanation: "(C)正確。「左右」指近臣；「衣紫而進者」指穿著紫衣進見的人。全句意為：這時恰好有穿著紫衣進見桓公的近臣。" },
+            { id: 20, category: "綜合賞析", question: "管仲的計策之所以能在「三日」內迅速奏效，其根本原因為何？", options: ["因為管仲動用了軍隊強力鎮壓", "因為百姓本來就不喜歡紫色，只是被逼迫的", "因為百姓穿紫衣的動機是為了「迎合君王」，當君王明確表示厭惡時，這股風氣便瞬間失去依託", "因為紫色的布料剛好賣光了"], answer: 2, explanation: "(C)為最核心的根本原因。這是權力結構下的心理學，百姓的行為是依附於君王的喜好(上有所好，下必甚焉)，所以解鈴還須繫鈴人。" },
+            { id: 21, category: "字義辨析", question: "「君欲止之」的「止」，與下列何者意思最接近？", options: ["嘆息痛恨於桓靈也，未嘗不呼天也「止」", "拊床而「止」之", "樹欲靜而風不「止」", "學無「止」境"], answer: 1, explanation: "題幹的「止」為使動用法，使之停止/制止。(B)拍打床鋪來「制止」老鼠(出自範例甲)，為使動用法。(A)無此句。(C)停止(不及物)。(D)盡頭。" },
+            { id: 22, category: "標點與斷句", question: "下列關於文句斷句的判斷，何者正確？", options: ["於是/左右適有/衣紫而進者", "於是左右適/有衣紫/而進者", "於是/左右/適有/衣紫而進者", "於是左右適有衣/紫而進者"], answer: 2, explanation: "(C)最符合語法邏輯。「於是」(在這時) / 「左右」(近臣) / 「適有」(恰好有) / 「衣紫而進者」(穿紫衣進見的人)。" },
+            { id: 23, category: "成語辨誤", question: "若要形容齊國百姓盲目跟隨齊桓公穿紫衣的行為，下列哪一個成語「不適用」？", options: ["趨之若鶩", "東施效顰", "爭相效仿", "特立獨行"], answer: 3, explanation: "(D)「特立獨行」指行為高潔，不隨波逐流。與百姓盲目跟風的行為完全相反。" },
+            { id: 24, category: "寫作手法", question: "文章末段「於是日，郎中莫衣紫；其明日，國中莫衣紫；三日，境內莫衣紫也。」作者使用極短的文字連續鋪陳，其文學效果為何？", options: ["營造懸疑緊張的氣氛", "表現時間的漫長與改革的艱難", "以明快緊湊的節奏，凸顯管仲計策的「立竿見影」與君王影響力的巨大", "暗示齊桓公的統治過於殘暴，百姓敢怒不敢言"], answer: 2, explanation: "(C)正確。連用三個「莫衣紫」與遞進的時間，節奏快速，強烈對比出禁令未下而風氣已除的神奇效果。" },
+            { id: 25, category: "主旨統整", question: "綜合全文，《韓非子》收錄這篇〈齊桓公好服紫〉，其最終的寫作意圖最可能是向君王傳達什麼觀念？", options: ["君王應該提倡節儉，不要穿戴昂貴的服飾", "君王的言行舉止具有強大的示範作用(勢)，必須謹慎克制自己的私欲與偏好", "治國應該多聽取臣子的意見，不可獨斷獨行", "商業發展過快會導致物價失衡，君王應當干預市場"], answer: 1, explanation: "(B)正確。法家說故事是為了闡述政治哲學。這篇強調君王的一己之私會引發全國性的災難，因此身為擁有最高「勢」的統治者，必須謹言慎行，不可輕易暴露喜好。" }
+        ];
+
+        // --- State Management ---
+        let currentState = {
+            username: '',
+            answers: {}, // { questionId: selectedOptionIndex }
+            mistakes: [], 
+            favorites: [],
+            viewMode: 'all', // 'all', 'wrong', 'favorite'
+        };
+
+        const ui = {
+            usernameInput: document.getElementById('username'),
+            userDisplay: document.getElementById('user-display'),
+            usernameSpan: document.getElementById('username-span'),
+            dashboardUsername: document.getElementById('dashboard-username'),
+            dashWrongCount: document.getElementById('dash-wrong-count'),
+            dashFavCount: document.getElementById('dash-fav-count'),
+            quickLoginArea: document.getElementById('quick-login-area'),
+            recentUsersList: document.getElementById('recent-users-list'),
+            statCorrect: document.getElementById('stat-correct'),
+            statWrong: document.getElementById('stat-wrong'),
+            quizListContainer: document.getElementById('quiz-list-container'),
+            statusDot: document.getElementById('status-dot'),
+            statusText: document.getElementById('status-text'),
+            views: {
+                login: document.getElementById('view-login'),
+                dashboard: document.getElementById('view-dashboard'),
+                quiz: document.getElementById('view-quiz')
+            }
+        };
+
+        // --- Initialization ---
+        function init() {
+            if (isFirebaseReady) {
+                const globalRef = doc(db, COLLECTION_NAME, DOC_GLOBAL);
+                onSnapshot(globalRef, (docSnap) => {
+                    updateConnectionStatus('success', '已同步');
+                    if (docSnap.exists()) {
+                        renderRecentUsers(docSnap.data().users || []);
+                    }
+                }, (error) => {
+                    console.error("Global listen error", error);
+                    updateConnectionStatus('error', '雲端同步失敗');
+                });
+            } else {
+                updateConnectionStatus('error', '未連線');
+                renderRecentUsers([]); 
+            }
+        }
+
+        function updateConnectionStatus(type, text) {
+            ui.statusText.textContent = text;
+            ui.statusDot.className = 'status-dot';
+            if (type === 'loading') ui.statusDot.classList.add('status-loading');
+            else if (type === 'success') ui.statusDot.classList.add('status-success');
+            else if (type === 'error') ui.statusDot.classList.add('status-error');
+        }
+
+        function renderRecentUsers(users) {
+            if (users && users.length > 0) {
+                ui.quickLoginArea.classList.remove('hidden');
+                ui.recentUsersList.innerHTML = '';
+                users.forEach(user => {
+                    const btn = document.createElement('button');
+                    btn.className = 'px-4 py-2 bg-white hover:bg-orange-50 text-gray-700 rounded-lg text-base border border-gray-200 transition mb-2 shadow-sm font-medium flex items-center';
+                    btn.innerHTML = `<i class="fas fa-user-circle mr-2 text-orange-400 text-xl"></i>${user}`;
+                    btn.onclick = () => {
+                        ui.usernameInput.value = user;
+                        window.attemptLogin();
+                    };
+                    ui.recentUsersList.appendChild(btn);
+                });
+            } else {
+                 ui.quickLoginArea.classList.add('hidden');
+            }
+        }
+
+        // --- Login Logic ---
+        window.attemptLogin = async function() {
+            const name = ui.usernameInput.value.trim();
+            if (!name) { alert('請輸入姓名'); return; }
+            
+            currentState.username = name;
+            
+            if (isFirebaseReady) {
+                const globalRef = doc(db, COLLECTION_NAME, DOC_GLOBAL);
+                setDoc(globalRef, { users: arrayUnion(name) }, { merge: true })
+                    .catch(e => console.error("Global user update error:", e));
+                startUserListener(name);
+            }
+
+            ui.userDisplay.classList.remove('hidden');
+            ui.userDisplay.classList.add('flex');
+            ui.usernameSpan.textContent = name;
+            
+            switchView('dashboard');
+        }
+
+        function startUserListener(username) {
+            if (currentUserUnsubscribe) currentUserUnsubscribe();
+
+            const userRef = doc(db, COLLECTION_NAME, username);
+            
+            currentUserUnsubscribe = onSnapshot(userRef, (docSnap) => {
+                updateConnectionStatus('success', '資料同步');
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    currentState.favorites = data.favorites || [];
+                    currentState.mistakes = data.mistakes || [];
+                    ui.dashWrongCount.textContent = currentState.mistakes.length;
+                    ui.dashFavCount.textContent = currentState.favorites.length;
+
+                    if (data.progress) {
+                           currentState.answers = data.progress.answers || {};
+                    }
+                } else {
+                    // New User
+                    currentState.favorites = [];
+                    currentState.mistakes = [];
+                    currentState.answers = {};
+                    ui.dashWrongCount.textContent = 0;
+                    ui.dashFavCount.textContent = 0;
+                }
+                // Render the quiz list with new data
+                renderWaterfallQuiz();
+            }, (error) => {
+                console.error("User listen error", error);
+                updateConnectionStatus('error', '同步失敗');
+            });
+        }
+
+        function switchView(viewName) {
+            Object.values(ui.views).forEach(el => el.classList.add('hidden'));
+            ui.views[viewName].classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        window.startExam = function() {
+            currentState.viewMode = 'all';
+            switchView('quiz');
+            renderWaterfallQuiz();
+        }
+
+        window.showDashboard = function() {
+            switchView('dashboard');
+        }
+
+        window.restartQuiz = function() {
+            if (confirm("確定要重新開始測驗嗎？\n這將清除本回的作答紀錄，但不會刪除錯題本與收藏。")) {
+                currentState.answers = {};
+                saveProgress();
+                renderWaterfallQuiz();
+                window.scrollTo({top:0, behavior:'smooth'});
+            }
+        }
+
+        // --- Waterfall Render Logic ---
+        function renderWaterfallQuiz() {
+            const container = ui.quizListContainer;
+            container.innerHTML = ''; 
+
+            let questionsToRender = questionsData;
+            let titleHtml = '';
+
+            // Filter questions based on viewMode
+            if (currentState.viewMode === 'wrong') {
+                questionsToRender = questionsData.filter(q => currentState.mistakes.includes(q.id));
+                titleHtml = `<span class="text-red-600 mr-2"><i class="fas fa-times-circle"></i> 錯題本複習</span><span class="text-lg text-gray-500 font-normal">共 ${questionsToRender.length} 題</span>`;
+                
+                if (questionsToRender.length === 0) {
+                    container.innerHTML = `<div class="text-center py-20"><i class="fas fa-check-circle text-6xl text-green-200 mb-4"></i><p class="text-2xl text-gray-500">太棒了！目前沒有錯題紀錄。</p></div>`;
+                }
+            } else if (currentState.viewMode === 'favorite') {
+                questionsToRender = questionsData.filter(q => currentState.favorites.includes(q.id));
+                titleHtml = `<span class="text-amber-500 mr-2"><i class="fas fa-star"></i> 我的最愛</span><span class="text-lg text-gray-500 font-normal">共 ${questionsToRender.length} 題</span>`;
+                
+                if (questionsToRender.length === 0) {
+                    container.innerHTML = `<div class="text-center py-20"><i class="far fa-star text-6xl text-gray-200 mb-4"></i><p class="text-2xl text-gray-500">目前沒有收藏的題目。</p></div>`;
+                }
+            } else {
+                // Default 'all'
+                questionsToRender = questionsData;
+                titleHtml = `<span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span><span class="text-lg text-gray-500 font-normal">共 ${questionsData.length} 題</span>`;
+            }
+
+            // Update Header Title
+            const headerTitleEl = document.querySelector('#view-quiz h2');
+            if(headerTitleEl) headerTitleEl.innerHTML = titleHtml;
+
+            let correctCount = 0;
+            let wrongCount = 0;
+
+            questionsToRender.forEach((q) => {
+                const userAnswer = currentState.answers[q.id];
+                const isAnswered = userAnswer !== undefined;
+                const isCorrect = isAnswered && userAnswer === q.answer;
+                
+                if (isAnswered) {
+                    if (isCorrect) correctCount++;
+                    else wrongCount++;
+                }
+
+                // Determine Card Border Color
+                let borderColor = 'border-gray-200';
+                let bgColor = 'bg-white';
+                if (isAnswered) {
+                    if (isCorrect) {
+                        borderColor = 'border-green-400';
+                        bgColor = 'bg-green-50/10';
+                    } else {
+                        borderColor = 'border-red-400';
+                        bgColor = 'bg-red-50/10';
+                    }
+                }
+
+                // Card Element
+                const card = document.createElement('div');
+                card.className = `relative rounded-2xl shadow-sm border-2 p-6 md:p-8 transition-all duration-300 ${borderColor} ${bgColor}`;
+                
+                // Header (加大字體)
+                // Note: Using #${q.id} so the ID is consistent regardless of filter
+                const headerHtml = `
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="flex items-start gap-4">
+                            <span class="flex-shrink-0 bg-orange-500 text-white font-bold rounded px-3 py-1.5 text-base shadow-sm">
+                                #${q.id}
+                            </span>
+                            <h3 class="text-2xl md:text-3xl font-bold text-gray-800 leading-relaxed tracking-wide font-serif">
+                                ${q.question}
+                            </h3>
+                        </div>
+                        <button onclick="window.toggleFavorite(${q.id})" class="text-3xl transition transform hover:scale-110 ${currentState.favorites.includes(q.id) ? 'text-amber-400' : 'text-gray-200 hover:text-amber-300'}">
+                            <i class="${currentState.favorites.includes(q.id) ? 'fas' : 'far'} fa-star"></i>
+                        </button>
+                    </div>
+                `;
+
+                // Options (加大字體)
+                let optionsHtml = '<div class="grid gap-4">';
+                q.options.forEach((opt, optIdx) => {
+                    const letter = ['A','B','C','D'][optIdx];
+                    // 加大內距
+                    let btnClass = "option-btn w-full text-left p-6 rounded-xl border flex items-center group transition-colors ";
+                    // 加大選項編號圈圈
+                    let badgeClass = "w-12 h-12 flex items-center justify-center rounded-full font-bold mr-5 text-xl flex-shrink-0 ";
+                    
+                    if (isAnswered) {
+                        if (optIdx === q.answer) {
+                            btnClass += "bg-green-100 border-green-500 text-green-900";
+                            badgeClass += "bg-green-500 text-white";
+                        } else if (optIdx === userAnswer) {
+                            btnClass += "bg-red-100 border-red-500 text-red-900";
+                            badgeClass += "bg-red-500 text-white";
+                        } else {
+                            btnClass += "bg-white border-gray-100 text-gray-400 opacity-60";
+                            badgeClass += "bg-gray-100 text-gray-400";
+                        }
+                    } else {
+                        btnClass += "bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700";
+                        badgeClass += "bg-gray-100 text-gray-500 group-hover:bg-orange-500 group-hover:text-white transition-colors";
+                    }
+
+                    const clickAction = isAnswered ? "" : `onclick="window.handleAnswer(${q.id}, ${optIdx})"`;
+                    const cursor = isAnswered ? "cursor-default" : "cursor-pointer";
+
+                    // 加大選項文字
+                    optionsHtml += `
+                        <button ${clickAction} class="${btnClass} ${cursor}" ${isAnswered ? 'disabled' : ''}>
+                            <span class="${badgeClass}">${letter}</span>
+                            <span class="font-medium text-2xl leading-relaxed">${opt}</span>
+                            ${(isAnswered && optIdx === q.answer) ? '<i class="fas fa-check-circle ml-auto text-green-600 text-3xl"></i>' : ''}
+                            ${(isAnswered && optIdx === userAnswer && optIdx !== q.answer) ? '<i class="fas fa-times-circle ml-auto text-red-500 text-3xl"></i>' : ''}
+                        </button>
+                    `;
+                });
+                optionsHtml += '</div>';
+
+                // Explanation Block (加大字體)
+                let explanationHtml = '';
+                if (isAnswered) {
+                    explanationHtml = `
+                        <div class="mt-6 bg-orange-50 p-6 rounded-xl border border-orange-100 animate-fade-in-up">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-lightbulb text-orange-500 mt-1 text-2xl"></i>
+                                <div>
+                                    <span class="font-bold text-orange-700 block mb-2 text-xl">解析：</span>
+                                    <p class="text-gray-700 text-xl leading-8 text-justify">${q.explanation}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = headerHtml + optionsHtml + explanationHtml;
+                container.appendChild(card);
+            });
+
+            // Update Stats (Calculated based on currently displayed questions)
+            ui.statCorrect.textContent = correctCount;
+            ui.statWrong.textContent = wrongCount;
+        }
+
+        window.handleAnswer = function(qId, selectedIdx) {
+            if (!currentState.username) return;
+
+            currentState.answers[qId] = selectedIdx;
+            
+            const q = questionsData.find(x => x.id === qId);
+            const isCorrect = q.answer === selectedIdx;
+            
+            if (!isCorrect) {
+                if (!currentState.mistakes.includes(qId)) {
+                    currentState.mistakes.push(qId);
+                    saveUserData('mistakes');
+                }
+            }
+
+            saveProgress();
+            renderWaterfallQuiz();
+        }
+
+        window.toggleFavorite = function(qId) {
+            if (!currentState.username) return;
+            
+            const idx = currentState.favorites.indexOf(qId);
+            if (idx === -1) currentState.favorites.push(qId);
+            else currentState.favorites.splice(idx, 1);
+            
+            saveUserData('favorites');
+            renderWaterfallQuiz(); 
+        }
+
+        // --- Implementation of Review Modes ---
+        window.showReview = function(type) {
+            if (!currentState.username) return;
+
+            if (type === 'wrong') {
+                if (currentState.mistakes.length === 0) {
+                    alert("目前沒有錯題紀錄！太棒了！");
+                    return;
+                }
+                currentState.viewMode = 'wrong';
+            } else if (type === 'favorite') {
+                if (currentState.favorites.length === 0) {
+                    alert("目前沒有收藏任何題目。");
+                    return;
+                }
+                currentState.viewMode = 'favorite';
+            } else {
+                currentState.viewMode = 'all';
+            }
+            
+            switchView('quiz');
+            renderWaterfallQuiz();
+        }
+
+        window.showAllQuestions = function() {
+            window.startExam();
+        }
+
+        // --- Persistence Helpers ---
+        function saveProgress() {
+            if (!isFirebaseReady || !currentState.username) return;
+            const userRef = doc(db, COLLECTION_NAME, currentState.username);
+            const progressData = {
+                answers: currentState.answers,
+                timestamp: new Date().getTime()
+            };
+            setDoc(userRef, { progress: progressData }, { merge: true });
+        }
+
+        function saveUserData(type) {
+            if (!isFirebaseReady || !currentState.username) return;
+            const userRef = doc(db, COLLECTION_NAME, currentState.username);
+            const data = {};
+            data[type] = currentState[type];
+            setDoc(userRef, data, { merge: true });
+        }
+
+        window.clearLocalAndLogout = function() {
+            if(confirm("警告：此操作將清除本機暫存並登出，若有未同步的資料可能會遺失。")) {
+                window.logout();
+            }
+        }
+
+        window.logout = function() {
+            if (currentUserUnsubscribe) currentUserUnsubscribe();
+            currentState.username = '';
+            ui.views.login.classList.remove('hidden');
+            ui.views.dashboard.classList.add('hidden');
+            ui.views.quiz.classList.add('hidden');
+            document.getElementById('username').value = '';
+        }
+        
+        window.goHome = function() {
+            if (currentState.username) {
+                window.scrollTo({top:0, behavior:'smooth'});
+                switchView('dashboard');
+            } else {
+                window.location.reload();
+            }
+        }
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-in-up {
+                animation: fadeInUp 0.3s ease-out forwards;
+            }
+        `;
+        document.head.appendChild(style);
+
+        init();
+
+    </script>
+</body>
+</html>
