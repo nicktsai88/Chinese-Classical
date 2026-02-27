@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>(推與敲) 第61篇 西湖香市 - 互動式古文學習 (AI 旗艦版)</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 載入 Marked.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- 載入 FontAwesome 圖標 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 載入 Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #fffbf0; 
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23fcd34d' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .font-serif {
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        /* 自定義滾動條 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fff7ed; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d97706; 
+            border-radius: 4px;
+        }
+
+        /* 標籤樣式 */
+        .tab-btn {
+            position: relative;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background-color: #d97706;
+            transition: width 0.3s ease;
+        }
+        .tab-btn.active {
+            color: #92400e;
+            background-color: #fef3c7;
+        }
+        .tab-btn.active::after {
+            width: 100%;
+        }
+
+        /* 互動文字樣式 */
+        .interactive-word {
+            cursor: pointer;
+            border-bottom: 2px dotted #f59e0b; 
+            transition: all 0.2s;
+            padding-bottom: 1px;
+            position: relative;
+            z-index: 20;
+            color: #b45309; 
+            font-weight: 600;
+        }
+        .interactive-word:hover {
+            background-color: #fde68a; 
+            color: #78350f; 
+            border-bottom-style: solid;
+        }
+
+        /* 彈出註釋 */
+        .note-popup {
+            animation: fadeIn 0.2s ease-out;
+            box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.2), 0 8px 10px -6px rgba(245, 158, 11, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px) translateX(-50%); }
+            to { opacity: 1; transform: translateY(0) translateX(-50%); }
+        }
+
+        /* 懸停翻譯效果 */
+        .hover-trans-container:hover .hover-translation {
+            display: block;
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 聊天氣泡 */
+        .chat-bubble {
+            max-width: 85%;
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            position: relative;
+            line-height: 1.6;
+        }
+        .chat-user {
+            background-color: #fef3c7;
+            color: #92400e;
+            align-self: flex-end;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .chat-ai {
+            background-color: #fff;
+            border: 1px solid #fde68a;
+            color: #44403c;
+            align-self: flex-start;
+            border-bottom-left-radius: 0.25rem;
+        }
+        
+        /* 故事模式樣式 */
+        .story-choice:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(217, 119, 6, 0.1), 0 2px 4px -1px rgba(217, 119, 6, 0.06);
+        }
+        .fade-in-image {
+            animation: fadeInImg 0.8s ease-out forwards;
+        }
+        @keyframes fadeInImg {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        /* 禁用狀態的樣式 */
+        input[type="radio"]:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .disabled-label {
+            cursor: not-allowed !important;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body class="text-stone-800 min-h-screen flex flex-col">
+
+    <!-- 頂部導航欄 -->
+    <nav class="bg-amber-900 text-amber-50 shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-book-open text-2xl mr-3 text-amber-300"></i>
+                    <span class="font-bold text-xl tracking-wider font-serif">古文互動教室 <span class="text-xs text-amber-300 font-sans ml-1">AI 旗艦版</span></span>
+                </div>
+                <div class="flex items-center">
+                    <div class="hidden md:block text-sm opacity-90 text-amber-100 mr-4">
+                        深度學習：第61篇 西湖香市
+                    </div>
+                    <!-- 返回總部按鈕 -->
+                    <a href="index.html" 
+                       class="btn btn-gray transform hover:scale-105 transition-transform duration-200 shadow-md" 
+                       style="text-decoration: none; padding: 8px 16px;
+                              background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+                              color: white; border-radius: 999px; display: inline-block; font-size: 0.85rem;">
+                        🏠 返回總部
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="app" class="max-w-6xl mx-auto p-4 sm:p-6 w-full flex-grow flex flex-col">
+        
+        <!-- 課程標題卡片 -->
+        <header class="bg-white rounded-2xl shadow-md overflow-hidden mb-6 border border-amber-100 relative">
+            <div class="absolute top-0 right-0 w-40 h-40 bg-amber-50 rounded-bl-full opacity-60 z-0"></div>
+            <div class="bg-gradient-to-r from-amber-50/50 to-white p-6 sm:p-8 relative z-10">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h1 id="main-title" class="text-3xl sm:text-4xl font-serif font-bold text-amber-900 mb-2"></h1>
+                        <div class="flex items-center text-amber-800 space-x-4 text-sm sm:text-base">
+                            <span class="flex items-center bg-orange-100 px-3 py-1 rounded-full border border-orange-200"><i class="fas fa-user-edit mr-2 text-orange-600"></i><span id="author-name"></span></span>
+                            <span class="flex items-center bg-orange-100 px-3 py-1 rounded-full border border-orange-200"><i class="fas fa-book mr-2 text-orange-600"></i><span id="source-name"></span></span>
+                        </div>
+                    </div>
+                    <div class="hidden md:block text-right">
+                        <span class="inline-block bg-red-100 text-red-800 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wide mb-1 border border-red-200">重要考試篇章</span>
+                        <div class="text-xs text-amber-600 font-medium">適合程度：高階 (文辭對比與晚明散文)</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 功能標籤 -->
+        <div class="flex flex-wrap justify-center bg-white rounded-xl shadow-sm mb-6 border border-amber-100 sticky top-20 z-40 overflow-x-auto">
+            <button id="tab-overview" class="tab-btn active px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('overview')">
+                <i class="fas fa-info-circle mr-2"></i>總覽
+            </button>
+            <button id="tab-reading" class="tab-btn px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('reading')">
+                <i class="fas fa-glasses mr-2"></i>精讀與圖解
+            </button>
+            <button id="tab-deep" class="tab-btn px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('deep')">
+                <i class="fas fa-project-diagram mr-2"></i>深度理解
+            </button>
+            <button id="tab-story" class="tab-btn px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('story')">
+                <i class="fas fa-theater-masks mr-2"></i>抉擇 RPG
+            </button>
+            <button id="tab-vocabulary" class="tab-btn px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('vocabulary')">
+                <i class="fas fa-spell-check mr-2"></i>語詞精解
+            </button>
+            <button id="tab-analysis" class="tab-btn px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('analysis')">
+                <i class="fas fa-feather-alt mr-2"></i>修辭分析
+            </button>
+            <button id="tab-chat" class="tab-btn px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('chat')">
+                <i class="fas fa-robot mr-2"></i>AI 對話
+            </button>
+            <button id="tab-quiz" class="tab-btn px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('quiz')">
+                <i class="fas fa-pen-nib mr-2"></i>隨堂測驗
+            </button>
+        </div>
+
+        <!-- 主要內容區 -->
+        <main id="content-display" class="flex-grow bg-white rounded-2xl shadow-lg p-6 sm:p-8 min-h-[500px] transition-all duration-300 relative border border-orange-50">
+            <!-- 內容動態載入 -->
+        </main>
+        
+    </div>
+
+    <!-- 註釋彈出框模板 -->
+    <div id="note-template" class="note-popup absolute bg-white border-l-4 border-amber-500 rounded-r-lg shadow-2xl p-4 z-50 hidden w-72" onclick="event.stopPropagation()">
+        <button onclick="closeNote()" class="absolute top-2 right-2 text-amber-400 hover:text-amber-600 transition">
+            <i class="fas fa-times"></i>
+        </button>
+        <div id="note-content">
+            <!-- 內容動態填充 -->
+        </div>
+    </div>
+
+    <!-- 結果模態框 -->
+    <div id="score-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 shadow-2xl transform transition-all scale-100 border-2 border-amber-100">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-gradient-to-br from-amber-100 to-orange-200 mb-6 shadow-inner">
+                    <i class="fas fa-award text-3xl text-amber-700"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-amber-900 mb-2 font-serif">測驗結果</h3>
+                <p class="text-amber-600 mb-6" id="score-text">你的得分是...</p>
+                <button onclick="closeScoreModal()" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-md px-4 py-3 bg-amber-700 text-base font-medium text-white hover:bg-amber-800 focus:outline-none transition">
+                    查看詳細解析
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 錯誤提示 -->
+    <div id="error-toast" class="fixed bottom-6 right-6 bg-red-50 border border-red-200 text-red-600 px-6 py-4 rounded-lg shadow-xl hidden z-50 flex items-center transition-all transform translate-y-10 opacity-0">
+        <i class="fas fa-exclamation-circle mr-3 text-xl"></i>
+        <div>
+            <p class="font-bold">系統提示</p>
+            <p id="error-msg" class="text-sm"></p>
+        </div>
+    </div>
+
+    <script>
+        // ----------------------------------------------------
+        // 1. 教材資料結構 (Content Data) - 西湖香市
+        // ----------------------------------------------------
+        const contentData = {
+            metadata: {
+                title: "(推與敲) 第61篇 西湖香市",
+                author: "張岱",
+                source: "《陶庵夢憶》"
+            },
+            summary: "本文選自明末清初散文大師張岱的《陶庵夢憶》。文章生動描繪了明代杭州西湖「香市」在春季（花朝至端午）的空前盛況。作者透過細膩的筆觸與強烈的對比手法，將高雅的文人品味與喧鬧的世俗市井交織在一起，展現了一幅生機勃勃、龍蛇雜處的明代江南風俗畫卷。同時，字裡行間也隱含著故國繁華已逝的淡淡哀愁與歷史滄桑感。",
+            
+            meaning: "1. **生動的民俗史料**：詳實記錄了明末西湖香市的時間、人潮、商業活動，為研究當時社會經濟與民俗提供了珍貴史料。\n\n2. **極致的對比美學**：以五組「不勝其...」的排比，將雅（士女、蘭香、絲竹、古董、名畫）與俗（野婦、芫荽、搖鼓、泥人、佛圖）進行強烈對比，突顯出香市強大的世俗生命力與狂熱氛圍。\n\n3. **繁華落盡的黍離之悲**：作為回憶錄，昔日的極度喧囂與今日的國破家亡形成強烈反差，體現了張岱特有的「夢憶」文學特質，表面寫熱鬧，實則憑弔故國。",
+            
+            rhetoric: [
+                "**排比與對比 (Parallelism & Contrast):** 連續使用五組「（雅）...不勝其（俗）...」的排比句，將文人雅士的精緻生活與鄉野村民的粗俗熱烈進行強烈對比，突顯香市強大的世俗同化力。",
+                "**誇飾 (Hyperbole):** 「岸無留船，寓無留客，肆無留釀」，連用三個「無留」，極言遊人之多、消費之巨。",
+                "**引用 (Allusion):** 引用袁宏道（袁石公）的名句「山色如娥，花光如頰...」，先以名家筆下的西湖雅景鋪墊，隨即筆鋒一轉，引出香市的「俗」，形成巧妙的反差。",
+                "**摹寫 (Imagery):** 「如逃如逐，如奔如追」，連用四個動詞，生動描繪出人潮洶湧、擁擠不堪、身不由己的動態畫面。"
+            ],
+            
+            // 詳盡語詞精解
+            vocabulary: [
+                { word: "香市", zhuyin: "ㄒㄧㄤ ㄕˋ", pos: "名詞", meaning: "以進香朝拜為主，同時進行商品交易的臨時集市。" },
+                { word: "花朝", zhuyin: "ㄏㄨㄚ ㄓㄠ", pos: "名詞", meaning: "農曆二月十二（或十五），百花生日，即花朝節。" },
+                { word: "端午", zhuyin: "ㄉㄨㄢ ㄨˇ", pos: "名詞", meaning: "農曆五月初五。" },
+                { word: "普陀", zhuyin: "ㄆㄨˇ ㄊㄨㄛˊ", pos: "名詞", meaning: "浙江舟山群島的普陀山，觀音菩薩道場。" },
+                { word: "嘉、湖", zhuyin: "ㄐㄧㄚ、ㄏㄨˊ", pos: "名詞", meaning: "浙江嘉興、湖州兩地。" },
+                { word: "天竺", zhuyin: "ㄊㄧㄢ ㄓㄨˊ", pos: "名詞", meaning: "杭州西湖山中的天竺寺，為進香勝地。" },
+                { word: "市焉", zhuyin: "ㄕˋ ㄧㄢ", pos: "動賓結構", meaning: "在此進行交易。市，做買賣；焉，於此。" },
+                { word: "日至", zhuyin: "ㄖˋ ㄓˋ", pos: "副詞+動詞", meaning: "每天都有人來。" },
+                { word: "明媚", zhuyin: "ㄇㄧㄥˊ ㄇㄟˋ", pos: "形容詞", meaning: "景物鮮明可愛。" },
+                { word: "鼓吹", zhuyin: "ㄍㄨˇ ㄔㄨㄟ", pos: "名詞", meaning: "泛指音樂、樂器演奏。吹，音ㄔㄨㄟ。" },
+                { word: "清和", zhuyin: "ㄑㄧㄥ ㄏㄜˊ", pos: "形容詞", meaning: "清越和諧。" },
+                { word: "岸無留船", zhuyin: "ㄢˋ ㄨˊ ㄌㄧㄡˊ ㄔㄨㄢˊ", pos: "片語", meaning: "岸邊沒有空閒停泊的船隻，極言舟楫之多。" },
+                { word: "肆無留釀", zhuyin: "ㄙˋ ㄨˊ ㄌㄧㄡˊ ㄋㄧㄤˋ", pos: "片語", meaning: "酒館裡沒有剩餘的酒。肆，店鋪；釀，酒。" },
+                { word: "袁石公", zhuyin: "ㄩㄢˊ ㄕˊ ㄍㄨㄥ", pos: "名詞", meaning: "袁宏道，字中郎，號石公，明代公安派文學家。" },
+                { word: "娥", zhuyin: "ㄜˊ", pos: "名詞", meaning: "蛾眉，古代美女的眉毛，此喻山色秀美。" },
+                { word: "頰", zhuyin: "ㄐㄧㄚˊ", pos: "名詞", meaning: "面頰，比喻花朵嬌艷如同少女的臉龐。" },
+                { word: "綾", zhuyin: "ㄌㄧㄥˊ", pos: "名詞", meaning: "一種表面有冰花紋的絲織品，比喻水波細緻。" },
+                { word: "光景", zhuyin: "ㄍㄨㄤ ㄐㄧㄥˇ", pos: "名詞", meaning: "情形、景象。" },
+                { word: "士女", zhuyin: "ㄕˋ ㄋㄩˇ", pos: "名詞", meaning: "泛指上流社會的青年男女。" },
+                { word: "閑都", zhuyin: "ㄒㄧㄢˊ ㄉㄨ", pos: "形容詞", meaning: "閒雅端莊，美麗。閑，通嫻；都，美好。" },
+                { word: "不勝其", zhuyin: "ㄅㄨˋ ㄕㄥ ㄑㄧˊ", pos: "動詞片語", meaning: "抵不過、比不上（數量或聲勢上）。勝，音ㄕㄥ，承受。" },
+                { word: "喬畫", zhuyin: "ㄑㄧㄠˊ ㄏㄨㄚˋ", pos: "名詞", meaning: "粗俗誇張的打扮、假裝。喬，做作。" },
+                { word: "芳蘭薌澤", zhuyin: "ㄈㄤ ㄌㄢˊ ㄒㄧㄤ ㄗㄜˊ", pos: "名詞", meaning: "指高雅名貴的香氣。薌，通香；澤，香氣。" },
+                { word: "合香", zhuyin: "ㄏㄜˊ ㄒㄧㄤ", pos: "名詞", meaning: "混合多種香料製成的廉價香。" },
+                { word: "芫荽", zhuyin: "ㄩㄢˊ ㄙㄨㄟ", pos: "名詞", meaning: "香菜。這裡指強烈的氣味。" },
+                { word: "絲竹管絃", zhuyin: "ㄙ ㄓㄨˊ ㄍㄨㄢˇ ㄒㄧㄢˊ", pos: "名詞", meaning: "指高雅的音樂。絃通弦。" },
+                { word: "搖鼓欱笙", zhuyin: "ㄧㄠˊ ㄍㄨˇ ㄏㄜ ㄕㄥ", pos: "名詞", meaning: "撥浪鼓和吹笙，指小販招攬生意的粗俗樂器。欱，音ㄏㄜ，吹奏。" },
+                { word: "聒帳", zhuyin: "ㄍㄨㄚ ㄓㄤˋ", pos: "形容詞", meaning: "聲音吵鬧刺耳。聒，音ㄍㄨㄚ。" },
+                { word: "鼎彞光怪", zhuyin: "ㄉㄧㄥˇ ㄧˊ ㄍㄨㄤ ㄍㄨㄞˋ", pos: "名詞", meaning: "泛指名貴的古董銅器。鼎彞，古代青銅禮器。" },
+                { word: "泥人竹馬", zhuyin: "ㄋㄧˊ ㄖㄣˊ ㄓㄨˊ ㄇㄚˇ", pos: "名詞", meaning: "泥捏的人像和竹做的馬，民間廉價的兒童玩具。" },
+                { word: "紙貴", zhuyin: "ㄓˇ ㄍㄨㄟˋ", pos: "形容詞", meaning: "借指某種紙張物品非常暢銷、價格昂貴。" },
+                { word: "撩撲不開", zhuyin: "ㄌㄧㄠ ㄆㄨ ㄅㄨˋ ㄎㄞ", pos: "動詞片語", meaning: "形容人多擁擠，互相摩擦碰撞，無法分開。撩，撥弄。" },
+                { word: "牽挽不住", zhuyin: "ㄑㄧㄢ ㄨㄢˇ ㄅㄨˋ ㄓㄨˋ", pos: "動詞片語", meaning: "拉扯不住，形容人潮洶湧，隨波逐流。" },
+                { word: "簇擁", zhuyin: "ㄘㄨˋ ㄩㄥˇ", pos: "動詞", meaning: "群聚擁擠在一起。" },
+                { word: "四閱月", zhuyin: "ㄙˋ ㄩㄝˋ ㄩㄝˋ", pos: "名詞", meaning: "整整四個月（從二月到五月）。閱，經歷。" }
+            ],
+
+            segments: [
+                {
+                    original: "西湖香市，起於花朝，盡於端午。山東進香普陀者日至，嘉、湖進香天竺者日至，至則與湖之人市焉，故曰香市。",
+                    translation: "西湖的香市，從農曆二月十二的花朝節開始，到五月初五的端午節結束。從山東到普陀山進香的香客每天都有人來，從嘉興、湖州到天竺寺進香的香客也是每天都有人來。他們到了這裡，就和西湖當地的人做起買賣交易，所以稱之為「香市」。",
+                    audioText: "西湖香市，起於花朝，盡於端午。，山東進香普陀者日至，，嘉、湖進香天竺者日至，，至則與湖之人市焉，故曰香市。",
+                    notes: {
+                        "香市": { zhuyin: "ㄒㄧㄤ ㄕˋ", type: "名詞", def: "兼具進香與交易的臨時集市。" },
+                        "花朝": { zhuyin: "ㄏㄨㄚ ㄓㄠ", type: "名詞", def: "農曆二月花朝節。" },
+                        "端午": { zhuyin: "ㄉㄨㄢ ㄨˇ", type: "名詞", def: "農曆五月初五。" },
+                        "普陀": { zhuyin: "ㄆㄨˇ ㄊㄨㄛˊ", type: "名詞", def: "觀音菩薩道場。" },
+                        "嘉、湖": { zhuyin: "ㄐㄧㄚ、ㄏㄨˊ", type: "名詞", def: "嘉興、湖州。" },
+                        "天竺": { zhuyin: "ㄊㄧㄢ ㄓㄨˊ", type: "名詞", def: "西湖山中進香勝地。" },
+                        "日至": { zhuyin: "ㄖˋ ㄓˋ", type: "副詞+動詞", def: "每天都有人來。" },
+                        "市焉": { zhuyin: "ㄕˋ ㄧㄢ", type: "動賓結構", def: "在此進行交易。" }
+                    }
+                },
+                {
+                    original: "此時春暖，桃柳明媚，鼓吹清和，岸無留船，寓無留客，肆無留釀。袁石公所謂:「山色如娥，花光如頰，溫風如酒，波紋如綾」，已畫出西湖三月。",
+                    translation: "這個時候春意盎然，桃花和柳樹鮮明可愛，傳來的音樂聲清越和諧。岸邊沒有空閒停泊的船隻，客棧裡沒有空房，酒館裡的酒也被喝得一滴不剩。明代文人袁宏道所說的：「山色秀美如同女子的蛾眉，花朵嬌艷如同少女的面頰，和暖的春風令人如飲美酒般陶醉，水波細緻如同精美的絲綢」，這幾句話已經生動地描繪出了西湖三月的美景。",
+                    audioText: "此時春暖，桃柳明媚，，鼓吹清和，，岸無留船，寓無留客，肆無留釀。，袁石公所謂:，山色如娥，，花光如頰，，溫風如酒，，波紋如綾，，已畫出西湖三月。",
+                    notes: {
+                        "明媚": { zhuyin: "ㄇㄧㄥˊ ㄇㄟˋ", type: "形容詞", def: "景物鮮明可愛。" },
+                        "鼓吹": { zhuyin: "ㄍㄨˇ ㄔㄨㄟ", type: "名詞", def: "泛指音樂演奏。" },
+                        "清和": { zhuyin: "ㄑㄧㄥ ㄏㄜˊ", type: "形容詞", def: "清越和諧。" },
+                        "岸無留船": { zhuyin: "ㄢˋ ㄨˊ ㄌㄧㄡˊ ㄔㄨㄢˊ", type: "片語", def: "岸邊沒有空船。" },
+                        "肆無留釀": { zhuyin: "ㄙˋ ㄨˊ ㄌㄧㄡˊ ㄋㄧㄤˋ", type: "片語", def: "酒館沒有剩酒。" },
+                        "袁石公": { zhuyin: "ㄩㄢˊ ㄕˊ ㄍㄨㄥ", type: "名詞", def: "袁宏道。" },
+                        "娥": { zhuyin: "ㄜˊ", type: "名詞", def: "蛾眉，喻山色秀美。" },
+                        "頰": { zhuyin: "ㄐㄧㄚˊ", type: "名詞", def: "面頰，喻花朵嬌艷。" },
+                        "綾": { zhuyin: "ㄌㄧㄥˊ", type: "名詞", def: "絲織品，喻水波。" }
+                    }
+                },
+                {
+                    original: "而此以香客雜來，光景又別。士女閑都，不勝其村莊野婦之喬畫；芳蘭薌澤，不勝其合香芫荽之薰蒸；絲竹管絃，不勝其搖鼓欱笙之聒帳；鼎彞光怪，不勝其泥人竹馬之行情；宋、元名畫，不勝其湖景佛圖之紙貴。",
+                    translation: "然而，這時因為各地的香客雜亂地湧來，景象又完全不同了。高雅端莊的上流社會男女，在數量聲勢上抵不過那些打扮得粗俗誇張的鄉野村婦；高雅名貴的蘭花香氣，抵不過那些廉價混合香料和香菜散發出的刺鼻味道；高雅的管弦音樂，抵不過小販招攬生意的撥浪鼓和吹笙的吵鬧聲；名貴的古董銅器，抵不過廉價泥人竹馬玩具的熱銷行情；宋代、元代的名家畫作，抵不過那些印著西湖風景和佛像的便宜圖畫那樣搶手暢銷。",
+                    audioText: "而此以香客雜來，光景又別。，士女閑都，不勝其村莊野婦之喬畫；，芳蘭薌澤，不勝其合香芫荽之薰蒸；，絲竹管絃，不勝其搖鼓欱笙之聒帳；，鼎彞光怪，不勝其泥人竹馬之行情；，宋、元名畫，不勝其湖景佛圖之紙貴。",
+                    notes: {
+                        "光景": { zhuyin: "ㄍㄨㄤ ㄐㄧㄥˇ", type: "名詞", def: "景象。" },
+                        "士女": { zhuyin: "ㄕˋ ㄋㄩˇ", type: "名詞", def: "上流社會男女。" },
+                        "閑都": { zhuyin: "ㄒㄧㄢˊ ㄉㄨ", type: "形容詞", def: "雅致端莊。" },
+                        "不勝其": { zhuyin: "ㄅㄨˋ ㄕㄥ ㄑㄧˊ", type: "動詞片語", def: "抵不過、比不上。" },
+                        "喬畫": { zhuyin: "ㄑㄧㄠˊ ㄏㄨㄚˋ", type: "名詞", def: "粗俗誇張的打扮。" },
+                        "芳蘭薌澤": { zhuyin: "ㄈㄤ ㄌㄢˊ ㄒㄧㄤ ㄗㄜˊ", type: "名詞", def: "高雅名貴的香氣。" },
+                        "合香": { zhuyin: "ㄏㄜˊ ㄒㄧㄤ", type: "名詞", def: "廉價混合香。" },
+                        "芫荽": { zhuyin: "ㄩㄢˊ ㄙㄨㄟ", type: "名詞", def: "香菜。" },
+                        "絲竹管絃": { zhuyin: "ㄙ ㄓㄨˊ ㄍㄨㄢˇ ㄒㄧㄢˊ", type: "名詞", def: "高雅的音樂。" },
+                        "搖鼓欱笙": { zhuyin: "ㄧㄠˊ ㄍㄨˇ ㄏㄜ ㄕㄥ", type: "名詞", def: "小販的粗俗樂器。" },
+                        "聒帳": { zhuyin: "ㄍㄨㄚ ㄓㄤˋ", type: "形容詞", def: "聲音吵鬧。" },
+                        "鼎彞光怪": { zhuyin: "ㄉㄧㄥˇ ㄧˊ ㄍㄨㄤ ㄍㄨㄞˋ", type: "名詞", def: "名貴的古董銅器。" },
+                        "泥人竹馬": { zhuyin: "ㄋㄧˊ ㄖㄣˊ ㄓㄨˊ ㄇㄚˇ", type: "名詞", def: "廉價兒童玩具。" },
+                        "紙貴": { zhuyin: "ㄓˇ ㄍㄨㄟˋ", type: "形容詞", def: "極度暢銷。" }
+                    }
+                },
+                {
+                    original: "如逃如逐，如奔如追，撩撲不開，牽挽不住。數百十萬男男女女、老老少少，日簇擁於寺之前後左右者，凡四閱月方罷。恐大江以東，斷無此二地矣。",
+                    translation: "人們像在逃跑、像在追逐、像在狂奔，人擠人互相碰撞根本分不開，想拉都拉不住。數以百萬計的男男女女、老老少少，每天就這樣擁擠在寺廟的前後左右，整整持續了四個月才結束。恐怕在長江以東的江南地區，絕對找不到第二個像這樣瘋狂熱鬧的地方了。",
+                    audioText: "如逃如逐，如奔如追，，撩撲不開，牽挽不住。，數百十萬男男女女、老老少少，，日簇擁於寺之前後左右者，，凡四閱月方罷。，恐大江以東，，斷無此二地矣。",
+                    notes: {
+                        "撩撲不開": { zhuyin: "ㄌㄧㄠ ㄆㄨ ㄅㄨˋ ㄎㄞ", type: "動詞片語", def: "擁擠碰撞，無法分開。" },
+                        "牽挽不住": { zhuyin: "ㄑㄧㄢ ㄨㄢˇ ㄅㄨˋ ㄓㄨˋ", type: "動詞片語", def: "拉扯不住，隨波逐流。" },
+                        "簇擁": { zhuyin: "ㄘㄨˋ ㄩㄥˇ", type: "動詞", def: "群聚擁擠在一起。" },
+                        "四閱月": { zhuyin: "ㄙˋ ㄩㄝˋ ㄩㄝˋ", type: "名詞", def: "整整四個月。" }
+                    }
+                }
+            ],
+            // 20題高難度考題
+            quiz: [
+                { q: "關於「西湖香市」的時間，下列敘述何者正確？", opts: ["A. 從春節到清明", "B. 從二月花朝節到五月端午節", "C. 僅限於三月", "D. 整個秋季"], ans: "B", exp: "文中開篇即點明「起於花朝，盡於端午」，長達「四閱月」。" },
+                { q: "「至則與湖之人市焉」中的「市」字，其詞性與字義為何？", opts: ["A. 名詞，市場", "B. 動詞，進行交易、買賣", "C. 形容詞，熱鬧的", "D. 副詞，在市集裡"], ans: "B", exp: "「市」在此處為名詞轉作動詞，意指香客到了西湖，便與當地人進行商品交易。" },
+                { q: "「岸無留船，寓無留客，肆無留釀」使用了什麼修辭手法來表現遊客之多？", opts: ["A. 擬人", "B. 排比與誇飾", "C. 借代", "D. 譬喻"], ans: "B", exp: "連用三個結構相同的「無留」句型構成排比，並以極端的說法（一滴酒都沒剩）達到誇飾的效果。" },
+                { q: "袁宏道所謂「山色如娥」中的「娥」是指？", opts: ["A. 嫦娥", "B. 美女的蛾眉，喻山色清秀", "C. 飛蛾", "D. 鵝"], ans: "B", exp: "娥，同「蛾」，指古代美女細長的眉毛，用來比喻西湖群山婉約秀美的輪廓。" },
+                { q: "張岱引用袁宏道的名言「山色如娥...波紋如綾」，其寫作上的作用為何？", opts: ["A. 為了炫耀自己書讀得多", "B. 作為反襯，先寫西湖傳統的「雅」，再帶出香市獨特的「俗」與熱鬧", "C. 完全同意袁宏道，認為西湖只有雅致", "D. 諷刺袁宏道不會寫文章"], ans: "B", exp: "作者先用名家筆墨鋪陳西湖的文雅幽靜，隨即筆鋒一轉「而此以香客雜來，光景又別」，形成強烈的雅俗對比。" },
+                { q: "「士女閑都」中「閑都」的意思是？", opts: ["A. 閒暇無事", "B. 雅致端莊、文雅美麗", "C. 繁華的都市", "D. 散步的樣子"], ans: "B", exp: "閑，通「嫻」，嫻靜；都，美好。指上流社會男女高雅端莊的姿態。" },
+                { q: "「不勝其村莊野婦之喬畫」中的「喬畫」意指？", opts: ["A. 古代名畫", "B. 粗俗做作、誇張的打扮", "C. 喬裝成男人", "D. 橋上的畫作"], ans: "B", exp: "喬，做作、假裝。喬畫指鄉野村婦刻意、誇張且俗氣的化妝打扮。" },
+                { q: "作者連用五個「不勝其...」，表達了當時西湖香市怎樣的現象？", opts: ["A. 雅致的文化完全被消滅了", "B. 數量龐大、充滿生命力的世俗氣息(俗)，在聲勢上壓倒了少數文人的雅致(雅)", "C. 證明張岱非常討厭這些村民", "D. 顯示當時物價通貨膨脹嚴重"], ans: "B", exp: "張岱以這五組對比，客觀且生動地描繪了世俗大眾力量的龐大，它在香市期間完全淹沒了文人的精緻文化。" },
+                { q: "「芳蘭薌澤」對比的是何種氣味？", opts: ["A. 鼎彞光怪", "B. 搖鼓欱笙", "C. 合香芫荽", "D. 泥人竹馬"], ans: "C", exp: "「芳蘭薌澤」是名貴高雅的香氣，對比的是廉價混合香與香菜（芫荽）那種強烈刺鼻的氣味。" },
+                { q: "句中「合香芫荽之薰蒸」的「芫荽」是指什麼植物？", opts: ["A. 蘭花", "B. 茉莉", "C. 香菜", "D. 艾草"], ans: "C", exp: "芫荽即為今日所稱的香菜，氣味濃烈，在此代表民間世俗的氣味。" },
+                { q: "「搖鼓欱笙」中的「欱」音義為何？", opts: ["A. ㄏㄜ，吹奏、吸飲", "B. ㄑㄧㄣ，親吻", "C. ㄏㄢˋ，遺憾", "D. ㄍㄜ，唱歌"], ans: "A", exp: "欱，音ㄏㄜ。原意為吸飲，此處引申為吹奏樂器（笙）。" },
+                { q: "「鼎彞光怪」通常用來指稱什麼物品？", opts: ["A. 奇怪的鼎", "B. 名貴的青銅古董禮器", "C. 發光的妖怪", "D. 寺廟的香爐"], ans: "B", exp: "鼎彞是古代宗廟祭祀用的青銅禮器，代表文人雅士把玩的昂貴古董。" },
+                { q: "承上題，與「鼎彞光怪」形成強烈對比的世俗商品是？", opts: ["A. 村莊野婦", "B. 湖景佛圖", "C. 泥人竹馬", "D. 絲竹管絃"], ans: "C", exp: "名貴的古董銅器（鼎彞光怪），抵不過民間廉價且大受歡迎的兒童玩具（泥人竹馬）。" },
+                { q: "「如逃如逐，如奔如追，撩撲不開，牽挽不住」這段話描寫了怎樣的場景？", opts: ["A. 官兵抓強盜", "B. 小孩玩捉迷藏", "C. 香客與遊人擁擠不堪、隨波逐流的瘋狂狀態", "D. 西湖水流湍急"], ans: "C", exp: "生動描繪出百萬人潮湧動時，個人的渺小與身不由己的擁擠狀態。" },
+                { q: "「凡四閱月方罷」的「閱」字，解釋為何？", opts: ["A. 閱讀", "B. 經歷、經過", "C. 檢閱軍隊", "D. 喜悅"], ans: "B", exp: "閱，經過。四閱月即經歷了整整四個月。" },
+                { q: "「恐大江以東，斷無此二地矣」，「大江以東」是指？", opts: ["A. 長江以東的江南地區", "B. 黃河以東", "C. 珠江以東", "D. 黑龍江以東"], ans: "A", exp: "大江通常指長江，江東泛指江南繁華富庶的地區。" },
+                { q: "本文在結構安排上，採用了怎樣的層次遞進？", opts: ["A. 先寫香市盛況，再寫西湖雅景，最後寫人物", "B. 先交代時間地點由來，次寫西湖春景，再以排比對比雅俗，最後以人潮擁擠作結", "C. 全篇只寫買賣過程", "D. 先寫自己，再寫他人"], ans: "B", exp: "文章條理清晰：破題交代由來 -> 引名言寫雅景 -> 雅俗對比寫香市特點 -> 極寫人潮作結。" },
+                { q: "下列關於作者張岱的敘述，何者正確？", opts: ["A. 唐代大詩人", "B. 明末清初著名的散文家，晚年經歷國破家亡，著有《陶庵夢憶》", "C. 宋代詞人", "D. 清代小說家，著有《紅樓夢》"], ans: "B", exp: "張岱出身晚明世家，鼎革後隱居著書，《陶庵夢憶》是他對故國繁華最重要的追憶之作。" },
+                { q: "《西湖香市》一文表面寫極盛的喧鬧，但在張岱晚年「夢憶」的背景下，其實隱含了什麼情感？", opts: ["A. 對從前奢靡生活的炫耀", "B. 繁華落盡、國破家亡的滄桑與黍離之悲", "C. 鼓勵大家多去進香", "D. 對農民的鄙視"], ans: "B", exp: "昔日越熱鬧、越繁華，對比晚年的國破家亡就越顯得淒涼，這是張岱小品文的核心底色。" },
+                { q: "文中「嘉、湖進香天竺者日至」的「日至」，意思是？", opts: ["A. 太陽出來時", "B. 到了日本", "C. 每天都有人來", "D. 直到今天"], ans: "C", exp: "日，每天；至，到來。形容進香客絡繹不絕。" }
+            ]
+        };
+
+        // 預處理所有關鍵字
+        const allKeywords = {};
+        contentData.segments.forEach((seg, idx) => {
+            Object.entries(seg.notes).forEach(([key, note]) => {
+                if (!allKeywords[key]) {
+                    allKeywords[key] = { ...note, segIdx: idx };
+                }
+            });
+        });
+
+        // ----------------------------------------------------
+        // 2. 全域狀態管理
+        // ----------------------------------------------------
+        let currentTab = 'overview';
+        let chatHistory = [];
+        let currentPersona = 'zhangdai'; 
+        let userAnswers = {}; 
+
+        const personas = {
+            zhangdai: {
+                name: "張岱 (作者)",
+                icon: "fas fa-feather-alt",
+                color: "amber",
+                intro: "吾乃山陰張岱。國破家亡後，枯坐草庵，回想起昔年西湖香市那『如逃如逐』的喧鬧，宛如一夢。你覺得這香市的『俗』，到底俗在哪裡？",
+                systemPrompt: "你扮演明末清初散文家張岱。你出身江南世家，曾經過著極度奢華風雅的生活，但明亡後隱居山林，生活清苦。你說話帶著歷經滄桑的看透與對故國繁華的深切懷念。你善於觀察細節，對雅與俗有獨到的見解。請用半文半白的語氣與學生對話。"
+            },
+            yuanhongdao: {
+                name: "袁宏道 (明代名士)",
+                icon: "fas fa-leaf",
+                color: "green",
+                intro: "我是袁中郎。我曾說西湖『山色如娥，花光如頰』，那是多麼清雅！宗子（張岱字）這篇卻盡寫些泥人竹馬、村莊野婦，真是奇特！你怎麼看這種對比？",
+                systemPrompt: "你扮演明代公安派文學家袁宏道（袁石公）。你提倡「獨抒性靈，不拘格套」。你對西湖的印象是極度唯美與高雅的，因此對張岱筆下那種狂熱、喧鬧、充滿世俗氣息的「香市」感到驚奇與有趣。"
+            },
+            vendor: {
+                name: "泥人小販",
+                icon: "fas fa-store",
+                color: "orange",
+                intro: "客官，來看看！我這泥人竹馬可好賣了，連那些貴老爺的古董銅器都沒我這兒生意好！這幾個月在西湖，賺的可比種田多多了！",
+                systemPrompt: "你扮演明代西湖香市中賣「泥人竹馬」的小販。你說話世俗、熱情、充滿市井氣息與生命力。你代表了香市中最底層但最狂熱的世俗力量，對那些文人的高雅玩意兒不屑一顧，只在乎生意好不好。"
+            }
+        };
+
+        window.onload = function() {
+            document.getElementById('main-title').textContent = contentData.metadata.title;
+            document.getElementById('author-name').textContent = contentData.metadata.author;
+            document.getElementById('source-name').textContent = contentData.metadata.source;
+            switchTab('overview');
+
+            if ('speechSynthesis' in window) {
+                 window.speechSynthesis.onvoiceschanged = function() {
+                    window.speechSynthesis.getVoices();
+                };
+            }
+
+            document.addEventListener('click', (e) => {
+                const popup = document.getElementById('note-template');
+                if (!e.target.closest('.interactive-word') && !e.target.closest('.note-popup')) {
+                    closeNote();
+                }
+            });
+        };
+
+        function closeNote() {
+            const popup = document.getElementById('note-template');
+            if(popup) {
+                popup.classList.add('hidden');
+                popup.style.display = ''; 
+            }
+        }
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            closeNote();
+
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            const container = document.getElementById('content-display');
+            container.style.opacity = '0';
+            
+            setTimeout(() => {
+                switch(tabId) {
+                    case 'overview': renderOverview(container); break;
+                    case 'reading': renderReading(container); break;
+                    case 'deep': renderDeepUnderstanding(container); break;
+                    case 'vocabulary': renderVocabulary(container); break;
+                    case 'analysis': renderAnalysis(container); break;
+                    case 'chat': renderChat(container); break;
+                    case 'quiz': renderQuiz(container); break;
+                    case 'story': renderStory(container); break;
+                }
+                container.style.opacity = '1';
+            }, 200);
+        }
+
+        function renderOverview(container) {
+            container.innerHTML = `
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-orange-50 rounded-2xl p-8 border border-orange-200 mb-8 shadow-sm">
+                        <h2 class="text-2xl font-bold text-amber-900 mb-4 font-serif"><i class="fas fa-scroll mr-2"></i>課文導讀</h2>
+                        <p class="text-lg text-amber-900 leading-loose text-justify">${contentData.summary}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         <div class="bg-white border border-amber-200 rounded-xl p-6 shadow-sm hover:shadow-md transition flex flex-col items-center text-center">
+                            <div class="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-yin-yang text-amber-600 text-2xl"></i>
+                            </div>
+                            <h3 class="font-bold text-amber-900 mb-2 text-lg font-serif">雅俗對立</h3>
+                            <p class="text-amber-800 font-serif text-lg">五組「不勝其」，寫盡世俗狂熱</p>
+                        </div>
+                        <div class="bg-white border border-orange-200 rounded-xl p-6 shadow-sm hover:shadow-md transition flex flex-col items-center text-center">
+                            <div class="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-users text-orange-600 text-2xl"></i>
+                            </div>
+                            <h3 class="font-bold text-orange-900 mb-2 text-lg font-serif">極致喧囂</h3>
+                            <p class="text-orange-800 font-serif text-lg">如逃如逐，如奔如追的百萬人潮</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderReading(container) {
+            let segmentsHtml = contentData.segments.map((seg, idx) => {
+                let displayHtml = seg.original;
+                const sortedKeys = Object.keys(seg.notes).sort((a, b) => b.length - a.length);
+                
+                sortedKeys.forEach(key => {
+                     displayHtml = displayHtml.replace(new RegExp(`(?<!<[^>]*)${key}`, 'g'), `<span class="interactive-word" onclick="showNote('${key}', ${idx}, this, event)">${key}</span>`);
+                });
+
+                const localPath = `Chinese-Classical-413-images/reading_segment_${idx + 1}.jpg`;
+                let imageSection = `
+                    <div class="mt-6 rounded-lg overflow-hidden border border-amber-200 bg-orange-50 shadow-md">
+                        <img src="${localPath}" class="w-full h-auto object-cover" alt="段落插圖" onerror="this.style.display='none'">
+                    </div>
+                `;
+
+                return `
+                    <div class="group mb-12 relative pl-6 sm:pl-8 border-l-4 border-amber-300 hover:border-orange-500 transition-colors duration-300">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold text-amber-800 bg-amber-100 px-2 py-1 rounded uppercase tracking-widest">段落 ${idx + 1}</span>
+                            <div class="flex gap-2">
+                                <button onclick="playAudio('${seg.audioText}')" class="w-8 h-8 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center hover:bg-orange-200 transition shadow-sm" title="朗讀 (高品質女聲)">
+                                    <i class="fas fa-volume-up text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="relative hover-trans-container cursor-help py-2">
+                            <p class="text-xl sm:text-2xl font-serif text-amber-900 leading-loose relative z-10 text-justify tracking-wide">${displayHtml}</p>
+                            <div class="hover-translation hidden absolute left-0 top-full mt-2 w-full z-20">
+                                <div class="bg-amber-900/95 backdrop-blur-sm p-4 rounded-lg text-white text-lg leading-7 shadow-2xl relative border border-amber-700">
+                                    <div class="absolute -top-2 left-8 w-4 h-4 bg-amber-900 border-t border-l border-amber-700 transform rotate-45"></div>
+                                    <span class="font-bold text-yellow-300 mr-1"><i class="fas fa-language mr-1"></i>白話：</span> ${seg.translation}
+                                </div>
+                            </div>
+                        </div>
+                        ${imageSection}
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="max-w-4xl mx-auto">
+                    ${segmentsHtml}
+                </div>
+                <div class="text-center mt-12 pb-6 text-amber-500 text-sm space-y-1">
+                    <p><i class="fas fa-mouse-pointer mr-1"></i> 點擊底線文字查看「語詞精解」</p>
+                    <p><i class="fas fa-hand-pointer mr-1"></i> 滑鼠移過古文即可查看「白話翻譯」</p>
+                </div>
+            `;
+        }
+        
+        function renderDeepUnderstanding(container) {
+            container.innerHTML = `
+                <div class="space-y-12">
+                    <!-- Logical Analysis -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-amber-900 mb-6 font-serif border-l-4 border-amber-600 pl-4">香市的「雅俗對比」結構</h2>
+                        <div class="bg-white rounded-xl shadow-lg p-8 border border-orange-100 overflow-x-auto">
+                            <div class="text-center mb-6">
+                                <span class="bg-amber-100 text-amber-800 px-4 py-1 rounded-full text-sm font-bold">五組「不勝其...」排比句型分析</span>
+                            </div>
+                            <table class="w-full text-center border-collapse">
+                                <thead>
+                                    <tr class="bg-amber-800 text-white font-serif">
+                                        <th class="p-4 border border-amber-700 rounded-tl-lg w-1/3">文人的「雅」 (被壓倒)</th>
+                                        <th class="p-4 border border-amber-700 w-1/3">感官面向</th>
+                                        <th class="p-4 border border-amber-700 rounded-tr-lg w-1/3">市井的「俗」 (佔上風)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="p-4 border border-amber-200 font-serif text-lg text-amber-900 bg-orange-50">士女閑都</td>
+                                        <td class="p-4 border border-amber-200 text-amber-700 font-bold"><i class="fas fa-eye mr-2"></i>視覺裝扮</td>
+                                        <td class="p-4 border border-amber-200 font-serif text-lg text-red-800 font-bold bg-red-50">村莊野婦之喬畫</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-4 border border-amber-200 font-serif text-lg text-amber-900 bg-orange-50">芳蘭薌澤</td>
+                                        <td class="p-4 border border-amber-200 text-amber-700 font-bold"><i class="fas fa-wind mr-2"></i>嗅覺氣味</td>
+                                        <td class="p-4 border border-amber-200 font-serif text-lg text-red-800 font-bold bg-red-50">合香芫荽之薰蒸</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-4 border border-amber-200 font-serif text-lg text-amber-900 bg-orange-50">絲竹管絃</td>
+                                        <td class="p-4 border border-amber-200 text-amber-700 font-bold"><i class="fas fa-ear-listen mr-2"></i>聽覺聲音</td>
+                                        <td class="p-4 border border-amber-200 font-serif text-lg text-red-800 font-bold bg-red-50">搖鼓欱笙之聒帳</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-4 border border-amber-200 font-serif text-lg text-amber-900 bg-orange-50">鼎彞光怪</td>
+                                        <td class="p-4 border border-amber-200 text-amber-700 font-bold"><i class="fas fa-gavel mr-2"></i>器物商品</td>
+                                        <td class="p-4 border border-amber-200 font-serif text-lg text-red-800 font-bold bg-red-50">泥人竹馬之行情</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-4 border border-amber-200 font-serif text-lg text-amber-900 bg-orange-50">宋、元名畫</td>
+                                        <td class="p-4 border border-amber-200 text-amber-700 font-bold"><i class="fas fa-scroll mr-2"></i>藝術文化</td>
+                                        <td class="p-4 border border-amber-200 font-serif text-lg text-red-800 font-bold bg-red-50">湖景佛圖之紙貴</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p class="mt-6 text-amber-800 leading-relaxed text-justify">
+                                <strong><i class="fas fa-lightbulb text-yellow-500 mr-2"></i>賞析：</strong> 張岱並非單純鄙視世俗。他透過這五組強烈的對比，生動地展示了民間文化那種排山倒海、無法阻擋的<strong>生命力與狂熱</strong>。在香市期間，文人自視甚高的雅致，完全被這股龐大的世俗洪流所淹沒。這種「極致的喧囂」，正是晚明江南社會商品經濟發達與思想解放的真實寫照。
+                            </p>
+                        </div>
+                    </section>
+                </div>
+            `;
+        }
+
+        function renderVocabulary(container) {
+            const cardsHtml = contentData.vocabulary.map(item => `
+                <div class="bg-white border border-orange-100 rounded-xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col h-full group hover:border-amber-300">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-2xl font-bold text-amber-900 group-hover:text-amber-700 font-serif">${item.word}</h3>
+                    </div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-sm font-mono bg-orange-50 px-2 py-1 rounded text-orange-800">${item.zhuyin}</span>
+                        <span class="text-xs font-bold text-white bg-amber-600 px-2 py-1 rounded-full">${item.pos}</span>
+                    </div>
+                    <p class="text-amber-800 text-lg leading-relaxed flex-grow border-t border-dashed border-orange-100 pt-2">${item.meaning}</p>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-10">
+                        <h2 class="text-3xl font-bold text-amber-900 font-serif mb-2">語詞精解</h2>
+                        <p class="text-amber-700">共收錄 ${contentData.vocabulary.length} 個重點詞彙，包含罕見字音與典故解析</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        ${cardsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAnalysis(container) {
+            const rhetoricHtml = contentData.rhetoric.map(r => `
+                <div class="flex items-start mb-6 p-5 bg-white rounded-xl border border-orange-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex-shrink-0 mr-5">
+                        <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-lg shadow-sm">
+                            <i class="fas fa-feather-alt"></i>
+                        </div>
+                    </div>
+                    <div class="prose prose-amber text-amber-900 text-lg">
+                        ${marked.parse(r)}
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="max-w-4xl mx-auto space-y-12">
+                    <section>
+                        <h2 class="text-2xl font-bold text-amber-900 mb-6 font-serif flex items-center">
+                            <i class="fas fa-lightbulb mr-3 text-yellow-500"></i>全文主旨與文學價值
+                        </h2>
+                        <div class="bg-orange-50 p-8 rounded-2xl border border-orange-200 shadow-sm text-lg text-amber-900 leading-loose">
+                            ${marked.parse(contentData.meaning)}
+                        </div>
+                    </section>
+                    <section>
+                        <h2 class="text-2xl font-bold text-amber-900 mb-6 font-serif flex items-center">
+                            <i class="fas fa-highlighter mr-3 text-amber-500"></i>修辭與寫作技巧
+                        </h2>
+                        <div class="space-y-4">
+                            ${rhetoricHtml}
+                        </div>
+                    </section>
+                </div>
+            `;
+        }
+
+        function renderChat(container) {
+            const p = personas[currentPersona];
+            container.innerHTML = `
+                <div class="flex flex-col h-[600px] bg-white rounded-xl shadow-lg border border-orange-200 overflow-hidden">
+                    <div class="bg-amber-50 p-4 border-b border-amber-100 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center mr-3 border-2 border-amber-200 shadow-sm overflow-hidden">
+                                <i class="${p.icon} text-2xl text-${p.color}-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-amber-900 text-lg">${p.name}</h3>
+                                <p class="text-xs text-amber-600 font-medium">AI 角色扮演中</p>
+                            </div>
+                        </div>
+                        <select onchange="switchPersona(this.value)" class="text-sm border-amber-200 rounded-lg shadow-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 p-2 bg-white text-amber-900 outline-none">
+                            <option value="zhangdai" ${currentPersona === 'zhangdai' ? 'selected' : ''}>張岱 (作者)</option>
+                            <option value="yuanhongdao" ${currentPersona === 'yuanhongdao' ? 'selected' : ''}>袁宏道 (明代名士)</option>
+                            <option value="vendor" ${currentPersona === 'vendor' ? 'selected' : ''}>泥人小販 (香市商販)</option>
+                        </select>
+                    </div>
+                    
+                    <div id="chat-messages" class="flex-grow overflow-y-auto p-6 bg-orange-50 space-y-6 custom-scrollbar">
+                        <div class="chat-bubble chat-ai shadow-sm">
+                            ${processTextWithNotes(p.intro)}
+                        </div>
+                    </div>
+
+                    <div class="p-4 border-t border-orange-200 bg-white">
+                        <form onsubmit="handleChatSubmit(event)" class="relative">
+                            <input type="text" id="chat-input" class="w-full pl-5 pr-14 py-4 rounded-full border border-orange-300 focus:border-amber-500 focus:ring-4 focus:ring-amber-100 focus:outline-none transition text-amber-900 placeholder-amber-400 shadow-inner" placeholder="向 ${p.name} 提問...">
+                            <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-amber-600 text-white rounded-full hover:bg-amber-700 flex items-center justify-center transition shadow-md hover:scale-105">
+                                <i class="fas fa-paper-plane text-sm"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            // 重新渲染歷史訊息
+            if (chatHistory.length > 0) {
+                const chatBox = document.getElementById('chat-messages');
+                chatHistory.forEach(msg => {
+                    chatBox.innerHTML += `<div class="chat-bubble ${msg.role === 'user' ? 'chat-user' : 'chat-ai'} shadow-sm">${marked.parse(msg.text)}</div>`;
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        function switchPersona(newPersona) {
+            currentPersona = newPersona;
+            chatHistory = []; 
+            renderChat(document.getElementById('content-display'));
+        }
+
+        function renderQuiz(container) {
+            let quizHtml = contentData.quiz.map((q, i) => {
+                const val = ["A","B","C","D"];
+                const isAnswered = userAnswers[i] !== undefined;
+                const userAnswer = userAnswers[i];
+                let feedback = '';
+                let cardClass = "bg-white border border-orange-200 hover:border-amber-300";
+                let feedbackClass = "hidden mt-4 p-4 rounded-lg text-base bg-orange-50 border border-orange-100"; 
+                
+                if (isAnswered) {
+                    feedbackClass = "mt-4 p-4 rounded-lg text-base animate-fade-in border"; 
+                    if (userAnswer === q.ans) {
+                        feedback = `<strong class="block mb-1 text-lg"><i class="fas fa-check-circle mr-2"></i>答對了！</strong>${q.exp}`;
+                        cardClass = "bg-green-50/30 border border-green-500 shadow-sm";
+                        feedbackClass += " bg-green-50 border-green-200 text-green-900";
+                    } else {
+                        const userOption = q.opts.find((opt, idx) => ["A","B","C","D"][idx] === userAnswer);
+                        const correctOption = q.opts.find((opt, idx) => ["A","B","C","D"][idx] === q.ans);
+                        feedback = `
+                            <div class="mb-2">
+                                <span class="block font-bold text-red-700 text-lg"><i class="fas fa-times-circle mr-2"></i>答錯了</span>
+                                <span class="block text-amber-800 mt-1">您的答案：${userOption}</span>
+                                <span class="block text-green-700 font-bold mt-1">正確答案：${correctOption}</span>
+                            </div>
+                            <div class="pt-2 border-t border-red-200 mt-2 text-amber-900">
+                                <strong><i class="fas fa-lightbulb text-yellow-500 mr-1"></i>解析：</strong>${q.exp}
+                            </div>
+                        `;
+                        cardClass = "bg-red-50/30 border border-red-500 shadow-sm";
+                        feedbackClass += " bg-red-50 border-red-200 text-red-900";
+                    }
+                }
+
+                return `
+                <div class="${cardClass} rounded-xl p-6 mb-8 shadow-sm transition-all duration-300" id="quiz-card-${i}">
+                    <div class="flex items-start mb-4">
+                        <span class="flex-shrink-0 w-8 h-8 bg-amber-600 text-white rounded-full flex items-center justify-center font-bold mr-3 mt-1">${i+1}</span>
+                        <p class="font-bold text-xl text-amber-900 leading-relaxed">${q.q}</p>
+                    </div>
+                    <div class="grid grid-cols-1 gap-3 pl-11">
+                        ${q.opts.map((opt, optIdx) => {
+                            const val = ["A","B","C","D"][optIdx];
+                            const isChecked = userAnswer === val ? 'checked' : '';
+                            const isDisabled = isAnswered ? 'disabled' : '';
+                            const labelClass = isAnswered 
+                                ? (val === q.ans ? 'bg-green-100 border-green-300 font-bold text-green-900' : (isChecked ? 'bg-red-100 border-red-300' : 'opacity-50'))
+                                : 'hover:bg-amber-50 hover:border-amber-300 cursor-pointer bg-white';
+
+                            return `
+                            <label class="flex items-center p-4 rounded-lg border border-orange-200 transition group ${labelClass}">
+                                <input type="radio" name="q-${i}" value="${val}" class="mr-3 text-amber-600 focus:ring-amber-500 w-5 h-5" onchange="checkAnswer(${i}, '${val}', '${q.ans}')" ${isChecked} ${isDisabled}>
+                                <span class="text-lg text-amber-900">${opt}</span>
+                            </label>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div id="feedback-${i}" class="${feedbackClass}">${feedback}</div>
+                </div>
+            `}).join('');
+            
+            container.innerHTML = `
+                <div class="max-w-3xl mx-auto pb-24">
+                    <div class="text-center mb-10">
+                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-bold uppercase mb-2 inline-block border border-red-200">高鑑別度題型</span>
+                        <h2 class="text-3xl font-bold text-amber-900 font-serif">隨堂測驗 (20題)</h2>
+                        <p class="text-amber-700 mt-2">請細心作答，體會張岱筆下的對比美學</p>
+                    </div>
+                    ${quizHtml}
+                    
+                    <!-- Submit Button Area -->
+                    <div class="fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-md border-t border-orange-200 p-4 shadow-[0_-5px_20px_rgba(0,0,0,0.1)] flex justify-center items-center z-40">
+                         <button onclick="submitQuiz()" class="px-10 py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold rounded-full shadow-lg transition transform hover:scale-105 flex items-center text-lg">
+                            <i class="fas fa-paper-plane mr-2"></i> 交卷並查看成績
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // [Tab Story] 抉擇之路 (RPG)
+        const storyNodes = {
+            start: {
+                id: 'start',
+                text: "明朝末年，江南繁華絕代。你是名士張岱，適逢二月花朝，西湖「香市」大開。你站在湖畔，眼前人山人海，各種聲音氣味交織。你打算...",
+                choices: [
+                    { text: "去湖心亭找個清靜處喝茶，避開俗人", next: "tea_pavilion" },
+                    { text: "深入香市，感受這「俗」到極致的生命力", next: "enter_market" }
+                ]
+            },
+            tea_pavilion: {
+                id: 'tea_pavilion',
+                text: "【Alternative Ending: 孤芳自賞】你避開了人群，在湖心亭品茗。雖然清雅，但你錯過了明末江南最生動的世俗畫卷，日後寫《陶庵夢憶》時，總覺得少了一篇最具爆發力的文章。",
+                choices: [{ text: "重來，我要走入人群", next: "start" }],
+                isEnding: true
+            },
+            enter_market: {
+                id: 'enter_market',
+                text: "你選擇擠入人群。「岸無留船，寓無留客」。你看到高雅的士女被村婦的濃妝艷抹搶了風頭；名貴的古董根本賣不過幾文錢的泥人竹馬。面對這龐大的世俗洪流，你的感受是？",
+                choices: [
+                    { text: "痛心疾首，大罵世風日下", next: "complain" },
+                    { text: "豁達欣賞，將這極致的「俗」與西湖的「雅」並列寫入文章", next: "success" }
+                ]
+            },
+            complain: {
+                id: 'complain',
+                text: "【Alternative Ending: 道學先生】你拂袖而去，對民間的狂熱嗤之以鼻。你失去了作為一個散文家客觀包容的視野，寫出來的文章流於說教，無人問津。",
+                choices: [{ text: "重新體會世俗之美", next: "enter_market" }],
+                isEnding: true
+            },
+            success: {
+                id: 'success',
+                text: "【True Ending: 夢憶繁華】你感嘆這幾百萬人的狂熱，「如逃如逐，如奔如追」。你以筆為攝影機，用五組絕妙的對比，將這大江以東絕無僅有的奇景永遠定格。多年後國破家亡，這篇《西湖香市》成了你對故國繁華最深刻的憑弔。",
+                choices: [{ text: "重溫繁華一夢", next: "start" }],
+                isEnding: true,
+                win: true
+            }
+        };
+
+        function renderStory(container) {
+            if(!window.currentStoryNode) window.currentStoryNode = 'start';
+            const node = storyNodes[window.currentStoryNode];
+
+            const localPath = `Chinese-Classical-413-images/rpg_${window.currentStoryNode}.jpg`;
+            let imageContent = `
+                <div class="w-full overflow-hidden rounded-t-xl bg-gray-100">
+                    <img src="${localPath}" class="w-full h-auto fade-in-image shadow-inner" alt="場景圖" onerror="this.style.display='none'">
+                </div>
+            `;
+
+            container.innerHTML = `<div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-orange-100">${imageContent}<div class="p-8 sm:p-10"><div class="flex items-center mb-6 text-amber-800 text-sm font-bold uppercase tracking-widest border-b border-orange-100 pb-2"><i class="fas fa-compass mr-2"></i> 抉擇時刻</div><p class="text-xl sm:text-2xl leading-relaxed text-amber-900 mb-10 font-serif">${node.text}</p>${node.isEnding ? (node.win ? `<div class="text-center mb-8 text-green-700 font-bold text-2xl p-6 bg-green-50 rounded-xl border border-green-200 shadow-sm"><i class="fas fa-check-circle mr-3"></i>絕妙好辭</div>` : `<div class="text-center mb-8 text-orange-700 font-bold text-2xl p-6 bg-orange-50 rounded-xl border border-orange-200 shadow-sm"><i class="fas fa-redo mr-3"></i>重新挑戰</div>`) : ''}<div class="grid gap-4">${node.choices.map(c => `<button onclick="nextStoryNode('${c.next}')" class="story-choice w-full py-5 px-8 bg-white hover:bg-orange-50 border-2 border-orange-200 hover:border-amber-500 rounded-xl text-amber-900 font-bold text-xl transition duration-200 flex items-center justify-between group shadow-sm hover:shadow-md text-left"><span>${c.text}</span><i class="fas fa-chevron-right text-amber-300 group-hover:text-amber-600 transition transform group-hover:translate-x-1"></i></button>`).join('')}</div></div></div>`;
+            if(node.win) { try { confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } }); } catch (e) { console.log("Confetti not loaded"); } }
+        }
+
+        function nextStoryNode(nodeId) {
+            window.currentStoryNode = nodeId;
+            renderStory(document.getElementById('content-display'));
+        }
+
+        function checkAnswer(idx, val, ans) {
+            if (userAnswers[idx] !== undefined) return; 
+
+            userAnswers[idx] = val; 
+            
+            const radios = document.getElementsByName(`q-${idx}`);
+            for (let radio of radios) {
+                radio.disabled = true;
+                radio.parentElement.classList.add('disabled-label');
+            }
+
+            const feedbackEl = document.getElementById(`feedback-${idx}`);
+            const card = document.getElementById(`quiz-card-${idx}`);
+            const qData = contentData.quiz[idx];
+            if (!feedbackEl || !card) return;
+            
+            feedbackEl.className = 'mt-4 p-4 rounded-lg text-base animate-fade-in border';
+            card.classList.remove('bg-white');
+
+            if (val === ans) {
+                feedbackEl.innerHTML = `<strong class="block mb-1 text-lg"><i class="fas fa-check-circle mr-2"></i>答對了！</strong>${qData.exp}`;
+                feedbackEl.classList.add('bg-green-50', 'border-green-200', 'text-green-900');
+                card.classList.add('bg-green-50/30', 'border-green-500');
+            } else {
+                const correctOption = qData.opts.find((opt, i) => ["A","B","C","D"][i] === ans);
+                const userOption = qData.opts.find((opt, i) => ["A","B","C","D"][i] === val);
+                
+                feedbackEl.innerHTML = `
+                    <div class="mb-2">
+                        <span class="block font-bold text-red-700 text-lg"><i class="fas fa-times-circle mr-2"></i>答錯了</span>
+                        <span class="block text-amber-800 mt-1">您的答案：${userOption}</span>
+                        <span class="block text-green-700 font-bold mt-1">正確答案：${correctOption}</span>
+                    </div>
+                    <div class="pt-2 border-t border-red-200 mt-2 text-amber-900">
+                        <strong><i class="fas fa-lightbulb text-yellow-500 mr-1"></i>解析：</strong>${qData.exp}
+                    </div>
+                `;
+                feedbackEl.classList.add('bg-red-50', 'border-red-200', 'text-amber-900');
+                card.classList.add('bg-red-50/30', 'border-red-500');
+            }
+            feedbackEl.classList.remove('hidden');
+        }
+
+        function submitQuiz() {
+            const total = contentData.quiz.length;
+            const answered = Object.keys(userAnswers).length;
+            
+            if (answered < total) {
+                showError(`您還有 ${total - answered} 題未完成，請作答完畢後再交卷！`);
+                return;
+            }
+            
+            let correctCount = 0;
+            for (let i = 0; i < total; i++) {
+                if (userAnswers[i] === contentData.quiz[i].ans) {
+                    correctCount++;
+                }
+            }
+            
+            const score = Math.round((correctCount / total) * 100);
+
+            const scoreText = document.getElementById('score-text');
+            scoreText.innerHTML = `您的總分是 <span class="text-amber-600 font-bold text-5xl">${score}</span> 分`;
+            
+            const modal = document.getElementById('score-modal');
+            modal.classList.remove('hidden');
+            
+            try {
+                if(score >= 80) {
+                    confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+                }
+            } catch(e) {}
+        }
+
+        function closeScoreModal() {
+            const modal = document.getElementById('score-modal');
+            modal.classList.add('hidden');
+        }
+        
+        function showNote(key, segIdx, el, e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            const popup = document.getElementById('note-template');
+            const content = document.getElementById('note-content');
+            let noteData = null;
+            
+            if (segIdx !== undefined && contentData.segments[segIdx] && contentData.segments[segIdx].notes[key]) { 
+                noteData = contentData.segments[segIdx].notes[key]; 
+            } else if (allKeywords[key]) { 
+                noteData = allKeywords[key]; 
+            }
+            
+            if(!noteData) return;
+            
+            content.innerHTML = `
+                <div class="flex items-baseline justify-between border-b border-amber-100 pb-2 mb-2">
+                    <h4 class="text-xl font-bold text-amber-900 font-serif">${key}</h4>
+                    <span class="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full font-bold">${noteData.type || noteData.pos}</span>
+                </div>
+                <p class="text-sm text-amber-700 mb-2 font-mono bg-orange-50 px-2 py-1 rounded inline-block">${noteData.zhuyin}</p>
+                <p class="text-amber-800 leading-relaxed font-medium">${noteData.def || noteData.meaning}</p>
+            `;
+            
+            const rect = el.getBoundingClientRect();
+            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            let left = rect.left + scrollLeft;
+            let top = rect.bottom + scrollTop + 8; 
+            
+            if (left + 300 > document.body.clientWidth) { left = document.body.clientWidth - 310; }
+            
+            popup.style.left = `${left}px`;
+            popup.style.top = `${top}px`;
+            popup.classList.remove('hidden');
+        }
+
+        function processTextWithNotes(text) {
+            let processedText = marked.parse(text);
+            const sortedKeys = Object.keys(allKeywords).sort((a, b) => b.length - a.length);
+            
+            sortedKeys.forEach(key => {
+                const regex = new RegExp(`(?<!<[^>]*)${key}`, "g");
+                processedText = processedText.replace(regex, `<span class="interactive-word bg-orange-50 px-1 rounded" onclick="showNote('${key}', undefined, this, event)">${key}</span>`);
+            });
+            return processedText;
+        }
+
+        // 語音播放優化：優先女聲，語速0.9，音調1.05，標點停頓
+        async function playAudio(text) {
+            if (!('speechSynthesis' in window)) { showError("您的瀏覽器不支援語音朗讀功能。"); return; }
+            window.speechSynthesis.cancel();
+            
+            let voices = window.speechSynthesis.getVoices();
+            if (voices.length === 0) {
+                await new Promise(resolve => {
+                    const id = setInterval(() => {
+                        voices = window.speechSynthesis.getVoices();
+                        if (voices.length > 0) {
+                            clearInterval(id);
+                            resolve();
+                        }
+                    }, 100);
+                });
+            }
+
+            // 優先選擇高品質女聲
+            let targetVoice = voices.find(v => (v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW' || v.lang === 'zh-CN') && 
+                (v.name.includes('Google 國語') || v.name.includes('Mei-Jia') || v.name.includes('Yating') || v.name.includes('Lili') || v.name.includes('Ting-Ting') || v.name.includes('Xiaoxiao')));
+            
+            if (!targetVoice) { 
+                targetVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW'); 
+            }
+            if (!targetVoice) {
+                targetVoice = voices.find(v => v.lang.startsWith('zh'));
+            }
+
+            // 增強斷句處理，遇到標點符號分割
+            const chunks = text.split(/([，、。？！；：])/).reduce((acc, curr, i) => {
+                if (i % 2 === 0) { 
+                    if (curr.trim()) acc.push({ text: curr });
+                } else { 
+                    if (acc.length > 0) {
+                        acc[acc.length - 1].text += curr;
+                    }
+                }
+                return acc;
+            }, []);
+
+            if (chunks.length === 0) return;
+
+            // 遞迴播放以確保每段設定生效
+            const playNext = (index) => {
+                if (index >= chunks.length) return;
+                const utterance = new SpeechSynthesisUtterance(chunks[index].text);
+                utterance.lang = 'zh-TW';
+                utterance.rate = 0.9;  // 微調語速
+                utterance.pitch = 1.05; // 稍高音調，更溫暖
+                if (targetVoice) utterance.voice = targetVoice;
+                
+                utterance.onend = () => { playNext(index + 1); };
+                window.speechSynthesis.speak(utterance);
+            };
+
+            playNext(0);
+        }
+
+        function showError(msg) {
+            const toast = document.getElementById('error-toast');
+            document.getElementById('error-msg').innerText = msg;
+            toast.classList.remove('hidden');
+            requestAnimationFrame(() => { toast.classList.remove('translate-y-10', 'opacity-0'); });
+            setTimeout(() => { toast.classList.add('translate-y-10', 'opacity-0'); setTimeout(() => toast.classList.add('hidden'), 300); }, 4000);
+        }
+
+        // Static Mock Chat Response Logic for GitHub Pages 
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatBox = document.getElementById('chat-messages');
+            chatBox.innerHTML += `<div class="chat-bubble chat-user shadow-sm animate-fade-in">${message}</div>`;
+            chatHistory.push({role: 'user', text: message});
+            
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            const loadingId = 'loading-' + Date.now();
+            chatBox.innerHTML += `<div id="${loadingId}" class="chat-bubble chat-ai shadow-sm"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            setTimeout(() => {
+                const loadingEl = document.getElementById(loadingId);
+                if(loadingEl) loadingEl.remove();
+                
+                let responseText = "";
+                const p = personas[currentPersona];
+                
+                if (currentPersona === 'zhangdai') {
+                    responseText = "唉，那都是前朝舊夢了。昔日那喧鬧的香市，那滿耳的搖鼓欱笙，如今思來，字字皆是血淚啊！";
+                } else if (currentPersona === 'yuanhongdao') {
+                    responseText = "宗子老弟的筆力真是驚人！我眼中的西湖是純粹的雅，他卻能把西湖寫得如此『俗不可耐』卻又生機勃勃，佩服！";
+                } else {
+                    responseText = "客官，別管那些酸秀才怎麼想！香市就是圖個熱鬧，來，買個泥人竹馬回去給孩子玩吧！";
+                }
+                
+                chatHistory.push({role: 'ai', text: responseText});
+                chatBox.innerHTML += `<div class="chat-bubble chat-ai shadow-sm animate-fade-in">${marked.parse(responseText)}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 1000);
+        }
+
+    </script>
+</body>
+</html>
