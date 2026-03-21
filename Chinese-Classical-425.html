@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>(推與敲) 第67篇 殺青 - 互動式古文學習 (AI 旗艦版)</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 載入 Marked.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- 載入 FontAwesome 圖標 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 載入 Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #fffbf0; 
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23fcd34d' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .font-serif {
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        /* 自定義滾動條 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fff7ed; }
+        ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 4px; }
+
+        /* 標籤樣式 */
+        .tab-btn { position: relative; transition: all 0.3s ease; white-space: nowrap; }
+        .tab-btn::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 3px; background-color: #d97706; transition: width 0.3s ease; }
+        .tab-btn.active { color: #92400e; background-color: #fef3c7; }
+        .tab-btn.active::after { width: 100%; }
+
+        /* 互動文字樣式 */
+        .interactive-word {
+            cursor: pointer;
+            border-bottom: 2px dotted #f59e0b; 
+            transition: all 0.2s;
+            padding-bottom: 1px;
+            position: relative;
+            z-index: 20;
+            color: #b45309; 
+            font-weight: 600;
+        }
+        .interactive-word:hover { background-color: #fde68a; color: #78350f; border-bottom-style: solid; }
+
+        /* 彈出註釋 */
+        .note-popup {
+            animation: fadeIn 0.2s ease-out;
+            box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.2), 0 8px 10px -6px rgba(245, 158, 11, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px) translateX(-50%); }
+            to { opacity: 1; transform: translateY(0) translateX(-50%); }
+        }
+
+        /* 懸停翻譯效果 */
+        .hover-trans-container:hover .hover-translation { display: block; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 聊天氣泡 */
+        .chat-bubble { max-width: 85%; border-radius: 1rem; padding: 0.75rem 1rem; margin-bottom: 1rem; position: relative; line-height: 1.6; }
+        .chat-user { background-color: #fef3c7; color: #92400e; align-self: flex-end; border-bottom-right-radius: 0.25rem; }
+        .chat-ai { background-color: #fff; border: 1px solid #fde68a; color: #44403c; align-self: flex-start; border-bottom-left-radius: 0.25rem; }
+        
+        /* 故事模式樣式 */
+        .story-choice:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(217, 119, 6, 0.1), 0 2px 4px -1px rgba(217, 119, 6, 0.06); }
+        .fade-in-image { animation: fadeInImg 0.8s ease-out forwards; }
+        @keyframes fadeInImg { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        
+        /* 禁用狀態的樣式 */
+        input[type="radio"]:disabled { cursor: not-allowed; opacity: 0.6; }
+        .disabled-label { cursor: not-allowed !important; opacity: 0.7; }
+    </style>
+</head>
+<body class="text-stone-800 min-h-screen flex flex-col">
+
+    <!-- 頂部導航欄 -->
+    <nav class="bg-amber-900 text-amber-50 shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-scroll text-2xl mr-3 text-amber-300"></i>
+                    <span class="font-bold text-xl tracking-wider font-serif">古文互動教室 <span class="text-xs text-amber-300 font-sans ml-1">AI 旗艦版</span></span>
+                </div>
+                <div class="hidden md:block text-sm opacity-90 text-amber-100">
+                    深度學習：第67篇 殺青
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="app" class="max-w-6xl mx-auto p-4 sm:p-6 w-full flex-grow flex flex-col">
+        
+        <!-- 課程標題卡片 -->
+        <header class="bg-white rounded-2xl shadow-md overflow-hidden mb-6 border border-amber-100 relative">
+            <div class="absolute top-0 right-0 w-40 h-40 bg-amber-50 rounded-bl-full opacity-60 z-0"></div>
+            <div class="bg-gradient-to-r from-amber-50/50 to-white p-6 sm:p-8 relative z-10">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h1 id="main-title" class="text-3xl sm:text-4xl font-serif font-bold text-amber-900 mb-2"></h1>
+                        <div class="flex items-center text-amber-800 space-x-4 text-sm sm:text-base">
+                            <span class="flex items-center bg-orange-100 px-3 py-1 rounded-full border border-orange-200"><i class="fas fa-user-edit mr-2 text-orange-600"></i><span id="author-name"></span></span>
+                            <span class="flex items-center bg-orange-100 px-3 py-1 rounded-full border border-orange-200"><i class="fas fa-book mr-2 text-orange-600"></i><span id="source-name"></span></span>
+                        </div>
+                    </div>
+                    <div class="hidden md:block text-right">
+                        <span class="inline-block bg-red-100 text-red-800 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wide mb-1 border border-red-200">必讀經典文章</span>
+                        <div class="text-xs text-amber-600 font-medium">適合程度：中高階 (科技散文與擬人修辭)</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 功能標籤 -->
+        <div class="flex flex-wrap justify-center bg-white rounded-xl shadow-sm mb-6 border border-amber-100 sticky top-20 z-40 overflow-x-auto">
+            <button id="tab-overview" class="tab-btn active px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('overview')"><i class="fas fa-info-circle mr-2"></i>總覽</button>
+            <button id="tab-reading" class="tab-btn px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('reading')"><i class="fas fa-glasses mr-2"></i>精讀與圖解</button>
+            <button id="tab-deep" class="tab-btn px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('deep')"><i class="fas fa-project-diagram mr-2"></i>深度理解</button>
+            <button id="tab-story" class="tab-btn px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('story')"><i class="fas fa-theater-masks mr-2"></i>抉擇 RPG</button>
+            <button id="tab-vocabulary" class="tab-btn px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('vocabulary')"><i class="fas fa-spell-check mr-2"></i>語詞精解</button>
+            <button id="tab-analysis" class="tab-btn px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('analysis')"><i class="fas fa-feather-alt mr-2"></i>修辭分析</button>
+            <button id="tab-chat" class="tab-btn px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('chat')"><i class="fas fa-robot mr-2"></i>AI 對話</button>
+            <button id="tab-quiz" class="tab-btn px-4 py-3 md:px-5 md:py-4 font-medium text-amber-700 hover:text-amber-900" onclick="switchTab('quiz')"><i class="fas fa-pen-nib mr-2"></i>隨堂測驗</button>
+        </div>
+
+        <!-- 主要內容區 -->
+        <main id="content-display" class="flex-grow bg-white rounded-2xl shadow-lg p-6 sm:p-8 min-h-[500px] transition-all duration-300 relative border border-orange-50">
+            <!-- 內容動態載入 -->
+        </main>
+        
+    </div>
+
+    <!-- 註釋彈出框模板 -->
+    <div id="note-template" class="note-popup absolute bg-white border-l-4 border-amber-500 rounded-r-lg shadow-2xl p-4 z-50 hidden w-72" onclick="event.stopPropagation()">
+        <button onclick="closeNote()" class="absolute top-2 right-2 text-amber-400 hover:text-amber-600 transition"><i class="fas fa-times"></i></button>
+        <div id="note-content"></div>
+    </div>
+
+    <!-- 結果模態框 -->
+    <div id="score-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 shadow-2xl transform transition-all scale-100 border-2 border-amber-100">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-gradient-to-br from-amber-100 to-orange-200 mb-6 shadow-inner">
+                    <i class="fas fa-award text-3xl text-amber-700"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-amber-900 mb-2 font-serif">測驗結果</h3>
+                <p class="text-amber-600 mb-6" id="score-text">你的得分是...</p>
+                <button onclick="closeScoreModal()" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-md px-4 py-3 bg-amber-700 text-base font-medium text-white hover:bg-amber-800 focus:outline-none transition">
+                    查看詳細解析
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 錯誤提示 -->
+    <div id="error-toast" class="fixed bottom-6 right-6 bg-red-50 border border-red-200 text-red-600 px-6 py-4 rounded-lg shadow-xl hidden z-50 flex items-center transition-all transform translate-y-10 opacity-0">
+        <i class="fas fa-exclamation-circle mr-3 text-xl"></i>
+        <div>
+            <p class="font-bold">系統提示</p>
+            <p id="error-msg" class="text-sm"></p>
+        </div>
+    </div>
+
+    <script>
+        // ----------------------------------------------------
+        // 1. 教材資料結構 (Content Data) - 殺青
+        // ----------------------------------------------------
+        const contentData = {
+            metadata: {
+                title: "(推與敲) 第67篇 殺青",
+                author: "宋應星",
+                source: "《天工開物》"
+            },
+            summary: "本文選自明代宋應星所著的中國古代科技百科全書《天工開物》的第十三卷〈殺青〉（造紙術篇）的總敘。宋應星以深邃的哲理視角，論述了「紙」（楮先生）在人類文明傳承中不可或缺的偉大作用。他對比了口耳相傳的侷限性，與文字記載的長遠影響力，指出造紙術不僅是門技術，更是文化與智慧賴以傳遞的載體。文末，他也糾正了世人將發明紙的功勞完全歸於漢晉時期（如蔡倫）的淺陋觀念，指出造紙的雛形在上古時期便已存在。",
+            
+            meaning: "1. **科技與人文的結合**：作者不只是在紀錄造紙的工序，更是站在人類文明史的高度，探討紙張作為知識載體的哲學意義。\n2. **語言與文字的對比**：點出「呫呫口語」（口頭交流）在時間與空間上的侷限，而「寸符半卷」（書面文字）卻能「風行而冰釋」，長久傳遞政令與學問。\n3. **批判精神**：敢於挑戰傳統認知，認為紙的發明是人類實踐經驗的長期積累，而非少數古人（如蔡倫）所能獨佔專美的，展現了實事求是的科學態度。",
+            
+            rhetoric: [
+                "**擬人 (Personification):** 將紙張尊稱為「楮先生」，賦予其人格化特徵，表達了對紙張承載文明的敬意。",
+                "**對比 (Contrast):** 將「呫呫口語」（口傳）的微弱，與「風行而冰釋」（紙傳）的高效與深遠進行強烈對比。",
+                "**借代 (Metonymy):** 以「寸符」、「半卷」代指寫有文字的紙張與公文書籍；以「竹骨」、「木皮」代指造紙的原料。"
+            ],
+            
+            vocabulary: [
+                { word: "宋子", zhuyin: "ㄙㄨㄥˋ ㄗˇ", pos: "名詞", meaning: "宋應星的自稱。仿效古人著書立說的尊稱。" },
+                { word: "物象精華", zhuyin: "ㄨˋ ㄒㄧㄤˋ ㄐㄧㄥ ㄏㄨㄚˊ", pos: "名詞片語", meaning: "萬事萬物的精華。" },
+                { word: "乾坤", zhuyin: "ㄑㄧㄢˊ ㄎㄨㄣ", pos: "名詞", meaning: "天地。" },
+                { word: "華達夷", zhuyin: "ㄏㄨㄚˊ ㄉㄚˊ ㄧˊ", pos: "動賓片語", meaning: "從中原（華）傳達到四方邊遠地區（夷）。" },
+                { word: "含生", zhuyin: "ㄏㄢˊ ㄕㄥ", pos: "名詞", meaning: "指有生命的物類，此指後代的人類。" },
+                { word: "目授", zhuyin: "ㄇㄨˋ ㄕㄡˋ", pos: "動詞", meaning: "用眼睛看到、閱讀。" },
+                { word: "呫呫", zhuyin: "ㄔㄜˋ ㄔㄜˋ", pos: "擬聲詞", meaning: "形容說話微弱或喋喋不休的樣子。（注音亦可作 ㄓㄢ ㄓㄢ，此處多取 ㄔㄜˋ ㄔㄜˋ）" },
+                { word: "幾何", zhuyin: "ㄐㄧ ㄏㄜˊ", pos: "疑問詞", meaning: "多少。這裡指能傳播多遠、多久。" },
+                { word: "寸符", zhuyin: "ㄘㄨㄣˋ ㄈㄨˊ", pos: "名詞", meaning: "短小的信物或公文。" },
+                { word: "半卷", zhuyin: "ㄅㄢˋ ㄐㄩㄢˋ", pos: "名詞", meaning: "半卷文書或書籍。" },
+                { word: "詮旨", zhuyin: "ㄑㄩㄢˊ ㄓˇ", pos: "動賓片語", meaning: "傳達、解釋旨意。" },
+                { word: "風行", zhuyin: "ㄈㄥ ㄒㄧㄥˊ", pos: "形容詞", meaning: "像風吹過一樣迅速、普遍。" },
+                { word: "冰釋", zhuyin: "ㄅㄧㄥ ㄕˋ", pos: "動詞", meaning: "像冰塊消融一樣，比喻毫無阻礙或疑慮消除。" },
+                { word: "覆載之間", zhuyin: "ㄈㄨˋ ㄗㄞˋ ㄓ ㄐㄧㄢ", pos: "名詞片語", meaning: "天地之間。天覆蓋萬物，地承載萬物。" },
+                { word: "藉", zhuyin: "ㄐㄧㄝˋ", pos: "動詞", meaning: "憑藉、依賴。" },
+                { word: "楮先生", zhuyin: "ㄔㄨˇ ㄒㄧㄢ ㄕㄥ", pos: "名詞", meaning: "對紙的擬人化尊稱。楮樹的皮是造紙的重要原料。" },
+                { word: "聖頑", zhuyin: "ㄕㄥˋ ㄨㄢˊ", pos: "名詞", meaning: "聖明的人與愚頑的人。" },
+                { word: "咸", zhuyin: "ㄒㄧㄢˊ", pos: "副詞", meaning: "都、皆。" },
+                { word: "嘉賴", zhuyin: "ㄐㄧㄚ ㄌㄞˋ", pos: "動詞", meaning: "讚美並依賴。" },
+                { word: "殺其青", zhuyin: "ㄕㄚ ㄑㄧˊ ㄑㄧㄥ", pos: "動賓片語", meaning: "原指烘烤竹簡去除水分防蛀，此處指去除造紙原料（竹木）的青色與水分的工序。" },
+                { word: "見", zhuyin: "ㄒㄧㄢˋ", pos: "動詞", meaning: "同「現」，顯露、呈現出來。" },
+                { word: "粗效", zhuyin: "ㄘㄨ ㄒㄧㄠˋ", pos: "名詞", meaning: "粗淺的功用。" },
+                { word: "擅名", zhuyin: "ㄕㄢˋ ㄇㄧㄥˊ", pos: "動賓片語", meaning: "獨攬名聲。指世人將造紙發明獨歸於蔡倫等人。" },
+                { word: "陋", zhuyin: "ㄌㄡˋ", pos: "形容詞", meaning: "見識淺薄。" }
+            ],
+
+            segments: [
+                {
+                    original: "宋子曰：物象精華，乾坤微妙，古傳今而華達夷，使後起含生，目授而心識之，承載者以何物哉？",
+                    translation: "宋先生說：萬事萬物的精華，天地的奧妙，能夠從古代傳到今天，從中原傳播到四方邊遠地區，讓後代的人類，能夠透過眼睛閱讀而心領神會，這承載知識的到底是靠什麼東西呢？",
+                    audioText: "宋子曰：，物象精華，乾坤微妙，，古傳今而華達夷，，使後起含生，，目授而心識之，，承載者以何物哉？",
+                    notes: {
+                        "物象": { zhuyin: "ㄨˋ ㄒㄧㄤˋ", type: "名詞", def: "萬事萬物。" },
+                        "乾坤": { zhuyin: "ㄑㄧㄢˊ ㄎㄨㄣ", type: "名詞", def: "天地。" },
+                        "華達夷": { zhuyin: "ㄏㄨㄚˊ ㄉㄚˊ ㄧˊ", type: "片語", def: "從中原傳到四方。" },
+                        "含生": { zhuyin: "ㄏㄢˊ ㄕㄥ", type: "名詞", def: "有生命的物類，指人類。" },
+                        "目授": { zhuyin: "ㄇㄨˋ ㄕㄡˋ", type: "動詞", def: "眼睛看到、閱讀。" }
+                    }
+                },
+                {
+                    original: "君與民通，師將弟命，憑藉呫呫口語，其與幾何？持寸符，握半卷，終事詮旨，風行而冰釋焉。",
+                    translation: "君王要與百姓溝通，老師要對弟子傳授知識命令，如果只憑藉著微弱且喋喋不休的口頭言語，那能傳播多遠、多久呢？但只要拿著小小的信符，握著半卷文書，就能完成事務、傳達旨意，像風吹過一樣迅速普及，像冰雪消融一樣毫無阻礙。",
+                    audioText: "君與民通，師將弟命，，憑藉撤撤口語，，其與幾何？，持寸符，握半卷，，終事詮旨，，風行而冰釋焉。",
+                    notes: {
+                        "將": { zhuyin: "ㄐㄧㄤ", type: "動詞", def: "傳達、帶領。" },
+                        "呫呫": { zhuyin: "ㄔㄜˋ ㄔㄜˋ", type: "擬聲詞", def: "說話微弱或喋喋不休的樣子。" },
+                        "幾何": { zhuyin: "ㄐㄧ ㄏㄜˊ", type: "疑問詞", def: "能傳多遠多久。" },
+                        "詮旨": { zhuyin: "ㄑㄩㄢˊ ㄓˇ", type: "動賓片語", def: "傳達解釋旨意。" },
+                        "冰釋": { zhuyin: "ㄅㄧㄥ ㄕˋ", type: "動詞", def: "毫無阻礙、疑慮消除。" }
+                    }
+                },
+                {
+                    original: "覆載之間之藉有楮先生也，聖頑咸嘉賴之矣。",
+                    translation: "天地之間幸好依賴有「楮先生」（紙）啊！無論是聖明的人還是愚頑的人，都非常喜愛並依賴它。",
+                    audioText: "覆載之間之藉有楚先生也，，聖頑咸嘉賴之矣。",
+                    notes: {
+                        "覆載之間": { zhuyin: "ㄈㄨˋ ㄗㄞˋ ㄓ ㄐㄧㄢ", type: "片語", def: "指天地之間。" },
+                        "藉": { zhuyin: "ㄐㄧㄝˋ", type: "動詞", def: "依賴。" },
+                        "楮先生": { zhuyin: "ㄔㄨˇ ㄒㄧㄢ ㄕㄥ", type: "名詞", def: "對紙的擬人化尊稱。" },
+                        "聖頑": { zhuyin: "ㄕㄥˋ ㄨㄢˊ", type: "名詞", def: "聖明與愚頑的人。" },
+                        "咸": { zhuyin: "ㄒㄧㄢˊ", type: "副詞", def: "都、皆。" },
+                        "嘉賴": { zhuyin: "ㄐㄧㄚ ㄌㄞˋ", type: "動詞", def: "讚美並依賴。" }
+                    }
+                },
+                {
+                    original: "身為竹骨與木皮，殺其青而白乃見，萬卷百家，基從此起。其精在此，而其粗效于障風、護物之間。",
+                    translation: "它的本體是竹子的骨幹與樹木的表皮，經過加工去除青色與水分後，潔白的紙張才顯現出來。萬卷書籍、百家學說，都是從這個基礎建立起來的。紙張最精華的價值就在於此（承載文化），而它粗淺的功用則是拿來擋風、包裝物品。",
+                    audioText: "身為竹骨與木皮，，殺其青而白乃現，，萬卷百家，基從此起。，其精在此，，而其粗效于障風、護物之間。",
+                    notes: {
+                        "殺其青": { zhuyin: "ㄕㄚ ㄑㄧˊ ㄑㄧㄥ", type: "片語", def: "去除竹木的青色與水分的加工過程。" },
+                        "見": { zhuyin: "ㄒㄧㄢˋ", type: "動詞", def: "同「現」，顯露。" },
+                        "粗效": { zhuyin: "ㄘㄨ ㄒㄧㄠˋ", type: "名詞", def: "粗淺的功用。" }
+                    }
+                },
+                {
+                    original: "事已開於上古，而使漢、晉時人擅名記者，何其陋哉！",
+                    translation: "造紙這件事在上古時期就已經有了雛形，卻讓漢代、晉代的人（如蔡倫）獨攬了發明造紙的名聲，這種看法是多麼的淺陋啊！",
+                    audioText: "事已開於上古，，而使漢、晉時人擅名記者，，何其陋哉！",
+                    notes: {
+                        "擅名": { zhuyin: "ㄕㄢˋ ㄇㄧㄥˊ", type: "動賓片語", def: "獨攬名聲。" },
+                        "陋": { zhuyin: "ㄌㄡˋ", type: "形容詞", def: "見識淺薄。" }
+                    }
+                }
+            ],
+            quiz: [
+                { q: "《天工開物》是中國古代著名的科技百科全書，請問其作者是誰？生活在哪個朝代？", opts: ["A. 郭守敬 / 元代", "B. 沈括 / 元代", "C. 宋應星 / 明代", "D. 李時珍 / 宋代"], ans: "C", exp: "《天工開物》是明代科學家宋應星所著的農業與手工業技術巨著。" },
+                { q: "本文首句「宋子曰」，「宋子」指的是誰？", opts: ["A. 孔子的弟子", "B. 宋代的大學問家", "C. 作者宋應星自稱", "D. 造紙的祖師爺"], ans: "C", exp: "宋子是作者宋應星仿效古人著書立說時對自己的尊稱。" },
+                { q: "「古傳今而華達夷」中的「華」與「夷」分別代表什麼？", opts: ["A. 華麗與平淡", "B. 中華(中原)與四方邊遠地區", "C. 鮮花與野草", "D. 華人與外國人"], ans: "B", exp: "華指中原文化發源地，夷指四方邊遠地區。全句意為知識能傳播得非常廣遠。" },
+                { q: "「使後起含生，目授而心識之」中，「含生」的意思是？", opts: ["A. 含有生機的植物", "B. 後代的人類(有生命的物類)", "C. 嘴裡含著東西的學生", "D. 剛出生的嬰兒"], ans: "B", exp: "「含生」泛指一切有生命之物，在此特指後代的人類。" },
+                { q: "「憑藉呫呫口語」中的「呫呫」讀音與意義為何？", opts: ["A. ㄓㄢ ㄓㄢ，大聲喧嘩", "B. ㄔㄜˋ ㄔㄜˋ，說話微弱或喋喋不休", "C. ㄍㄨ ㄍㄨ，喝水的聲音", "D. ㄊㄧㄝ ㄊㄧㄝ，高興的樣子"], ans: "B", exp: "呫呫，注音可作 ㄔㄜˋ ㄔㄜˋ（或 ㄓㄢ ㄓㄢ 等），形容輕言細語或喋喋不休。這裡用來形容口頭語言的侷限性。" },
+                { q: "「風行而冰釋焉」在文中的比喻意義為何？", opts: ["A. 天氣變化無常", "B. 文字的傳播像風一樣迅速普及，像冰消融一樣毫無阻礙", "C. 紙張很脆弱，一吹就破，一見水就化", "D. 形容師生的關係很冷淡"], ans: "B", exp: "這是讚美書面文字（紙）傳達旨意的高效與清晰。" },
+                { q: "「覆載之間之藉有楮先生也」使用了何種修辭格？", opts: ["A. 誇飾", "B. 擬人", "C. 排比", "D. 頂真"], ans: "B", exp: "將「紙」尊稱為「楮先生」，賦予其人格化，是標準的擬人修辭。" },
+                { q: "承上題，「覆載之間」是指哪裡？", opts: ["A. 車子裡", "B. 船隻上", "C. 天地之間", "D. 書本裡"], ans: "C", exp: "天覆蓋萬物，地承載萬物。「覆載之間」即指天地之間、人世間。" },
+                { q: "「聖頑咸嘉賴之矣」中，「咸」字的解釋為？", opts: ["A. 鹹味", "B. 減少", "C. 都、皆", "D. 感覺"], ans: "C", exp: "「咸」在古文中作為副詞，意思是「都、皆」。聖明和愚頑的人「都」依賴紙張。" },
+                { q: "「殺其青而白乃見」的「見」字，讀音與意義為何？", opts: ["A. ㄐㄧㄢˋ，看見", "B. ㄒㄧㄢˋ，同「現」，顯露", "C. ㄐㄧㄢˋ，拜見", "D. ㄒㄧㄢˋ，現在"], ans: "B", exp: "見通「現」，讀 ㄒㄧㄢˋ，意思是顯露出來。指去除青色後，白紙才顯現。" },
+                { q: "「殺青」一詞在古代原本的工序意義為何？", opts: ["A. 將青色的竹子砍斷", "B. 用火烘烤竹簡，使水分蒸發防蟲蛀", "C. 將綠色顏料塗在紙上", "D. 把生肉煮熟"], ans: "B", exp: "古代用竹簡寫字，需先用火烤去竹子的水分（汗），使其易於書寫且防蛀，此過程稱為「殺青」。後引申為著作定稿或電影拍攝完成。" },
+                { q: "作者認為紙張的「精」與「粗」分別在於什麼？", opts: ["A. 精在寫字，粗在畫畫", "B. 精在質地好，粗在質地差", "C. 精在承載萬卷百家（文化傳承），粗在擋風護物（日常包裝）", "D. 精在價格貴，粗在價格便宜"], ans: "C", exp: "文中明確寫道：「萬卷百家，基從此起。其精在此，而其粗效于障風、護物之間。」" },
+                { q: "「事已開於上古，而使漢、晉時人擅名記者，何其陋哉」這句話批判了什麼現象？", opts: ["A. 漢晉時期的紙質量太差", "B. 後人將發明紙的功勞完全歸於蔡倫等少數古人，忽略了技術是長期累積的", "C. 漢朝人不重視造紙術", "D. 古代人不懂得用木皮造紙"], ans: "B", exp: "宋應星展現了科學史觀，認為造紙術早在上古就有雛形，不應由漢晉的少數人「擅名」（獨攬名聲）。" },
+                { q: "「何其陋哉」的「陋」字作何解釋？", opts: ["A. 簡陋、破舊", "B. 醜陋", "C. 見識淺薄", "D. 粗俗"], ans: "C", exp: "在此批評這種歷史觀點「見識淺薄」。" },
+                { q: "本文雖然是一篇科技著作的序言，但其寫作視角主要偏向？", opts: ["A. 純粹的物理化學分析", "B. 數據與公式的羅列", "C. 從哲學與人類文明史的高度，探討技術對文化傳承的價值", "D. 抒發個人懷才不遇的悲憤"], ans: "C", exp: "宋應星從君民溝通、師生傳授的角度，論證了紙作為媒介的偉大人文價值。" },
+                { q: "「師將弟命」的「將」字最合理的解釋為？", opts: ["A. 將要", "B. 帶領、傳達", "C. 將軍", "D. 拿取"], ans: "B", exp: "老師傳達命令/知識給弟子。" },
+                { q: "「持寸符，握半卷」主要用來對比什麼？", opts: ["A. 竹簡的笨重", "B. 武器的銳利", "C. 「呫呫口語」的侷限，凸顯紙張（寸符半卷）雖小卻能發揮巨大的傳遞力量", "D. 皇權的威嚴"], ans: "C", exp: "對比口頭傳播的微弱，強調文字載體的高效。" },
+                { q: "《天工開物》書名的涵義為何？", opts: ["A. 天氣良好適合工作", "B. 藉由人類的巧工（開物），來開發利用大自然的資源（天工）", "C. 天降神蹟開啟萬物", "D. 研究天文學的著作"], ans: "B", exp: "天工指大自然的力量，開物指人類的開發利用。兩者結合造福人類。" },
+                { q: "下列關於「楮先生」的說明，何者正確？", opts: ["A. 真有其人，是一位造紙名家", "B. 是一種毛筆的代稱", "C. 因為造紙常使用楮樹皮，故以擬人化手法代稱紙張", "D. 是一種古代的官職"], ans: "C", exp: "楮（ㄔㄨˇ）樹的樹皮纖維長，是造紙的上等原料，故文人常尊稱紙為「楮先生」。" },
+                { q: "綜合全文，宋應星對待傳統歷史記載（如蔡倫造紙）的態度是？", opts: ["A. 盲目盲從", "B. 徹底否定其貢獻", "C. 具備批判思考，認為技術發展是源遠流長、眾人智慧的結晶", "D. 漠不關心"], ans: "C", exp: "他認為事已開於上古，反對由少數人「擅名」，體現了進步的科學史觀。" }
+            ]
+        };
+
+        const allKeywords = {};
+        contentData.segments.forEach((seg, idx) => {
+            Object.entries(seg.notes).forEach(([key, note]) => {
+                if (!allKeywords[key]) {
+                    allKeywords[key] = { ...note, segIdx: idx };
+                }
+            });
+        });
+
+        let currentTab = 'overview';
+        let userAnswers = {}; 
+
+        window.onload = function() {
+            document.getElementById('main-title').textContent = contentData.metadata.title;
+            document.getElementById('author-name').textContent = contentData.metadata.author;
+            document.getElementById('source-name').textContent = contentData.metadata.source;
+            switchTab('overview');
+
+            if ('speechSynthesis' in window) {
+                 window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+            }
+
+            document.addEventListener('click', (e) => {
+                const popup = document.getElementById('note-template');
+                if (!e.target.closest('.interactive-word') && !e.target.closest('.note-popup')) {
+                    closeNote();
+                }
+            });
+        };
+
+        function closeNote() {
+            const popup = document.getElementById('note-template');
+            if(popup) { popup.classList.add('hidden'); popup.style.display = ''; }
+        }
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            closeNote();
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            const container = document.getElementById('content-display');
+            container.style.opacity = '0';
+            
+            setTimeout(() => {
+                switch(tabId) {
+                    case 'overview': renderOverview(container); break;
+                    case 'reading': renderReading(container); break;
+                    case 'deep': renderDeepUnderstanding(container); break;
+                    case 'vocabulary': renderVocabulary(container); break;
+                    case 'analysis': renderAnalysis(container); break;
+                    case 'quiz': renderQuiz(container); break;
+                }
+                container.style.opacity = '1';
+            }, 200);
+        }
+
+        function renderOverview(container) {
+            container.innerHTML = `
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-orange-50 rounded-2xl p-8 border border-orange-200 mb-8 shadow-sm">
+                        <h2 class="text-2xl font-bold text-amber-900 mb-4 font-serif"><i class="fas fa-scroll mr-2"></i>課文導讀</h2>
+                        <p class="text-lg text-amber-900 leading-loose text-justify">${contentData.summary}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         <div class="bg-white border border-amber-200 rounded-xl p-6 shadow-sm hover:shadow-md transition flex flex-col items-center text-center">
+                            <div class="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-book-open text-amber-600 text-2xl"></i>
+                            </div>
+                            <h3 class="font-bold text-amber-900 mb-2 text-lg font-serif">載體的力量</h3>
+                            <p class="text-amber-800 font-serif text-lg">風行冰釋，遠勝口語</p>
+                        </div>
+                        <div class="bg-white border border-orange-200 rounded-xl p-6 shadow-sm hover:shadow-md transition flex flex-col items-center text-center">
+                            <div class="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-microscope text-orange-600 text-2xl"></i>
+                            </div>
+                            <h3 class="font-bold text-orange-900 mb-2 text-lg font-serif">科學史觀</h3>
+                            <p class="text-orange-800 font-serif text-lg">技術積累，非一人之功</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderReading(container) {
+            let segmentsHtml = contentData.segments.map((seg, idx) => {
+                let displayHtml = seg.original;
+                const sortedKeys = Object.keys(seg.notes).sort((a, b) => b.length - a.length);
+                
+                sortedKeys.forEach(key => {
+                     displayHtml = displayHtml.replace(new RegExp(`(?<!<[^>]*)${key}`, 'g'), `<span class="interactive-word" onclick="showNote('${key}', ${idx}, this, event)">${key}</span>`);
+                });
+
+                const localPath = `Chinese-Classical-425-images/reading_segment_${idx + 1}.jpg`;
+                let imageSection = `
+                    <div class="mt-6 rounded-lg overflow-hidden border border-amber-200 bg-orange-50 shadow-md">
+                        <img src="${localPath}" class="w-full h-auto object-cover" alt="段落插圖" onerror="this.style.display='none'">
+                    </div>
+                `;
+
+                return `
+                    <div class="group mb-12 relative pl-6 sm:pl-8 border-l-4 border-amber-300 hover:border-orange-500 transition-colors duration-300">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold text-amber-800 bg-amber-100 px-2 py-1 rounded uppercase tracking-widest">段落 ${idx + 1}</span>
+                            <div class="flex gap-2">
+                                <button onclick="playAudio('${seg.audioText}')" class="w-8 h-8 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center hover:bg-orange-200 transition shadow-sm" title="朗讀 (高品質女聲)">
+                                    <i class="fas fa-volume-up text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="relative hover-trans-container cursor-help py-2">
+                            <p class="text-xl sm:text-2xl font-serif text-amber-900 leading-loose relative z-10 text-justify tracking-wide">${displayHtml}</p>
+                            <div class="hover-translation hidden absolute left-0 top-full mt-2 w-full z-20">
+                                <div class="bg-amber-900/95 backdrop-blur-sm p-4 rounded-lg text-white text-lg leading-7 shadow-2xl relative border border-amber-700">
+                                    <div class="absolute -top-2 left-8 w-4 h-4 bg-amber-900 border-t border-l border-amber-700 transform rotate-45"></div>
+                                    <span class="font-bold text-yellow-300 mr-1"><i class="fas fa-language mr-1"></i>白話：</span> ${seg.translation}
+                                </div>
+                            </div>
+                        </div>
+                        ${imageSection}
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="flex flex-col md:flex-row gap-6 mb-8 items-center bg-gradient-to-r from-orange-50 to-white p-5 rounded-xl border border-orange-100 shadow-sm">
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-amber-900 text-lg">古文寫實圖解</h3>
+                        <p class="text-sm text-amber-700">為您重現《天工開物》中蘊含的科學與人文精神。</p>
+                    </div>
+                </div>
+                <div class="max-w-4xl mx-auto mt-4">
+                    ${segmentsHtml}
+                </div>
+                <div class="text-center mt-12 pb-6 text-amber-500 text-sm space-y-1">
+                    <p><i class="fas fa-mouse-pointer mr-1"></i> 點擊底線文字查看「語詞精解」</p>
+                    <p><i class="fas fa-hand-pointer mr-1"></i> 滑鼠移過古文即可查看「白話翻譯」</p>
+                </div>
+            `;
+        }
+        
+        function renderDeepUnderstanding(container) {
+            container.innerHTML = `
+                <div class="space-y-12">
+                    <section>
+                        <h2 class="text-2xl font-bold text-amber-900 mb-6 font-serif border-l-4 border-amber-600 pl-4">文本邏輯演進圖</h2>
+                        <div class="bg-white rounded-xl shadow-lg p-8 border border-orange-100 flex justify-center items-center overflow-hidden" style="min-height: 400px;">
+                             <svg viewBox="0 0 700 400" class="w-full h-full">
+                                <defs>
+                                    <marker id="arrow-deep" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                        <polygon points="0 0, 10 3.5, 0 7" fill="#b45309" />
+                                    </marker>
+                                </defs>
+                                
+                                <!-- Stage 1 -->
+                                <rect x="260" y="20" width="180" height="70" rx="10" fill="#fef2f2" stroke="#ef4444" stroke-width="3" />
+                                <text x="350" y="50" text-anchor="middle" font-weight="bold" font-size="16" fill="#991b1b">1. 哲學叩問</text>
+                                <text x="350" y="75" text-anchor="middle" font-size="14" fill="#b91c1c">承載文化者何物哉？</text>
+
+                                <path d="M350,90 L350,130" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-deep)" />
+
+                                <!-- Stage 2 Left -->
+                                <rect x="100" y="140" width="180" height="70" rx="10" fill="#f3f4f6" stroke="#6b7280" stroke-width="3" />
+                                <text x="190" y="170" text-anchor="middle" font-weight="bold" font-size="16" fill="#374151">口頭傳播 (弱)</text>
+                                <text x="190" y="195" text-anchor="middle" font-size="14" fill="#4b5563">憑藉呫呫口語，其與幾何</text>
+
+                                <!-- Stage 2 Right -->
+                                <rect x="420" y="140" width="180" height="70" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="3" />
+                                <text x="510" y="170" text-anchor="middle" font-weight="bold" font-size="16" fill="#1e40af">文字紙張 (強)</text>
+                                <text x="510" y="195" text-anchor="middle" font-size="14" fill="#2563eb">風行而冰釋，聖頑嘉賴</text>
+
+                                <path d="M350,110 L190,110 L190,130" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-deep)" fill="none"/>
+                                <path d="M350,110 L510,110 L510,130" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-deep)" fill="none"/>
+
+                                <!-- Merge to Stage 3 -->
+                                <path d="M510,210 L510,240 L350,240 L350,260" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-deep)" fill="none"/>
+
+                                <!-- Stage 3 -->
+                                <rect x="260" y="270" width="180" height="70" rx="10" fill="#fef9c3" stroke="#eab308" stroke-width="3" />
+                                <text x="350" y="300" text-anchor="middle" font-weight="bold" font-size="16" fill="#854d0e">3. 價值與歷史</text>
+                                <text x="350" y="325" text-anchor="middle" font-size="14" fill="#a16207">其精在此，事開於上古</text>
+                            </svg>
+                        </div>
+                        <p class="mt-6 text-amber-800 leading-relaxed text-justify bg-orange-50 p-4 rounded-lg border border-orange-100">
+                            <strong><i class="fas fa-lightbulb text-yellow-500 mr-2"></i>文學分析：</strong> 宋應星跳脫了純技術的描寫，採用了宏大的哲學開篇。透過「口語」的轉瞬即逝與「紙張」的風行冰釋作對比，確立了紙張在人類文明中的核心地位（基從此起）。最後，他秉持科學家的理性，批判了將發明全歸功於一時一人的「英雄史觀」，強調技術是漫長歷史經驗的積累。
+                        </p>
+                    </section>
+                </div>
+            `;
+        }
+
+        function renderVocabulary(container) {
+            const cardsHtml = contentData.vocabulary.map(item => `
+                <div class="bg-white border border-orange-100 rounded-xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col h-full group hover:border-amber-300">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-2xl font-bold text-amber-900 group-hover:text-amber-700 font-serif">${item.word}</h3>
+                    </div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-sm font-mono bg-orange-50 px-2 py-1 rounded text-orange-800">${item.zhuyin}</span>
+                        <span class="text-xs font-bold text-white bg-amber-600 px-2 py-1 rounded-full">${item.pos}</span>
+                    </div>
+                    <p class="text-amber-800 text-lg leading-relaxed flex-grow border-t border-dashed border-orange-100 pt-2">${item.meaning}</p>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-10">
+                        <h2 class="text-3xl font-bold text-amber-900 font-serif mb-2">語詞精解</h2>
+                        <p class="text-amber-700">共收錄 ${contentData.vocabulary.length} 個重點詞彙，掌握科技古文中的修辭與專業術語</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        ${cardsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAnalysis(container) {
+            const rhetoricHtml = contentData.rhetoric.map(r => `
+                <div class="flex items-start mb-6 p-5 bg-white rounded-xl border border-orange-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex-shrink-0 mr-5">
+                        <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-lg shadow-sm">
+                            <i class="fas fa-feather-alt"></i>
+                        </div>
+                    </div>
+                    <div class="prose prose-amber text-amber-900 text-lg">
+                        ${marked.parse(r)}
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="max-w-4xl mx-auto space-y-12">
+                    <section>
+                        <h2 class="text-2xl font-bold text-amber-900 mb-6 font-serif flex items-center">
+                            <i class="fas fa-lightbulb mr-3 text-yellow-500"></i>全文主旨與核心哲理
+                        </h2>
+                        <div class="bg-orange-50 p-8 rounded-2xl border border-orange-200 shadow-sm text-lg text-amber-900 leading-loose">
+                            ${marked.parse(contentData.meaning)}
+                        </div>
+                    </section>
+                    <section>
+                        <h2 class="text-2xl font-bold text-amber-900 mb-6 font-serif flex items-center">
+                            <i class="fas fa-highlighter mr-3 text-amber-500"></i>寫作技巧與敘事特徵
+                        </h2>
+                        <div class="space-y-4">
+                            ${rhetoricHtml}
+                        </div>
+                    </section>
+                </div>
+            `;
+        }
+
+        function renderQuiz(container) {
+            let quizHtml = contentData.quiz.map((q, i) => {
+                const val = ["A","B","C","D"];
+                const isAnswered = userAnswers[i] !== undefined;
+                const userAnswer = userAnswers[i];
+                let feedback = '';
+                let cardClass = "bg-white border border-orange-200 hover:border-amber-300";
+                let feedbackClass = "hidden mt-4 p-4 rounded-lg text-base bg-orange-50 border border-orange-100"; 
+                
+                if (isAnswered) {
+                    feedbackClass = "mt-4 p-4 rounded-lg text-base animate-fade-in border"; 
+                    if (userAnswer === q.ans) {
+                        feedback = `<strong class="block mb-1 text-lg"><i class="fas fa-check-circle mr-2"></i>答對了！</strong>${q.exp}`;
+                        cardClass = "bg-green-50/30 border border-green-500 shadow-sm";
+                        feedbackClass += " bg-green-50 border-green-200 text-green-900";
+                    } else {
+                        const userOption = q.opts.find((opt, idx) => ["A","B","C","D"][idx] === userAnswer);
+                        const correctOption = q.opts.find((opt, idx) => ["A","B","C","D"][idx] === q.ans);
+                        feedback = `
+                            <div class="mb-2">
+                                <span class="block font-bold text-red-700 text-lg"><i class="fas fa-times-circle mr-2"></i>答錯了</span>
+                                <span class="block text-amber-800 mt-1">您的答案：${userOption}</span>
+                                <span class="block text-green-700 font-bold mt-1">正確答案：${correctOption}</span>
+                            </div>
+                            <div class="pt-2 border-t border-red-200 mt-2 text-amber-900">
+                                <strong><i class="fas fa-lightbulb text-yellow-500 mr-1"></i>解析：</strong>${q.exp}
+                            </div>
+                        `;
+                        cardClass = "bg-red-50/30 border border-red-500 shadow-sm";
+                        feedbackClass += " bg-red-50 border-red-200 text-red-900";
+                    }
+                }
+
+                return `
+                <div class="${cardClass} rounded-xl p-6 mb-8 shadow-sm transition-all duration-300" id="quiz-card-${i}">
+                    <div class="flex items-start mb-4">
+                        <span class="flex-shrink-0 w-8 h-8 bg-amber-600 text-white rounded-full flex items-center justify-center font-bold mr-3 mt-1">${i+1}</span>
+                        <p class="font-bold text-xl text-amber-900 leading-relaxed">${q.q}</p>
+                    </div>
+                    <div class="grid grid-cols-1 gap-3 pl-11">
+                        ${q.opts.map((opt, optIdx) => {
+                            const val = ["A","B","C","D"][optIdx];
+                            const isChecked = userAnswer === val ? 'checked' : '';
+                            const isDisabled = isAnswered ? 'disabled' : '';
+                            const labelClass = isAnswered 
+                                ? (val === q.ans ? 'bg-green-100 border-green-300 font-bold text-green-900' : (isChecked ? 'bg-red-100 border-red-300' : 'opacity-50'))
+                                : 'hover:bg-amber-50 hover:border-amber-300 cursor-pointer bg-white';
+
+                            return `
+                            <label class="flex items-center p-4 rounded-lg border border-orange-200 transition group ${labelClass}">
+                                <input type="radio" name="q-${i}" value="${val}" class="mr-3 text-amber-600 focus:ring-amber-500 w-5 h-5" onchange="checkAnswer(${i}, '${val}', '${q.ans}')" ${isChecked} ${isDisabled}>
+                                <span class="text-lg text-amber-900">${opt}</span>
+                            </label>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div id="feedback-${i}" class="${feedbackClass}">${feedback}</div>
+                </div>
+            `}).join('');
+            
+            container.innerHTML = `
+                <div class="max-w-3xl mx-auto pb-24">
+                    <div class="text-center mb-10">
+                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-bold uppercase mb-2 inline-block border border-red-200">高鑑別度題型</span>
+                        <h2 class="text-3xl font-bold text-amber-900 font-serif">隨堂測驗 (20題)</h2>
+                        <p class="text-amber-700 mt-2">挑戰科技與人文結合的深度考題</p>
+                    </div>
+                    ${quizHtml}
+                    
+                    <!-- Submit Button Area -->
+                    <div class="fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-md border-t border-orange-200 p-4 shadow-[0_-5px_20px_rgba(0,0,0,0.1)] flex justify-center items-center z-40">
+                         <button onclick="submitQuiz()" class="px-10 py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold rounded-full shadow-lg transition transform hover:scale-105 flex items-center text-lg">
+                            <i class="fas fa-paper-plane mr-2"></i> 交卷並查看成績
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkAnswer(idx, val, ans) {
+            if (userAnswers[idx] !== undefined) return; 
+            userAnswers[idx] = val; 
+            const radios = document.getElementsByName(`q-${idx}`);
+            for (let radio of radios) {
+                radio.disabled = true;
+                radio.parentElement.classList.add('disabled-label');
+            }
+
+            const feedbackEl = document.getElementById(`feedback-${idx}`);
+            const card = document.getElementById(`quiz-card-${idx}`);
+            const qData = contentData.quiz[idx];
+            if (!feedbackEl || !card) return;
+            
+            feedbackEl.className = 'mt-4 p-4 rounded-lg text-base animate-fade-in border';
+            card.classList.remove('bg-white');
+
+            if (val === ans) {
+                feedbackEl.innerHTML = `<strong class="block mb-1 text-lg"><i class="fas fa-check-circle mr-2"></i>答對了！</strong>${qData.exp}`;
+                feedbackEl.classList.add('bg-green-50', 'border-green-200', 'text-green-900');
+                card.classList.add('bg-green-50/30', 'border-green-500');
+            } else {
+                const correctOption = qData.opts.find((opt, i) => ["A","B","C","D"][i] === ans);
+                const userOption = qData.opts.find((opt, i) => ["A","B","C","D"][i] === val);
+                
+                feedbackEl.innerHTML = `
+                    <div class="mb-2">
+                        <span class="block font-bold text-red-700 text-lg"><i class="fas fa-times-circle mr-2"></i>答錯了</span>
+                        <span class="block text-amber-800 mt-1">您的答案：${userOption}</span>
+                        <span class="block text-green-700 font-bold mt-1">正確答案：${correctOption}</span>
+                    </div>
+                    <div class="pt-2 border-t border-red-200 mt-2 text-amber-900">
+                        <strong><i class="fas fa-lightbulb text-yellow-500 mr-1"></i>解析：</strong>${qData.exp}
+                    </div>
+                `;
+                feedbackEl.classList.add('bg-red-50', 'border-red-200', 'text-amber-900');
+                card.classList.add('bg-red-50/30', 'border-red-500');
+            }
+            feedbackEl.classList.remove('hidden');
+        }
+
+        function submitQuiz() {
+            const total = contentData.quiz.length;
+            const answered = Object.keys(userAnswers).length;
+            
+            if (answered < total) {
+                showError(`您還有 ${total - answered} 題未完成，請作答完畢後再交卷！`);
+                return;
+            }
+            
+            let correctCount = 0;
+            for (let i = 0; i < total; i++) {
+                if (userAnswers[i] === contentData.quiz[i].ans) {
+                    correctCount++;
+                }
+            }
+            
+            const score = Math.round((correctCount / total) * 100);
+            const scoreText = document.getElementById('score-text');
+            scoreText.innerHTML = `您的總分是 <span class="text-amber-600 font-bold text-5xl">${score}</span> 分`;
+            
+            const modal = document.getElementById('score-modal');
+            modal.classList.remove('hidden');
+            
+            try {
+                if(score >= 80) { confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } }); }
+            } catch(e) {}
+        }
+
+        function closeScoreModal() {
+            const modal = document.getElementById('score-modal');
+            modal.classList.add('hidden');
+        }
+        
+        function showNote(key, segIdx, el, e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            const popup = document.getElementById('note-template');
+            const content = document.getElementById('note-content');
+            let noteData = null;
+            
+            if (segIdx !== undefined && contentData.segments[segIdx] && contentData.segments[segIdx].notes[key]) { 
+                noteData = contentData.segments[segIdx].notes[key]; 
+            } else if (allKeywords[key]) { 
+                noteData = allKeywords[key]; 
+            }
+            
+            if(!noteData) return;
+            
+            content.innerHTML = `
+                <div class="flex items-baseline justify-between border-b border-amber-100 pb-2 mb-2">
+                    <h4 class="text-xl font-bold text-amber-900 font-serif">${key}</h4>
+                    <span class="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full font-bold">${noteData.type || noteData.pos}</span>
+                </div>
+                <p class="text-sm text-amber-700 mb-2 font-mono bg-orange-50 px-2 py-1 rounded inline-block">${noteData.zhuyin}</p>
+                <p class="text-amber-800 leading-relaxed font-medium">${noteData.def || noteData.meaning}</p>
+            `;
+            
+            const rect = el.getBoundingClientRect();
+            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            let left = rect.left + scrollLeft;
+            let top = rect.bottom + scrollTop + 8; 
+            
+            if (left + 300 > document.body.clientWidth) { left = document.body.clientWidth - 310; }
+            
+            popup.style.left = `${left}px`;
+            popup.style.top = `${top}px`;
+            popup.classList.remove('hidden');
+        }
+
+        function processTextWithNotes(text) {
+            let processedText = marked.parse(text);
+            const sortedKeys = Object.keys(allKeywords).sort((a, b) => b.length - a.length);
+            
+            sortedKeys.forEach(key => {
+                const regex = new RegExp(`(?<!<[^>]*)${key}`, "g");
+                processedText = processedText.replace(regex, `<span class="interactive-word bg-orange-50 px-1 rounded" onclick="showNote('${key}', undefined, this, event)">${key}</span>`);
+            });
+            return processedText;
+        }
+
+        async function playAudio(text) {
+            if (!('speechSynthesis' in window)) { showError("您的瀏覽器不支援語音朗讀功能。"); return; }
+            window.speechSynthesis.cancel();
+            
+            let voices = window.speechSynthesis.getVoices();
+            if (voices.length === 0) {
+                await new Promise(resolve => {
+                    const id = setInterval(() => {
+                        voices = window.speechSynthesis.getVoices();
+                        if (voices.length > 0) { clearInterval(id); resolve(); }
+                    }, 100);
+                });
+            }
+
+            let targetVoice = voices.find(v => (v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW' || v.lang === 'zh-CN') && 
+                (v.name.includes('Google 國語') || v.name.includes('Mei-Jia') || v.name.includes('Yating') || v.name.includes('Lili') || v.name.includes('Ting-Ting') || v.name.includes('Xiaoxiao')));
+            
+            if (!targetVoice) targetVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW'); 
+            if (!targetVoice) targetVoice = voices.find(v => v.lang.startsWith('zh'));
+
+            const chunks = text.split(/([，、。？！；：])/).reduce((acc, curr, i) => {
+                if (i % 2 === 0) { 
+                    if (curr.trim()) acc.push({ text: curr, pause: 0 });
+                } else { 
+                    if (acc.length > 0) {
+                        acc[acc.length - 1].text += curr;
+                        if (['。', '！', '？'].includes(curr)) acc[acc.length - 1].pause = 800;
+                        else if (['；', '：'].includes(curr)) acc[acc.length - 1].pause = 600;
+                        else acc[acc.length - 1].pause = 400; 
+                    }
+                }
+                return acc;
+            }, []);
+
+            if (chunks.length === 0) return;
+
+            const playNext = (index) => {
+                if (index >= chunks.length) return;
+                const utterance = new SpeechSynthesisUtterance(chunks[index].text);
+                utterance.lang = 'zh-TW';
+                utterance.rate = 0.9;  
+                utterance.pitch = 1.05; 
+                if (targetVoice) utterance.voice = targetVoice;
+                
+                utterance.onend = () => { setTimeout(() => playNext(index + 1), chunks[index].pause); };
+                window.speechSynthesis.speak(utterance);
+            };
+
+            playNext(0);
+        }
+
+        function showError(msg) {
+            const toast = document.getElementById('error-toast');
+            document.getElementById('error-msg').innerText = msg;
+            toast.classList.remove('hidden');
+            requestAnimationFrame(() => { toast.classList.remove('translate-y-10', 'opacity-0'); });
+            setTimeout(() => { toast.classList.add('translate-y-10', 'opacity-0'); setTimeout(() => toast.classList.add('hidden'), 300); }, 4000);
+        }
+    </script>
+</body>
+</html>
