@@ -38,8 +38,8 @@
 
         /* 狀態燈號 */
         .status-dot {
-            height: 12px; /* 稍微加大燈號 */
-            width: 12px;
+            height: 10px;
+            width: 10px;
             border-radius: 50%;
             display: inline-block;
             margin-right: 8px;
@@ -60,26 +60,26 @@
     <!-- Header -->
     <header class="bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold tracking-wider flex items-center gap-2" onclick="goHome()" style="cursor: pointer;">
+            <h1 class="text-xl font-bold tracking-wider flex items-center gap-2" onclick="goHome()" style="cursor: pointer;">
                 <i class="fas fa-scroll text-amber-200"></i>
                 <span class="hidden sm:inline">文言文推與敲 - </span>
                 <span>吳興老狸</span>
             </h1>
             
-            <div class="flex items-center gap-6">
-                <!-- Status Indicator (加大) -->
-                <div id="connection-status" class="hidden sm:flex items-center text-base bg-black/20 px-3 py-1.5 rounded-lg transition-opacity duration-500 font-medium">
+            <div class="flex items-center gap-4">
+                <!-- Status Indicator -->
+                <div id="connection-status" class="hidden sm:flex items-center text-sm bg-black/20 px-3 py-1.5 rounded-lg transition-opacity duration-500 font-medium">
                     <span id="status-dot" class="status-dot status-loading"></span>
                     <span id="status-text">連線中...</span>
                 </div>
 
-                <div id="user-display" class="hidden flex items-center gap-4">
-                    <div class="text-lg bg-white/20 px-4 py-2 rounded-full flex items-center backdrop-blur-sm shadow-sm">
+                <div id="user-display" class="hidden flex items-center gap-3">
+                    <div class="text-base bg-white/20 px-3 py-1.5 rounded-full flex items-center backdrop-blur-sm shadow-sm">
                         <i class="fas fa-user mr-2 text-amber-200"></i>
                         <span id="username-span" class="font-bold"></span>
                     </div>
-                    <!-- 按鈕加大字體 -->
-                    <button onclick="window.logout()" class="text-lg font-bold bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition shadow-md border border-red-400">
+                    <!-- 按鈕 -->
+                    <button onclick="window.logout()" class="text-sm font-bold bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg transition shadow-md border border-red-400">
                         登出
                     </button>
                 </div>
@@ -87,38 +87,38 @@
         </div>
     </header>
 
-    <!-- Main Content (加寬 max-w-6xl) -->
-    <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl">
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl">
         
         <!-- View: Login -->
-        <div id="view-login" class="fade-in max-w-2xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden mt-10 border-t-8 border-orange-500">
-            <div class="p-12">
-                <div class="text-center mb-10">
-                    <div class="inline-block p-5 rounded-full bg-orange-100 text-orange-600 mb-6">
-                        <i class="fas fa-book-reader text-5xl"></i>
+        <div id="view-login" class="fade-in max-w-xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden mt-10 border-t-8 border-orange-500">
+            <div class="p-10">
+                <div class="text-center mb-8">
+                    <div class="inline-block p-4 rounded-full bg-orange-100 text-orange-600 mb-4">
+                        <i class="fas fa-book-reader text-4xl"></i>
                     </div>
-                    <h2 class="text-5xl font-bold text-gray-900 mb-4">文言文推與敲</h2>
-                    <p class="text-orange-600 font-bold text-3xl">第65篇 吳興老狸</p>
-                    <p class="text-gray-500 text-xl mt-4">瀑布流刷題模式 • 即時解析</p>
+                    <h2 class="text-4xl font-bold text-gray-900 mb-3">文言文推與敲</h2>
+                    <p class="text-orange-600 font-bold text-2xl">第65篇 吳興老狸</p>
+                    <p class="text-gray-500 text-lg mt-3">瀑布流刷題模式 • 即時解析</p>
                 </div>
                 
-                <div class="space-y-8">
+                <div class="space-y-6">
                     <div>
-                        <label for="username" class="block text-2xl font-bold text-gray-700 mb-4">請輸入姓名開始</label>
+                        <label for="username" class="block text-xl font-bold text-gray-700 mb-3">請輸入姓名開始</label>
                         <input type="text" id="username" 
-                            class="w-full pl-6 pr-6 py-5 text-2xl border border-gray-200 rounded-2xl focus:ring-4 focus:ring-orange-500 focus:border-orange-500 transition-all bg-gray-50 focus:bg-white" 
+                            class="w-full pl-5 pr-5 py-4 text-lg border border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-500 focus:border-orange-500 transition-all bg-gray-50 focus:bg-white" 
                             placeholder="例如：王小明"
                             onkeypress="if(event.key === 'Enter') window.attemptLogin()">
                     </div>
                     
-                    <button onclick="window.attemptLogin()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-5 px-8 rounded-2xl text-3xl font-bold shadow-lg transform active:scale-95 transition duration-200">
-                        開始刷題 <i class="fas fa-arrow-right ml-3"></i>
+                    <button onclick="window.attemptLogin()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 px-6 rounded-xl text-xl font-bold shadow-lg transform active:scale-95 transition duration-200">
+                        開始刷題 <i class="fas fa-arrow-right ml-2"></i>
                     </button>
 
                     <!-- Quick Login Section -->
-                    <div id="quick-login-area" class="hidden pt-6 border-t border-gray-100">
-                        <p class="text-lg text-gray-500 mb-4 font-bold">歷史挑戰者</p>
-                        <div id="recent-users-list" class="flex flex-wrap gap-2 max-h-48 overflow-y-auto"></div>
+                    <div id="quick-login-area" class="hidden pt-5 border-t border-gray-100">
+                        <p class="text-base text-gray-500 mb-3 font-bold">歷史挑戰者</p>
+                        <div id="recent-users-list" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto"></div>
                     </div>
                 </div>
             </div>
@@ -126,31 +126,31 @@
 
         <!-- View: Dashboard -->
         <div id="view-dashboard" class="hidden fade-in max-w-2xl mx-auto mt-10">
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-t-8 border-amber-500 p-10">
-                <div class="text-center mb-10">
-                    <h2 class="text-4xl font-bold text-gray-800">歡迎回來，<span id="dashboard-username" class="text-orange-600"></span></h2>
-                    <p class="text-gray-500 text-xl mt-3">請選擇您要進行的項目</p>
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-t-8 border-amber-500 p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800">歡迎回來，<span id="dashboard-username" class="text-orange-600"></span></h2>
+                    <p class="text-gray-500 text-lg mt-2">請選擇您要進行的項目</p>
                 </div>
 
-                <div class="space-y-6">
-                    <button onclick="window.startExam()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-6 px-8 rounded-2xl transition duration-200 font-bold shadow-md hover:shadow-lg flex items-center justify-between group">
-                        <span class="flex items-center text-3xl"><i class="fas fa-pen-nib mr-4 w-10 text-center"></i> 開始測驗</span>
-                        <i class="fas fa-chevron-right opacity-50 group-hover:opacity-100 transition-opacity text-2xl"></i>
+                <div class="space-y-4">
+                    <button onclick="window.startExam()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-5 px-6 rounded-xl transition duration-200 font-bold shadow-md hover:shadow-lg flex items-center justify-between group">
+                        <span class="flex items-center text-2xl"><i class="fas fa-pen-nib mr-4 w-8 text-center"></i> 開始測驗</span>
+                        <i class="fas fa-chevron-right opacity-50 group-hover:opacity-100 transition-opacity text-xl"></i>
                     </button>
 
-                    <button onclick="window.showReview('wrong')" class="w-full bg-white border-2 border-red-100 text-red-600 hover:bg-red-50 py-6 px-8 rounded-2xl transition duration-200 font-bold shadow-sm hover:shadow-md flex items-center justify-between group">
-                        <span class="flex items-center text-3xl"><i class="fas fa-times-circle mr-4 w-10 text-center"></i> 錯題本</span>
-                        <span class="text-xl bg-red-100 px-4 py-2 rounded-lg text-red-600 min-w-[3rem] text-center" id="dash-wrong-count">0</span>
+                    <button onclick="window.showReview('wrong')" class="w-full bg-white border-2 border-red-100 text-red-600 hover:bg-red-50 py-5 px-6 rounded-xl transition duration-200 font-bold shadow-sm hover:shadow-md flex items-center justify-between group">
+                        <span class="flex items-center text-2xl"><i class="fas fa-times-circle mr-4 w-8 text-center"></i> 錯題本</span>
+                        <span class="text-lg bg-red-100 px-3 py-1.5 rounded-lg text-red-600 min-w-[2.5rem] text-center" id="dash-wrong-count">0</span>
                     </button>
 
-                    <button onclick="window.showReview('favorite')" class="w-full bg-white border-2 border-amber-100 text-amber-600 hover:bg-amber-50 py-6 px-8 rounded-2xl transition duration-200 font-bold shadow-sm hover:shadow-md flex items-center justify-between group">
-                        <span class="flex items-center text-3xl"><i class="fas fa-star mr-4 w-10 text-center"></i> 我的最愛</span>
-                        <span class="text-xl bg-amber-100 px-4 py-2 rounded-lg text-amber-600 min-w-[3rem] text-center" id="dash-fav-count">0</span>
+                    <button onclick="window.showReview('favorite')" class="w-full bg-white border-2 border-amber-100 text-amber-600 hover:bg-amber-50 py-5 px-6 rounded-xl transition duration-200 font-bold shadow-sm hover:shadow-md flex items-center justify-between group">
+                        <span class="flex items-center text-2xl"><i class="fas fa-star mr-4 w-8 text-center"></i> 我的最愛</span>
+                        <span class="text-lg bg-amber-100 px-3 py-1.5 rounded-lg text-amber-600 min-w-[2.5rem] text-center" id="dash-fav-count">0</span>
                     </button>
 
-                    <div class="pt-6 border-t border-gray-100 mt-6">
-                        <button onclick="window.showAllQuestions()" class="w-full bg-gray-50 text-gray-600 hover:bg-gray-100 py-4 px-6 rounded-xl transition duration-200 font-medium text-xl flex items-center justify-center">
-                            <i class="fas fa-list-ul mr-3"></i> 題目一覽表 (快速刷題)
+                    <div class="pt-5 border-t border-gray-100 mt-5">
+                        <button onclick="window.showAllQuestions()" class="w-full bg-gray-50 text-gray-600 hover:bg-gray-100 py-3 px-5 rounded-lg transition duration-200 font-medium text-lg flex items-center justify-center">
+                            <i class="fas fa-list-ul mr-2"></i> 題目一覽表 (快速刷題)
                         </button>
                     </div>
                 </div>
@@ -158,34 +158,34 @@
         </div>
 
         <!-- View: Quiz List (Waterfall) -->
-        <div id="view-quiz" class="hidden fade-in pb-20">
+        <div id="view-quiz" class="hidden fade-in pb-16">
             
             <!-- Dashboard / Stats Sticky Header -->
-            <div class="bg-white p-5 rounded-xl shadow-md border border-gray-200 mb-8 sticky top-20 z-40 flex flex-wrap justify-between items-center gap-4 transition-all">
+            <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-6 sticky top-20 z-40 flex flex-wrap justify-between items-center gap-4 transition-all">
                 <div>
                     <!-- H2 Title will be updated dynamically -->
-                    <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                    <h2 class="text-xl font-bold text-gray-800 flex items-center">
                         <span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span>
-                        <span class="text-lg text-gray-500 font-normal">共 25 題</span>
+                        <span class="text-base text-gray-500 font-normal">共 25 題</span>
                     </h2>
                 </div>
-                <div class="flex gap-6 text-lg font-medium">
-                    <div class="flex items-center text-green-600 bg-green-50 px-5 py-2.5 rounded-full border border-green-200 shadow-sm">
+                <div class="flex gap-4 text-base font-medium">
+                    <div class="flex items-center text-green-600 bg-green-50 px-4 py-2 rounded-full border border-green-200 shadow-sm">
                         <span class="mr-2 font-bold">答對:</span>
-                        <span id="stat-correct" class="font-bold text-2xl">0</span>
+                        <span id="stat-correct" class="font-bold text-xl">0</span>
                     </div>
-                    <div class="flex items-center text-red-600 bg-red-50 px-5 py-2.5 rounded-full border border-red-200 shadow-sm">
+                    <div class="flex items-center text-red-600 bg-red-50 px-4 py-2 rounded-full border border-red-200 shadow-sm">
                         <span class="mr-2 font-bold">答錯:</span>
-                        <span id="stat-wrong" class="font-bold text-2xl">0</span>
+                        <span id="stat-wrong" class="font-bold text-xl">0</span>
                     </div>
                 </div>
-                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-gray-400 hover:text-orange-500 transition px-4 py-2 border border-transparent hover:border-orange-200 rounded-lg">
-                    <i class="fas fa-arrow-up text-2xl"></i>
+                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-gray-400 hover:text-orange-500 transition px-3 py-1.5 border border-transparent hover:border-orange-200 rounded-lg">
+                    <i class="fas fa-arrow-up text-xl"></i>
                 </button>
             </div>
 
             <!-- Questions Container -->
-            <div id="quiz-list-container" class="space-y-10">
+            <div id="quiz-list-container" class="space-y-8">
                 <!-- Questions will be injected here -->
             </div>
 
@@ -193,9 +193,9 @@
 
     </main>
 
-    <footer class="bg-white border-t border-gray-200 mt-auto py-8">
+    <footer class="bg-white border-t border-gray-200 mt-auto py-6">
         <div class="container mx-auto px-4 text-center">
-            <p class="text-gray-500 font-medium mb-2 text-lg">文言文推與敲 - 吳興老狸</p>
+            <p class="text-gray-500 font-medium mb-1 text-base">文言文推與敲 - 吳興老狸</p>
             <p class="text-gray-400 text-sm">&copy; 2026 道明中學國二國文模擬試題</p>
         </div>
     </footer>
@@ -246,7 +246,7 @@
             { id: 3, category: "句型辨析", question: "「父憂恐兒為鬼所困」屬於文言文中的「被動句」。下列古文句式中，何者也是被動句？", options: ["「為」宮室之美、妻妾之奉", "身死人手，「為」天下笑者", "不足「為」外人道也", "此妄言耳，切勿「為」人言"], answer: 1, explanation: "(B)正確。「為天下笑」即「被天下人嘲笑」，為被動句。(A)為了。(C)向、對。(D)向、對。" },
             { id: 4, category: "文化常識", question: "法師云：「君尊候有大邪氣。」「尊候」為敬稱對方的父親。下列稱謂語，何者使用「錯誤」？", options: ["稱別人的父親為「令尊」或「泰山」", "稱別人的兒子為「令郎」或「哲嗣」", "稱別人的兄弟為「昆仲」", "稱自己的妻子為「內人」或「拙荊」"], answer: 0, explanation: "(A)錯誤。「泰山」是稱呼別人的「岳父」，而非生父。令尊才是稱呼對方的父親。" },
             { id: 5, category: "字詞替換", question: "「向所殺者，乃真父也。」句中的「向」意為「從前、先前、剛才」。下列文句中的「向」字，何者意義與此相同？", options: ["秋天漠漠「向」昏黑", "尋「向」所誌，遂迷，不復得路", "瞢然「向」壁", "拔劍「向」天"], answer: 1, explanation: "(B)正確。「尋向所誌」的「向」意為從前、先前（出自《桃花源記》）。(A)將近。(C)對著、朝著。(D)對著、朝著。" },
-            { id: 6, category: "跨課文比較", question: "本文的老狸精與蘇軾〈黠鼠賦〉中的老鼠，在欺騙人類的手法上，有何共通之處？", options: ["皆利用法術幻化成人類的模樣來迷惑視覺", "皆精準利用人類認知上的盲點與心理預期，製造假象以達到目的", "皆透過裝死來逃避人類的追殺", "皆主動攻擊人類以宣示地盤主權"], answer: 1, explanation: "(B)正確。老狸利用兒子「預期會看到妖怪」的心理盲點借刀殺人；老鼠則利用「咬物聲中斷」與「橐中空」的假象裝死逃生。兩者皆極度狡猾，善用人類心理。" },
+            { id: 6, category: "跨課文比較", question: "本文的老狸精與蘇軾〈黠鼠賦〉中的老鼠，在欺騙人類的手法上，有何共通之處？", options: ["皆利用法術幻化成人類的模樣來迷惑視覺", "皆精準利用人類認知上的盲點與心理預期，製造假象以達到目的", "皆透過裝死來逃避人類的追殺", "皆主主動攻擊人類以宣示地盤主權"], answer: 1, explanation: "(B)正確。老狸利用兒子「預期會看到妖怪」的心理盲點借刀殺人；老鼠則利用「咬物聲中斷」與「橐中空」的假象裝死逃生。兩者皆極度狡猾，善用人類心理。" },
             { id: 7, category: "情節推論", question: "兒子為何會毫不猶豫地殺掉自己的親生父親？導致這場悲劇最關鍵的導火線為何？", options: ["兒子對父親長期以來「罵詈、趕打」積怨已深，藉機報復", "父親前去探望時，故意裝出鬼魅的樣子來測試兒子的膽量", "父親因擔憂而親自前往，卻未事先告知，兒子在先入為主的防備心理下，誤認其為鬼魅化身", "法師暗中施法，蒙蔽了兒子的雙眼，使其無法辨認生父"], answer: 2, explanation: "(C)正確。文中提到「父憂恐兒為鬼所困，便自往看。兒謂是鬼，便殺而埋之。」因為父親沒有預先告知，兒子滿腦子都是準備殺妖，導致了認知錯誤的誤殺。" },
             { id: 8, category: "國學常識", question: "本文選自《搜神記》，屬於「志怪小說」。關於中國古典小說的發展，下列敘述何者「錯誤」？", options: ["魏晉南北朝時期，盛行記錄神仙鬼怪的「志怪小說」與記錄人物軼事的「志人小說」", "唐代「傳奇」的出現，標誌著中國文言小說發展至成熟階段，具備完整結構", "宋代出現了白話小說的雛形「話本」，主要由文人雅士在書房中獨立創作而成", "明清時期為白話章回小說的鼎盛期，《三國演義》、《水滸傳》等皆為代表作"], answer: 2, explanation: "(C)錯誤。宋代的「話本」最初是民間「說書人」說故事的底本，屬於市井俗文學，並非文人雅士在書房獨立創作的。" },
             { id: 9, category: "文意理解", question: "老狸精得知法師說「君尊候有大邪氣」後，「父大怒」。這「大怒」背後的真實心理狀態最可能是：", options: ["氣憤兒子未經同意就帶陌生人回家", "氣憤法師妖言惑眾，破壞家庭和諧", "身分面臨被拆穿的危機，以憤怒來虛張聲勢、掩飾恐懼並試圖趕走威脅", "自以為修行高深，不滿被區區一個法師看扁"], answer: 2, explanation: "(C)正確。老狸精因為假冒的身分被法師看穿（有大邪氣），心虛恐懼之下，只能假借父親的權威「大怒」來逼迫兒子趕走法師，以求自保。" },
@@ -331,8 +331,8 @@
                 ui.recentUsersList.innerHTML = '';
                 users.forEach(user => {
                     const btn = document.createElement('button');
-                    btn.className = 'px-4 py-2 bg-white hover:bg-orange-50 text-gray-700 rounded-lg text-base border border-gray-200 transition mb-2 shadow-sm font-medium flex items-center';
-                    btn.innerHTML = `<i class="fas fa-user-circle mr-2 text-orange-400 text-xl"></i>${user}`;
+                    btn.className = 'px-3 py-1.5 bg-white hover:bg-orange-50 text-gray-700 rounded-lg text-sm border border-gray-200 transition mb-2 shadow-sm font-medium flex items-center';
+                    btn.innerHTML = `<i class="fas fa-user-circle mr-2 text-orange-400 text-lg"></i>${user}`;
                     btn.onclick = () => {
                         ui.usernameInput.value = user;
                         window.attemptLogin();
@@ -435,22 +435,22 @@
             // Filter questions based on viewMode
             if (currentState.viewMode === 'wrong') {
                 questionsToRender = questionsData.filter(q => currentState.mistakes.includes(q.id));
-                titleHtml = `<span class="text-red-600 mr-2"><i class="fas fa-times-circle"></i> 錯題本複習</span><span class="text-lg text-gray-500 font-normal">共 ${questionsToRender.length} 題</span>`;
+                titleHtml = `<span class="text-red-600 mr-2"><i class="fas fa-times-circle"></i> 錯題本複習</span><span class="text-base text-gray-500 font-normal">共 ${questionsToRender.length} 題</span>`;
                 
                 if (questionsToRender.length === 0) {
-                    container.innerHTML = `<div class="text-center py-20"><i class="fas fa-check-circle text-6xl text-green-200 mb-4"></i><p class="text-2xl text-gray-500">太棒了！目前沒有錯題紀錄。</p></div>`;
+                    container.innerHTML = `<div class="text-center py-16"><i class="fas fa-check-circle text-5xl text-green-200 mb-4"></i><p class="text-xl text-gray-500">太棒了！目前沒有錯題紀錄。</p></div>`;
                 }
             } else if (currentState.viewMode === 'favorite') {
                 questionsToRender = questionsData.filter(q => currentState.favorites.includes(q.id));
-                titleHtml = `<span class="text-amber-500 mr-2"><i class="fas fa-star"></i> 我的最愛</span><span class="text-lg text-gray-500 font-normal">共 ${questionsToRender.length} 題</span>`;
+                titleHtml = `<span class="text-amber-500 mr-2"><i class="fas fa-star"></i> 我的最愛</span><span class="text-base text-gray-500 font-normal">共 ${questionsToRender.length} 題</span>`;
                 
                 if (questionsToRender.length === 0) {
-                    container.innerHTML = `<div class="text-center py-20"><i class="far fa-star text-6xl text-gray-200 mb-4"></i><p class="text-2xl text-gray-500">目前沒有收藏的題目。</p></div>`;
+                    container.innerHTML = `<div class="text-center py-16"><i class="far fa-star text-5xl text-gray-200 mb-4"></i><p class="text-xl text-gray-500">目前沒有收藏的題目。</p></div>`;
                 }
             } else {
                 // Default 'all'
                 questionsToRender = questionsData;
-                titleHtml = `<span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span><span class="text-lg text-gray-500 font-normal">共 ${questionsData.length} 題</span>`;
+                titleHtml = `<span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span><span class="text-base text-gray-500 font-normal">共 ${questionsData.length} 題</span>`;
             }
 
             // Update Header Title
@@ -485,34 +485,31 @@
 
                 // Card Element
                 const card = document.createElement('div');
-                card.className = `relative rounded-2xl shadow-sm border-2 p-6 md:p-8 transition-all duration-300 ${borderColor} ${bgColor}`;
+                card.className = `relative rounded-2xl shadow-sm border-2 p-5 md:p-6 transition-all duration-300 ${borderColor} ${bgColor}`;
                 
-                // Header (加大字體)
-                // Note: Using #${q.id} so the ID is consistent regardless of filter
+                // Header 
                 const headerHtml = `
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="flex items-start gap-4">
-                            <span class="flex-shrink-0 bg-orange-500 text-white font-bold rounded px-3 py-1.5 text-base shadow-sm">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="flex items-start gap-3">
+                            <span class="flex-shrink-0 bg-orange-500 text-white font-bold rounded px-2.5 py-1 text-sm shadow-sm">
                                 #${q.id}
                             </span>
-                            <h3 class="text-2xl md:text-3xl font-bold text-gray-800 leading-relaxed tracking-wide font-serif">
+                            <h3 class="text-xl md:text-2xl font-bold text-gray-800 leading-relaxed tracking-wide font-serif">
                                 ${q.question}
                             </h3>
                         </div>
-                        <button onclick="window.toggleFavorite(${q.id})" class="text-3xl transition transform hover:scale-110 ${currentState.favorites.includes(q.id) ? 'text-amber-400' : 'text-gray-200 hover:text-amber-300'}">
+                        <button onclick="window.toggleFavorite(${q.id})" class="text-2xl transition transform hover:scale-110 ${currentState.favorites.includes(q.id) ? 'text-amber-400' : 'text-gray-200 hover:text-amber-300'}">
                             <i class="${currentState.favorites.includes(q.id) ? 'fas' : 'far'} fa-star"></i>
                         </button>
                     </div>
                 `;
 
-                // Options (加大字體)
-                let optionsHtml = '<div class="grid gap-4">';
+                // Options (縮小間距與字體)
+                let optionsHtml = '<div class="grid gap-3">';
                 q.options.forEach((opt, optIdx) => {
                     const letter = ['A','B','C','D'][optIdx];
-                    // 加大內距
-                    let btnClass = "option-btn w-full text-left p-6 rounded-xl border flex items-center group transition-colors ";
-                    // 加大選項編號圈圈
-                    let badgeClass = "w-12 h-12 flex items-center justify-center rounded-full font-bold mr-5 text-xl flex-shrink-0 ";
+                    let btnClass = "option-btn w-full text-left p-4 rounded-xl border flex items-center group transition-colors ";
+                    let badgeClass = "w-10 h-10 flex items-center justify-center rounded-full font-bold mr-4 text-lg flex-shrink-0 ";
                     
                     if (isAnswered) {
                         if (optIdx === q.answer) {
@@ -533,28 +530,27 @@
                     const clickAction = isAnswered ? "" : `onclick="window.handleAnswer(${q.id}, ${optIdx})"`;
                     const cursor = isAnswered ? "cursor-default" : "cursor-pointer";
 
-                    // 加大選項文字
                     optionsHtml += `
                         <button ${clickAction} class="${btnClass} ${cursor}" ${isAnswered ? 'disabled' : ''}>
                             <span class="${badgeClass}">${letter}</span>
-                            <span class="font-medium text-2xl leading-relaxed">${opt}</span>
-                            ${(isAnswered && optIdx === q.answer) ? '<i class="fas fa-check-circle ml-auto text-green-600 text-3xl"></i>' : ''}
-                            ${(isAnswered && optIdx === userAnswer && optIdx !== q.answer) ? '<i class="fas fa-times-circle ml-auto text-red-500 text-3xl"></i>' : ''}
+                            <span class="font-medium text-xl leading-relaxed">${opt}</span>
+                            ${(isAnswered && optIdx === q.answer) ? '<i class="fas fa-check-circle ml-auto text-green-600 text-2xl"></i>' : ''}
+                            ${(isAnswered && optIdx === userAnswer && optIdx !== q.answer) ? '<i class="fas fa-times-circle ml-auto text-red-500 text-2xl"></i>' : ''}
                         </button>
                     `;
                 });
                 optionsHtml += '</div>';
 
-                // Explanation Block (加大字體)
+                // Explanation Block 
                 let explanationHtml = '';
                 if (isAnswered) {
                     explanationHtml = `
-                        <div class="mt-6 bg-orange-50 p-6 rounded-xl border border-orange-100 animate-fade-in-up">
+                        <div class="mt-5 bg-orange-50 p-5 rounded-xl border border-orange-100 animate-fade-in-up">
                             <div class="flex items-start gap-3">
-                                <i class="fas fa-lightbulb text-orange-500 mt-1 text-2xl"></i>
+                                <i class="fas fa-lightbulb text-orange-500 mt-1 text-xl"></i>
                                 <div>
-                                    <span class="font-bold text-orange-700 block mb-2 text-xl">解析：</span>
-                                    <p class="text-gray-700 text-xl leading-8 text-justify">${q.explanation}</p>
+                                    <span class="font-bold text-orange-700 block mb-1 text-lg">解析：</span>
+                                    <p class="text-gray-700 text-lg leading-relaxed text-justify">${q.explanation}</p>
                                 </div>
                             </div>
                         </div>
