@@ -159,16 +159,13 @@
                     <p class="text-gray-500 text-lg mt-4 font-bold">今天想先進行哪個項目呢？</p>
                 </div>
 
-                <!-- 選單排版調整：第一排佔據整欄 (col-span-2) -->
+                <!-- 兩欄對稱排版選單 -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    
-                    <!-- 佔據一整排的「開始全真測驗」大按鈕 -->
-                    <button onclick="window.startExam()" class="md:col-span-2 bg-rose-100 hover:bg-rose-200 border-4 border-solid border-rose-300 p-8 rounded-[2.5rem] transition-transform hover:-translate-y-2 shadow-[0_6px_0_#fda4af] active:translate-y-1 active:shadow-none flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
-                        <span class="text-6xl md:text-7xl">📝</span>
-                        <span class="text-3xl md:text-4xl font-black text-rose-800 tracking-wide">開始全真測驗</span>
+                    <button onclick="window.startExam()" class="bg-rose-100 hover:bg-rose-200 border-4 border-solid border-rose-300 p-6 rounded-[2.5rem] transition-transform hover:-translate-y-2 shadow-[0_6px_0_#fda4af] active:translate-y-1 active:shadow-none flex flex-col items-center justify-center gap-3">
+                        <span class="text-5xl">📝</span>
+                        <span class="text-2xl font-bold text-rose-800">開始全真測驗</span>
                     </button>
 
-                    <!-- 下方兩欄 -->
                     <button onclick="window.showReview('wrong')" class="bg-amber-100 hover:bg-amber-200 border-4 border-solid border-amber-300 p-6 rounded-[2.5rem] transition-transform hover:-translate-y-2 shadow-[0_6px_0_#fcd34d] active:translate-y-1 active:shadow-none flex flex-col items-center justify-center gap-3 relative">
                         <span class="text-5xl">❌</span>
                         <span class="text-2xl font-bold text-amber-800">錯題本</span>
