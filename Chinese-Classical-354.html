@@ -3,965 +3,646 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文言文推與敲 - 第31篇 齊人攫金 (模擬試題)</title>
+    <title>第31篇 齊人攫金</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@700;900&display=swap');
         
         body {
+            /* 嚴格規定的點點背景 */
+            background-image: radial-gradient(#bae6fd 1.5px, transparent 1.5px), radial-gradient(#fecdd3 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            background-position: 0 0, 12px 12px;
+            background-color: #ffffff;
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #fff7ed; /* orange-50 */
+            -webkit-tap-highlight-color: transparent;
         }
         
-        .serif {
+        .font-serif {
             font-family: 'Noto Serif TC', serif;
         }
 
-        .fade-in {
-            animation: fadeIn 0.4s ease-out;
+        /* 嚴格規定的標楷體古文設定 */
+        .biaukai {
+            font-family: 'BiauKai', 'DFKai-SB', '標楷體', serif;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .option-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(234, 88, 12, 0.2), 0 2px 4px -1px rgba(234, 88, 12, 0.1);
-        }
-        
-        /* Custom scrollbar for review list */
+        /* 粉色系客製化滾動條 */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 12px;
         }
         ::-webkit-scrollbar-track {
-            background: #fff7ed;
+            background: #fdf2f8; 
+            border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb {
-            background: #fdba74;
-            border-radius: 4px;
+            background: #f9a8d4; 
+            border-radius: 10px; 
+            border: 3px solid #fdf2f8;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #f97316;
+            background: #f472b6;
+        }
+
+        /* 進場動畫 */
+        .fade-in {
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col text-gray-800 selection:bg-orange-200">
+<body class="min-h-screen flex flex-col text-gray-800">
 
-    <!-- Header -->
-    <header class="bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-lg sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wider flex items-center gap-2" onclick="goHome()" style="cursor: pointer;">
-                <i class="fas fa-scroll text-amber-200"></i>
-                <span>齊人攫金</span>
+    <!-- Custom Modal (取代 alert/confirm) -->
+    <div id="custom-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/30 backdrop-blur-sm p-4 fade-in">
+        <div class="bg-white border-4 border-solid border-rose-300 rounded-[2.5rem] p-8 max-w-sm w-full shadow-[0_8px_0_#fda4af]">
+            <div id="modal-content" class="text-xl font-bold mb-8 text-center text-gray-700 leading-relaxed font-serif"></div>
+            <div id="modal-actions" class="flex justify-center gap-4"></div>
+        </div>
+    </div>
+
+    <!-- 頂部導覽列 -->
+    <header class="bg-white border-b-4 border-solid border-amber-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-2xl font-black text-amber-600 flex items-center gap-2 cursor-pointer hover:scale-105 transition-transform" onclick="window.goHome()">
+                🎒 <span>第31篇 齊人攫金</span>
             </h1>
-            
-            <div id="user-display" class="hidden flex items-center gap-3">
-                <div class="text-sm bg-white/20 px-3 py-1 rounded-full flex items-center backdrop-blur-sm">
-                    <i class="fas fa-user mr-2 text-amber-200"></i>
-                    <span id="username-span" class="font-medium"></span>
+            <div id="header-user" class="hidden items-center gap-4">
+                <div class="font-bold text-teal-600 bg-teal-50 px-4 py-1.5 rounded-full border-2 border-solid border-teal-200">
+                    🧑‍🎓 <span id="header-username"></span>
                 </div>
-                <button onclick="logout()" class="text-xs bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded transition shadow-sm" title="登出並返回首頁">
-                    <i class="fas fa-sign-out-alt mr-1"></i>登出
+                <button onclick="window.logout()" class="text-rose-500 hover:bg-rose-50 bg-white border-2 border-solid border-rose-200 px-3 py-1.5 rounded-full font-bold transition-colors active:scale-95 shadow-sm">
+                    登出 👋
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-grow container mx-auto px-4 py-6 max-w-3xl">
+    <main class="flex-grow w-full relative">
         
-        <!-- View: Login -->
-        <div id="view-login" class="fade-in max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden mt-6 border-t-4 border-orange-500">
-            <div class="p-8">
-                <div class="text-center mb-8">
-                    <div class="inline-block p-3 rounded-full bg-orange-100 text-orange-600 mb-3">
-                        <i class="fas fa-book-reader text-3xl"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-1">文言文推與敲</h2>
-                    <p class="text-orange-600 font-medium">第31篇 齊人攫金</p>
-                    <p class="text-gray-400 text-sm mt-2">全真模擬試題 • 自動記錄進度</p>
+        <!-- ================= Login View ================= -->
+        <div id="view-login" class="max-w-md mx-auto py-12 px-4 fade-in">
+            <div class="bg-white border-4 border-solid border-rose-300 rounded-[2.5rem] p-8 shadow-[0_8px_0_#fda4af] text-center relative mt-12">
+                <!-- 封面圖片 -->
+                <div class="absolute -top-16 left-1/2 -translate-x-1/2">
+                    <img src="images/cc-354.jpg" alt="Cover" class="w-32 h-32 object-cover rounded-[2rem] border-4 border-solid border-rose-300 shadow-md bg-rose-50" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <div class="hidden w-32 h-32 bg-rose-100 rounded-[2rem] border-4 border-solid border-rose-300 shadow-md items-center justify-center text-5xl">📜</div>
                 </div>
                 
-                <div class="space-y-5">
-                    <div>
-                        <label for="username" class="block text-sm font-bold text-gray-700 mb-2">請輸入姓名開始</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-pencil-alt text-gray-400"></i>
-                            </div>
-                            <input type="text" id="username" 
-                                class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all bg-gray-50 focus:bg-white" 
-                                placeholder="例如：王小明"
-                                onkeypress="if(event.key === 'Enter') startQuiz()">
-                        </div>
-                    </div>
-                    
-                    <button onclick="startQuiz()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg transition duration-200 font-bold shadow-md hover:shadow-lg transform active:scale-95">
-                        開始測驗 <i class="fas fa-arrow-right ml-1"></i>
-                    </button>
-
-                    <!-- Quick Login Section -->
-                    <div id="quick-login-area" class="hidden pt-4 border-t border-gray-100">
-                        <p class="text-xs text-gray-500 mb-3 font-medium">快速登入（最近使用）</p>
-                        <div id="recent-users-list" class="flex flex-wrap gap-2">
-                            <!-- Buttons injected by JS -->
-                        </div>
-                    </div>
-                    
-                    <div class="text-center mt-6">
-                        <button onclick="clearData()" class="text-xs text-gray-400 hover:text-red-500 underline transition">清除本機所有紀錄</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- View: Quiz -->
-        <div id="view-quiz" class="hidden fade-in">
-            <!-- Progress Bar -->
-            <div class="mb-6 flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-orange-100">
-                <div class="flex items-center space-x-3">
-                    <div class="flex items-baseline space-x-1">
-                        <span class="text-3xl font-bold text-orange-600" id="current-question-num">1</span>
-                        <span class="text-gray-400 text-lg">/</span>
-                        <span class="text-gray-500 text-sm font-medium">20</span>
-                    </div>
-                    <div class="h-2 w-24 bg-gray-100 rounded-full overflow-hidden ml-2 hidden sm:block">
-                        <div id="progress-bar-fill" class="h-full bg-orange-500 transition-all duration-300" style="width: 5%"></div>
-                    </div>
-                </div>
-                <div class="flex space-x-2">
-                    <button onclick="toggleFavorite()" id="btn-favorite" class="text-gray-300 hover:text-amber-500 transition p-2 rounded-full hover:bg-amber-50" title="加入最愛">
-                        <i class="far fa-star text-2xl"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Question Card -->
-            <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-6 border border-gray-100">
-                <div class="p-6 md:p-8">
-                    <div class="mb-6">
-                        <span class="inline-block bg-orange-100 text-orange-700 text-xs px-2.5 py-1 rounded-md font-bold mb-3 tracking-wide" id="q-category">字義</span>
-                        <h3 class="text-xl md:text-2xl font-medium text-gray-800 leading-relaxed serif" id="q-text">題目載入中...</h3>
-                    </div>
-
-                    <!-- Options -->
-                    <div class="space-y-3" id="options-container">
-                        <!-- Options generated by JS -->
-                    </div>
+                <div class="mt-16 mb-8">
+                    <h2 class="text-3xl font-black text-gray-800 mb-2 font-serif">文言文測驗 🎒</h2>
+                    <h3 class="text-xl font-bold text-rose-500">【第31篇 齊人攫金】</h3>
                 </div>
                 
-                <!-- Explanation Area -->
-                <div id="explanation-area" class="hidden bg-amber-50 border-t border-amber-100 p-6 md:p-8">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0 mt-1">
-                            <i id="feedback-icon" class="fas fa-check-circle text-green-500 text-2xl"></i>
-                        </div>
-                        <div class="ml-4 w-full">
-                            <h4 class="text-lg font-bold text-gray-900 mb-2" id="feedback-title">答對了！</h4>
-                            <div class="text-gray-700 text-base leading-relaxed mb-6 bg-white p-4 rounded-lg border border-amber-100 shadow-sm" id="feedback-text">
-                                解析內容...
-                            </div>
-                            <button onclick="nextQuestion()" class="w-full sm:w-auto bg-orange-600 text-white px-8 py-3 rounded-lg hover:bg-orange-700 transition shadow font-medium flex items-center justify-center">
-                                下一題 <i class="fas fa-chevron-right ml-2"></i>
-                            </button>
-                        </div>
+                <div class="mb-8 text-left">
+                    <label class="block text-gray-500 font-bold mb-3 ml-2 text-sm">你的名字 🧑‍🎓</label>
+                    <input type="text" id="username-input" placeholder="請輸入姓名" class="w-full bg-gray-50 border-4 border-solid border-gray-200 rounded-full px-6 py-4 text-xl font-bold focus:outline-none focus:border-rose-400 focus:bg-rose-50 transition-all text-gray-700" onkeypress="if(event.key === 'Enter') window.startQuizFlow()">
+                </div>
+                
+                <button onclick="window.startQuizFlow()" class="w-full bg-rose-400 text-white border-4 border-solid border-rose-500 rounded-full py-4 text-2xl font-black shadow-[0_6px_0_#e11d48] hover:-translate-y-1 hover:shadow-[0_8px_0_#e11d48] active:translate-y-2 active:shadow-none transition-all flex justify-center items-center gap-2">
+                    進入學習 🚀
+                </button>
+                
+                <div class="mt-10 pt-6 border-t-4 border-dashed border-rose-100">
+                    <p class="text-sm font-bold text-gray-400 mb-4">✨ 雲端最近登入 ✨</p>
+                    <div id="recent-logins" class="flex flex-wrap justify-center gap-3">
+                        <!-- JS 注入 -->
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- View: Result -->
-        <div id="view-result" class="hidden fade-in max-w-2xl mx-auto">
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden text-center p-8 border-t-8 border-orange-500">
-                <div class="mb-8">
-                    <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-orange-50 mb-4 ring-4 ring-orange-100">
-                        <i class="fas fa-trophy text-4xl text-orange-500"></i>
-                    </div>
-                    <h2 class="text-3xl font-bold text-gray-900 mb-2">測驗完成！</h2>
-                    <p class="text-gray-500">恭喜您完成了所有題目，以下是您的成績</p>
-                </div>
-
-                <div class="grid grid-cols-3 gap-4 mb-8">
-                    <div class="bg-orange-50 p-5 rounded-xl border border-orange-100">
-                        <div class="text-4xl font-bold text-orange-600 mb-1" id="result-score">0</div>
-                        <div class="text-xs text-orange-400 uppercase tracking-wider font-bold">總分</div>
-                    </div>
-                    <div class="bg-green-50 p-5 rounded-xl border border-green-100">
-                        <div class="text-4xl font-bold text-green-600 mb-1" id="result-correct">0</div>
-                        <div class="text-xs text-green-500 uppercase tracking-wider font-bold">答對</div>
-                    </div>
-                    <div class="bg-red-50 p-5 rounded-xl border border-red-100 cursor-pointer hover:bg-red-100 transition group" onclick="showReview('wrong')">
-                        <div class="text-4xl font-bold text-red-600 mb-1 group-hover:scale-110 transition-transform" id="result-wrong">0</div>
-                        <div class="text-xs text-red-400 uppercase tracking-wider font-bold">錯題 (點擊複習)</div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col sm:flex-row justify-center gap-3">
-                    <button onclick="restartQuiz()" class="px-6 py-3 border-2 border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 hover:border-gray-300 font-bold transition">
-                        <i class="fas fa-redo mr-2"></i>重新測驗
-                    </button>
-                    <button onclick="showReview('wrong')" class="px-6 py-3 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-bold transition">
-                        <i class="fas fa-times-circle mr-2"></i>複習錯題
-                    </button>
-                    <button onclick="showReview('favorite')" class="px-6 py-3 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 font-bold transition">
-                        <i class="fas fa-star mr-2"></i>我的最愛
-                    </button>
-                </div>
+        <!-- ================= Dashboard View ================= -->
+        <div id="view-dashboard" class="hidden max-w-4xl mx-auto py-10 px-4 fade-in">
+            <div class="bg-white border-4 border-solid border-amber-300 rounded-[2.5rem] p-8 text-center shadow-[0_8px_0_#fcd34d] mb-10 relative overflow-hidden">
+                <div class="text-6xl mb-4 relative z-10 animate-bounce" style="animation-duration: 2s;">🌟</div>
+                <h2 class="text-3xl font-black text-gray-800 mb-3 relative z-10 font-serif">歡迎回來，<span id="display-username" class="text-amber-600"></span>！</h2>
+                <p class="text-gray-500 font-bold text-lg relative z-10">準備好挑戰文言文了嗎？🤔</p>
             </div>
-        </div>
-
-        <!-- View: Review List -->
-        <div id="view-review" class="hidden fade-in">
-            <div class="flex items-center justify-between mb-6 bg-white p-4 rounded-xl shadow-sm">
-                <div class="flex items-center gap-3">
-                    <div class="bg-orange-100 p-2 rounded-lg">
-                        <i class="fas fa-book-open text-orange-600"></i>
-                    </div>
-                    <h2 class="text-xl font-bold text-gray-800" id="review-title">錯題本</h2>
-                </div>
-                <button onclick="backToResult()" class="text-gray-500 hover:text-orange-600 font-bold transition flex items-center bg-gray-50 px-3 py-2 rounded-lg hover:bg-orange-50">
-                    <i class="fas fa-arrow-left mr-2"></i> 返回成績單
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <button onclick="window.goQuiz()" class="bg-teal-50 border-4 border-solid border-teal-400 rounded-[2.5rem] p-8 flex flex-col items-center justify-center gap-4 hover:-translate-y-2 hover:shadow-[0_8px_0_#2dd4bf] shadow-[0_4px_0_#2dd4bf] active:translate-y-2 active:shadow-none transition-all group">
+                    <span class="text-6xl group-hover:scale-110 transition-transform">📝</span>
+                    <span class="text-2xl font-black text-teal-800 font-serif">全真測驗</span>
+                </button>
+                <button onclick="window.goReview('mistakes')" class="bg-rose-50 border-4 border-solid border-rose-400 rounded-[2.5rem] p-8 flex flex-col items-center justify-center gap-4 hover:-translate-y-2 hover:shadow-[0_8px_0_#fb7185] shadow-[0_4px_0_#fb7185] active:translate-y-2 active:shadow-none transition-all group">
+                    <span class="text-6xl group-hover:scale-110 transition-transform">❌</span>
+                    <span class="text-2xl font-black text-rose-800 font-serif">錯題本</span>
+                </button>
+                <button onclick="window.goReview('favorites')" class="bg-amber-50 border-4 border-solid border-amber-400 rounded-[2.5rem] p-8 flex flex-col items-center justify-center gap-4 hover:-translate-y-2 hover:shadow-[0_8px_0_#fbbf24] shadow-[0_4px_0_#fbbf24] active:translate-y-2 active:shadow-none transition-all group">
+                    <span class="text-6xl group-hover:scale-110 transition-transform">⭐</span>
+                    <span class="text-2xl font-black text-amber-800 font-serif">我的最愛</span>
                 </button>
             </div>
-            <div id="review-list" class="space-y-6 pb-10">
-                <!-- Review Items -->
+        </div>
+
+        <!-- ================= Quiz View (35/65 Dual Column) ================= -->
+        <div id="view-quiz" class="hidden max-w-[1400px] mx-auto px-4 py-8 fade-in">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- 35% 側邊欄 (古文全文) -->
+                <div class="w-full lg:w-[35%] shrink-0">
+                    <div class="sticky top-[5.5rem] bg-yellow-50/95 border-4 border-solid border-amber-300 rounded-[2.5rem] p-8 shadow-[0_8px_0_#fcd34d]">
+                        <h2 class="text-3xl font-black mb-6 text-amber-800 border-b-4 border-solid border-amber-300 pb-4 font-serif">📜 齊人攫金</h2>
+                        <div class="biaukai text-[2rem] leading-[2.2] text-gray-800 font-bold tracking-wide">
+                            齊人有欲金者，清旦衣冠而之市，適鬻金者之所，因攫其金而去。吏捕得之。問曰：「人皆在焉，子攫人之金何？」對曰：「取金之時，不見人，徒見金。」
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 65% 主內容區 (瀑布流與頂部控制列) -->
+                <div class="w-full lg:w-[65%] flex flex-col gap-6">
+                    <!-- 頂部統計控制列 -->
+                    <div class="sticky top-[5.5rem] z-20 bg-white border-4 border-solid border-rose-300 rounded-[2rem] py-4 px-6 flex flex-wrap justify-between items-center shadow-[0_4px_0_#fda4af] gap-4">
+                        <div class="flex gap-3 items-center font-bold text-lg flex-wrap">
+                            <div class="flex items-center gap-2 bg-teal-50 px-4 py-1.5 rounded-full border-4 border-solid border-teal-300 text-teal-800">⭕ <span id="stat-correct">0</span></div>
+                            <div class="flex items-center gap-2 bg-rose-50 px-4 py-1.5 rounded-full border-4 border-solid border-rose-300 text-rose-800">❌ <span id="stat-wrong">0</span></div>
+                            <div class="flex items-center gap-2 bg-gray-50 px-4 py-1.5 rounded-full border-4 border-solid border-gray-300 text-gray-600">📝 <span id="stat-total">0/20</span></div>
+                        </div>
+                        <button onclick="window.confirmRestart()" class="flex items-center gap-2 bg-rose-400 text-white px-5 py-2.5 rounded-full font-black border-4 border-solid border-rose-500 shadow-[0_4px_0_#e11d48] hover:-translate-y-1 hover:shadow-[0_6px_0_#e11d48] active:translate-y-1 active:shadow-none transition-all">
+                            🔄 重新開始
+                        </button>
+                    </div>
+                    
+                    <!-- 瀑布流題庫容器 -->
+                    <div id="quiz-waterfall" class="flex flex-col gap-8 pb-20">
+                        <!-- JS 注入 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= Review View ================= -->
+        <div id="view-review" class="hidden max-w-3xl mx-auto px-4 py-8 fade-in">
+            <div class="flex justify-between items-center mb-8 bg-white border-4 border-solid border-amber-300 rounded-[2.5rem] p-6 shadow-[0_6px_0_#fcd34d]">
+                <h2 id="review-title" class="text-3xl font-black text-gray-800 font-serif"></h2>
+                <button onclick="window.switchView('view-dashboard')" class="bg-gray-100 hover:bg-amber-100 border-4 border-solid border-gray-300 hover:border-amber-400 text-gray-600 hover:text-amber-700 px-6 py-2 rounded-full font-bold transition-all shadow-[0_4px_0_#d1d5db] hover:shadow-[0_4px_0_#fbbf24] active:translate-y-1 active:shadow-none">
+                    🔙 返回主選單
+                </button>
+            </div>
+            <div id="review-container" class="flex flex-col gap-8 pb-20">
+                <!-- JS 注入 -->
             </div>
         </div>
 
     </main>
 
-    <footer class="bg-white border-t border-orange-100 mt-auto py-8">
-        <div class="container mx-auto px-4 text-center">
-            <p class="text-gray-500 font-medium mb-2">文言文推與敲 - 齊人攫金</p>
-            <p class="text-gray-400 text-xs">&copy; 2025 道明中學國二國文模擬試題</p>
-        </div>
-    </footer>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    <script>
-        // --- Data Configuration ---
-        const DB_PREFIX = 'ChineseClassicalQuiz-031-';
-        
-        // --- Questions Data ---
+        // ================= 1. 題庫資料萃取 =================
         const questionsData = [
-            {
-                id: 1,
-                category: "字音字形",
-                question: "「清旦衣冠而之市」，句中「冠」字的讀音與意思，下列何者正確？",
-                options: [
-                    "ㄍㄨㄢ，帽子",
-                    "ㄍㄨㄢˋ，戴上帽子",
-                    "ㄍㄨㄢ，居第一位",
-                    "ㄍㄨㄢˋ，帽子"
-                ],
-                answer: 1, // B
-                explanation: "「衣冠」在此處作動詞用，「衣」讀ㄧˋ，穿衣；「冠」讀ㄍㄨㄢˋ，戴帽。整句意指「穿好衣服、戴好帽子」。"
-            },
-            {
-                id: 2,
-                category: "字義測驗",
-                question: "下列「之」字的字義，何者與「清旦衣冠而之市」的「之」相同？",
-                options: [
-                    "送孟浩然「之」廣陵",
-                    "吏捕得「之」",
-                    "心「之」所向",
-                    "適鬻金者「之」所"
-                ],
-                answer: 0, // A
-                explanation: "題幹「之」市：動詞，往、去。(A)送孟浩然「之」廣陵：動詞，往、去。(B)代詞，指齊人。(C)助詞，無義。(D)助詞，的。"
-            },
-            {
-                id: 3,
-                category: "文意理解",
-                question: "「適鬻金者之所」句中「適」字的意思為何？",
-                options: [
-                    "適合",
-                    "舒適",
-                    "剛好、恰巧",
-                    "往、到"
-                ],
-                answer: 3, // D
-                explanation: "「適」在此處解釋為「往、到」。整句翻譯為：前往賣金子的人的地方。"
-            },
-            {
-                id: 4,
-                category: "字義測驗",
-                question: "「因攫其金而去」的「攫」字，意思與下列何者最接近？",
-                options: [
-                    "偷竊",
-                    "奪取",
-                    "購買",
-                    "乞討"
-                ],
-                answer: 1, // B
-                explanation: "「攫」（ㄐㄩㄝˊ）：抓取、奪取。指用手強行抓取。"
-            },
-            {
-                id: 5,
-                category: "字義比較",
-                question: "「適鬻金者之所」，「鬻」字的意思是「賣」。下列成語中的「鬻」字，何者意思相同？",
-                options: [
-                    "賣官鬻爵",
-                    "阿諛鬻容",
-                    "鬻兒賣女",
-                    "以上皆是"
-                ],
-                answer: 3, // D
-                explanation: "「鬻」（ㄩˋ）皆指「賣」。(A)賣官位爵位。(B)出賣容顏以奉承他人。(C)賣掉兒女，形容生活困苦。"
-            },
-            {
-                id: 6,
-                category: "文意推論",
-                question: "齊人「清旦衣冠而之市」，這個舉動顯示出他的心態為何？",
-                options: [
-                    "從容不迫，若無其事",
-                    "神智不清，夢遊狀態",
-                    "為了掩飾身分，喬裝打扮",
-                    "重視禮儀，準備去拜訪朋友"
-                ],
-                answer: 0, // A
-                explanation: "他「清旦衣冠」，意思是早起穿戴整齊，表現得像個體面的正常人，從容地去市場，與後面的搶劫行為形成強烈對比，顯示其「利令智昏」到了若無其事的地步。"
-            },
-            {
-                id: 7,
-                category: "文法結構",
-                question: "「徒見金」的「徒」字，詞性與解釋為何？",
-                options: [
-                    "名詞，徒弟",
-                    "動詞，步行",
-                    "副詞，只、僅",
-                    "形容詞，空的"
-                ],
-                answer: 2, // C
-                explanation: "「徒」在此為副詞，解釋為「只、僅」。意即「只看見金子」。"
-            },
-            {
-                id: 8,
-                category: "主語判斷",
-                question: "「吏捕得之」這句話省略了主語，若要還原，下列何者最恰當？",
-                options: [
-                    "齊人",
-                    "鬻金者",
-                    "旁觀者",
-                    "管理市場的官吏"
-                ],
-                answer: 3, // D
-                explanation: "句子的主詞是「吏」（官吏），動詞是「捕」，受詞是「之」（齊人）。本句描述的是官吏的動作。"
-            },
-            {
-                id: 9,
-                category: "成語應用",
-                question: "這則故事的寓意，可以用下列哪一個成語來形容？",
-                options: [
-                    "掩耳盜鈴",
-                    "利令智昏",
-                    "一葉障目",
-                    "以上皆是"
-                ],
-                answer: 3, // D
-                explanation: "齊人因為想得到金子（利），而看不見旁人（智昏），與「利令智昏」最貼切。「掩耳盜鈴」比喻自欺欺人，「一葉障目」比喻被局部現象迷惑而看不到全局，三者皆有共通之處。"
-            },
-            {
-                id: 10,
-                category: "文意理解",
-                question: "齊人回答：「取金之時，不見人，徒見金。」這句話真正的意涵是什麼？",
-                options: [
-                    "他的視力有問題，真的沒看到人",
-                    "他使用障眼法，以為別人看不到他",
-                    "他被貪欲蒙蔽了理智，眼中只有利益",
-                    "市場當時真的沒有人，只有金子"
-                ],
-                answer: 2, // C
-                explanation: "這是誇張的說法，強調他因為極度的貪婪，注意力完全集中在金子上，以至於忽略了周圍客觀環境（眾人）的存在。"
-            },
-            {
-                id: 11,
-                category: "文句翻譯",
-                question: "「子攫人之金何？」這句話的翻譯，下列何者最通順？",
-                options: [
-                    "兒子搶了別人的金子做什麼？",
-                    "你在何時搶了別人的金子？",
-                    "你為什麼要搶別人的金子？",
-                    "你搶別人的金子是誰的？"
-                ],
-                answer: 2, // C
-                explanation: "「子」：你。「何」：為何、為什麼（疑問副詞）。整句意為「你為什麼搶奪別人的金子？」"
-            },
-            {
-                id: 12,
-                category: "字形辨析",
-                question: "下列各組字形，何者讀音相同？",
-                options: [
-                    "「攫」取 ／ 「瞿」然",
-                    "恐「懼」 ／ 「攫」金",
-                    "「鬻」金 ／ 「育」兒",
-                    "「徒」步 ／ 遷「徙」"
-                ],
-                answer: 2, // C
-                explanation: "(A) ㄐㄩㄝˊ ／ ㄐㄩˋ。(B) ㄐㄩˋ ／ ㄐㄩㄝˊ。(C) ㄩˋ ／ ㄩˋ (同音)。(D) ㄊㄨˊ ／ ㄒㄧˇ。"
-            },
-            {
-                id: 13,
-                category: "修辭技巧",
-                question: "「不見人，徒見金」使用了什麼修辭技巧來強調齊人的執迷？",
-                options: [
-                    "譬喻",
-                    "映襯",
-                    "轉化",
-                    "誇飾"
-                ],
-                answer: 1, // B
-                explanation: "「不見人」與「見金」形成強烈對比（映襯），凸顯其眼中只有金子而無視他人的荒謬。"
-            },
-            {
-                id: 14,
-                category: "虛詞練習",
-                question: "「因攫其金而去」的「而」，用法與下列何者相同？",
-                options: [
-                    "學「而」時習之",
-                    "出淤泥「而」不染",
-                    "人「而」無信，不知其可",
-                    "清旦衣冠「而」之市"
-                ],
-                answer: 3, // D
-                explanation: "題幹「而」：連詞，表順接（然後）。(A)順接。(B)轉折。(C)假設。(D)順接（修飾動作）。D與題幹同屬本文且結構最類似。"
-            },
-            {
-                id: 15,
-                category: "文意理解",
-                question: "關於《齊人攫金》這則故事的寫作特色，下列敘述何者錯誤？",
-                options: [
-                    "文字簡潔，情節生動",
-                    "善用對話來刻畫人物心理",
-                    "使用大量華麗的形容詞來描寫金子",
-                    "具有深刻的諷刺意味"
-                ],
-                answer: 2, // C
-                explanation: "文中並未描寫金子的外觀，而是著重在齊人的行為與心理。"
-            },
-            {
-                id: 16,
-                category: "延伸思考",
-                question: "「人皆在焉」的「焉」，詞性與意義為何？",
-                options: [
-                    "助詞，無義",
-                    "代詞，那裡（指市場/現場）",
-                    "疑問詞，哪裡",
-                    "形容詞，安顯的樣子"
-                ],
-                answer: 1, // B
-                explanation: "「焉」在此作為兼詞（於是、於此），即「在那裡」。指大家都還在那裡（看著）。"
-            },
-            {
-                id: 17,
-                category: "字義測驗",
-                question: "「吏捕得之」與「因攫其金」兩句中的代詞運用，下列說明何者正確？",
-                options: [
-                    "前者「之」指金子，後者「其」指鬻金者",
-                    "前者「之」指齊人，後者「其」指鬻金者",
-                    "前者「之」指齊人，後者「其」指齊人",
-                    "前者「之」指金子，後者「其」指齊人"
-                ],
-                answer: 1, // B
-                explanation: "「捕得之」的之代指搶劫的「齊人」；「攫其金」的其代指「賣金子的人」（鬻金者）。"
-            },
-            {
-                id: 18,
-                category: "邏輯推演",
-                question: "若要以一句話勸告這位「齊人」，下列何者最不適合？",
-                options: [
-                    "君子愛財，取之有道",
-                    "法網恢恢，疏而不漏",
-                    "人為財死，鳥為食亡",
-                    "偷雞不著蝕把米"
-                ],
-                answer: 2, // C
-                explanation: "「人為財死，鳥為食亡」通常是用來描述人為了利益而犧牲的現象，比較像是「描述」而非「勸告」。"
-            },
-            {
-                id: 19,
-                category: "國學常識",
-                question: "本故事選自《列子》。關於《列子》一書，下列敘述何者正確？",
-                options: [
-                    "是儒家的重要經典",
-                    "作者列禦寇是戰國時代法家代表",
-                    "內容多寓言故事，富含哲理，屬道家著作",
-                    "與《論語》、《孟子》合稱四書"
-                ],
-                answer: 2, // C
-                explanation: "《列子》屬道家經典，內容多寓言。"
-            },
-            {
-                id: 20,
-                category: "綜合測驗",
-                question: "下列「」中的字，何者不屬於「動詞」？",
-                options: [
-                    "衣「冠」而之市",
-                    "適「鬻」金者之所",
-                    "「徒」見金",
-                    "「攫」其金"
-                ],
-                answer: 2, // C
-                explanation: "(A)戴帽（動詞）。(B)賣（動詞）。(C)只（副詞）。(D)抓取（動詞）。"
-            }
+            { id: 1, category: "字音字形", question: "「清旦衣冠而之市」，句中「冠」字的讀音與意思，下列何者正確？", options: ["ㄍㄨㄢ，帽子", "ㄍㄨㄢˋ，戴上帽子", "ㄍㄨㄢ，居第一位", "ㄍㄨㄢˋ，帽子"], answer: 1, explanation: "「衣冠」在此處作動詞用，「衣」讀ㄧˋ，穿衣；「冠」讀ㄍㄨㄢˋ，戴帽。整句意指「穿好衣服、戴好帽子」。" },
+            { id: 2, category: "字義測驗", question: "下列「之」字的字義，何者與「清旦衣冠而之市」的「之」相同？", options: ["送孟浩然「之」廣陵", "吏捕得「之」", "心「之」所向", "適鬻金者「之」所"], answer: 0, explanation: "題幹「之」市：動詞，往、去。(A)送孟浩然「之」廣陵：動詞，往、去。(B)代詞，指齊人。(C)助詞，無義。(D)助詞，的。" },
+            { id: 3, category: "文意理解", question: "「適鬻金者之所」句中「適」字的意思為何？", options: ["適合", "舒適", "剛好、恰巧", "往、到"], answer: 3, explanation: "「適」在此處解釋為「往、到」。整句翻譯為：前往賣金子的人的地方。" },
+            { id: 4, category: "字義測驗", question: "「因攫其金而去」的「攫」字，意思與下列何者最接近？", options: ["偷竊", "奪取", "購買", "乞討"], answer: 1, explanation: "「攫」（ㄐㄩㄝˊ）：抓取、奪取。指用手強行抓取。" },
+            { id: 5, category: "字義比較", question: "「適鬻金者之所」，「鬻」字的意思是「賣」。下列成語中的「鬻」字，何者意思相同？", options: ["賣官鬻爵", "阿諛鬻容", "鬻兒賣女", "以上皆是"], answer: 3, explanation: "「鬻」（ㄩˋ）皆指「賣」。(A)賣官位爵位。(B)出賣容顏以奉承他人。(C)賣掉兒女，形容生活困苦。" },
+            { id: 6, category: "文意推論", question: "齊人「清旦衣冠而之市」，這個舉動顯示出他的心態為何？", options: ["從容不迫，若無其事", "神智不清，夢遊狀態", "為了掩飾身分，喬裝打扮", "重視禮儀，準備去拜訪朋友"], answer: 0, explanation: "他「清旦衣冠」，意思是早起穿戴整齊，表現得像個體面的正常人，從容地去市場，與後面的搶劫行為形成強烈對比，顯示其「利令智昏」到了若無其事的地步。" },
+            { id: 7, category: "文法結構", question: "「徒見金」的「徒」字，詞性與解釋為何？", options: ["名詞，徒弟", "動詞，步行", "副詞，只、僅", "形容詞，空的"], answer: 2, explanation: "「徒」在此為副詞，解釋為「只、僅」。意即「只看見金子」。" },
+            { id: 8, category: "主語判斷", question: "「吏捕得之」這句話省略了主語，若要還原，下列何者最恰當？", options: ["齊人", "鬻金者", "旁觀者", "管理市場的官吏"], answer: 3, explanation: "句子的主詞是「吏」（官吏），動詞是「捕」，受詞是「之」（齊人）。本句描述的是官吏的動作。" },
+            { id: 9, category: "成語應用", question: "這則故事的寓意，可以用下列哪一個成語來形容？", options: ["掩耳盜鈴", "利令智昏", "一葉障目", "以上皆是"], answer: 3, explanation: "齊人因為想得到金子（利），而看不見旁人（智昏），與「利令智昏」最貼切。「掩耳盜鈴」比喻自欺欺人，「一葉障目」比喻被局部現象迷惑而看不到全局，三者皆有共通之處。" },
+            { id: 10, category: "文意理解", question: "齊人回答：「取金之時，不見人，徒見金。」這句話真正的意涵是什麼？", options: ["他的視力有問題，真的沒看到人", "他使用障眼法，以為別人看不到他", "他被貪欲蒙蔽了理智，眼中只有利益", "市場當時真的沒有人，只有金子"], answer: 2, explanation: "這是誇張的說法，強調他因為極度的貪婪，注意力完全集中在金子上，以至於忽略了周圍客觀環境（眾人）的存在。" },
+            { id: 11, category: "文句翻譯", question: "「子攫人之金何？」這句話的翻譯，下列何者最通順？", options: ["兒子搶了別人的金子做什麼？", "你在何時搶了別人的金子？", "你為什麼要搶別人的金子？", "你搶別人的金子是誰的？"], answer: 2, explanation: "「子」：你。「何」：為何、為什麼（疑問副詞）。整句意為「你為什麼搶奪別人的金子？」" },
+            { id: 12, category: "字形辨析", question: "下列各組字形，何者讀音相同？", options: ["「攫」取 ／ 「瞿」然", "恐「懼」 ／ 「攫」金", "「鬻」金 ／ 「育」兒", "「徒」步 ／ 遷「徙」"], answer: 2, explanation: "(A) ㄐㄩㄝˊ ／ ㄐㄩˋ。(B) ㄐㄩˋ ／ ㄐㄩㄝˊ。(C) ㄩˋ ／ ㄩˋ (同音)。(D) ㄊㄨˊ ／ ㄒㄧˇ。" },
+            { id: 13, category: "修辭技巧", question: "「不見人，徒見金」使用了什麼修辭技巧來強調齊人的執迷？", options: ["譬喻", "映襯", "轉化", "誇飾"], answer: 1, explanation: "「不見人」與「見金」形成強烈對比（映襯），凸顯其眼中只有金子而無視他人的荒謬。" },
+            { id: 14, category: "虛詞練習", question: "「因攫其金而去」的「而」，用法與下列何者相同？", options: ["學「而」時習之", "出淤泥「而」不染", "人「而」無信，不知其可", "清旦衣冠「而」之市"], answer: 3, explanation: "題幹「而」：連詞，表順接（然後）。(A)順接。(B)轉折。(C)假設。(D)順接（修飾動作）。D與題幹同屬本文且結構最類似。" },
+            { id: 15, category: "文意理解", question: "關於《齊人攫金》這則故事的寫作特色，下列敘述何者錯誤？", options: ["文字簡潔，情節生動", "善用對話來刻畫人物心理", "使用大量華麗的形容詞來描寫金子", "具有深刻的諷刺意味"], answer: 2, explanation: "文中並未描寫金子的外觀，而是著重在齊人的行為與心理。" },
+            { id: 16, category: "延伸思考", question: "「人皆在焉」的「焉」，詞性與意義為何？", options: ["助詞，無義", "代詞，那裡（指市場/現場）", "疑問詞，哪裡", "形容詞，安顯的樣子"], answer: 1, explanation: "「焉」在此作為兼詞（於是、於此），即「在那裡」。指大家都還在那裡（看著）。" },
+            { id: 17, category: "字義測驗", question: "「吏捕得之」與「因攫其金」兩句中的代詞運用，下列說明何者正確？", options: ["前者「之」指金子，後者「其」指鬻金者", "前者「之」指齊人，後者「其」指鬻金者", "前者「之」指齊人，後者「其」指齊人", "前者「之」指金子，後者「其」指齊人"], answer: 1, explanation: "「捕得之」的之代指搶劫的「齊人」；「攫其金」的其代指「賣金子的人」（鬻金者）。" },
+            { id: 18, category: "邏輯推演", question: "若要以一句話勸告這位「齊人」，下列何者最不適合？", options: ["君子愛財，取之有道", "法網恢恢，疏而不漏", "人為財死，鳥為食亡", "偷雞不著蝕把米"], answer: 2, explanation: "「人為財死，鳥為食亡」通常是用來描述人為了利益而犧牲的現象，比較像是「描述」而非「勸告」。" },
+            { id: 19, category: "國學常識", question: "本故事選自《列子》。關於《列子》一書，下列敘述何者正確？", options: ["是儒家的重要經典", "作者列禦寇是戰國時代法家代表", "內容多寓言故事，富含哲理，屬道家著作", "與《論語》、《孟子》合稱四書"], answer: 2, explanation: "《列子》屬道家經典，內容多寓言。" },
+            { id: 20, category: "綜合測驗", question: "下列「」中的字，何者不屬於「動詞」？", options: ["衣「冠」而之市", "適「鬻」金者之所", "「徒」見金", "「攫」其金"], answer: 2, explanation: "(A)戴帽（動詞）。(B)賣（動詞）。(C)只（副詞）。(D)抓取（動詞）。" }
         ];
 
-        // --- State Management ---
-        let currentState = {
-            username: '',
-            questionIndex: 0,
-            answers: {}, // { questionId: selectedOptionIndex }
-            mistakes: [], // array of question IDs
-            favorites: [], // array of question IDs
-            isFinished: false
-        };
-
-        // --- DOM Elements ---
-        const views = {
-            login: document.getElementById('view-login'),
-            quiz: document.getElementById('view-quiz'),
-            result: document.getElementById('view-result'),
-            review: document.getElementById('view-review')
-        };
+        // ================= 2. Firebase & 全域狀態設定 =================
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const initialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        const COLLECTION_NAME = 'Chinese-Classical-354';
         
-        const ui = {
-            usernameInput: document.getElementById('username'),
-            userDisplay: document.getElementById('user-display'),
-            usernameSpan: document.getElementById('username-span'),
-            quickLoginArea: document.getElementById('quick-login-area'),
-            recentUsersList: document.getElementById('recent-users-list'),
-            currentQNum: document.getElementById('current-question-num'),
-            progressBarFill: document.getElementById('progress-bar-fill'),
-            btnFavorite: document.getElementById('btn-favorite'),
-            qCategory: document.getElementById('q-category'),
-            qText: document.getElementById('q-text'),
-            optionsContainer: document.getElementById('options-container'),
-            explanationArea: document.getElementById('explanation-area'),
-            feedbackIcon: document.getElementById('feedback-icon'),
-            feedbackTitle: document.getElementById('feedback-title'),
-            feedbackText: document.getElementById('feedback-text'),
-            resultScore: document.getElementById('result-score'),
-            resultCorrect: document.getElementById('result-correct'),
-            resultWrong: document.getElementById('result-wrong'),
-            reviewList: document.getElementById('review-list'),
-            reviewTitle: document.getElementById('review-title')
+        let app, auth, db, currentUser = null, unsubscribeSnapshot = null;
+        
+        window.state = {
+            username: '',
+            answers: {},
+            mistakes: [],
+            favorites: []
         };
 
-        // --- Storage Helpers ---
-        function getStorageKey(type, username) {
-            if (username) return DB_PREFIX + type + '-' + username;
-            return DB_PREFIX + type; // Global or list keys
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch (e) {
+            console.error("Firebase 初始化失敗", e);
         }
 
-        // --- Initialization ---
-        function init() {
-            renderRecentUsers();
-        }
+        // ================= 3. Custom Modal 工具 (取代 alert/confirm) =================
+        window.closeModal = () => {
+            document.getElementById('custom-modal').classList.add('hidden');
+            document.getElementById('custom-modal').classList.remove('flex');
+        };
 
-        function renderRecentUsers() {
-            const users = JSON.parse(localStorage.getItem(getStorageKey('users')) || '[]');
-            
-            if (users.length > 0) {
-                ui.quickLoginArea.classList.remove('hidden');
-                ui.recentUsersList.innerHTML = '';
-                users.forEach(user => {
-                    const btn = document.createElement('button');
-                    btn.className = 'px-3 py-1.5 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-full text-sm border border-orange-200 transition';
-                    btn.innerHTML = `<i class="fas fa-user-circle mr-1"></i>${user}`;
-                    btn.onclick = () => quickLogin(user);
-                    ui.recentUsersList.appendChild(btn);
-                });
-            } else {
-                ui.quickLoginArea.classList.add('hidden');
+        window.customAlert = (msg) => {
+            document.getElementById('modal-content').innerText = msg;
+            document.getElementById('modal-actions').innerHTML = `
+                <button onclick="window.closeModal()" class="px-8 py-3 bg-rose-400 text-white text-xl font-black rounded-full border-4 border-solid border-rose-500 shadow-[0_4px_0_#e11d48] hover:-translate-y-1 hover:shadow-[0_6px_0_#e11d48] active:shadow-none active:translate-y-1 transition-all">知道囉 ⭕</button>
+            `;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        };
+
+        window._confirmCallback = null;
+        window.customConfirm = (msg, callback) => {
+            document.getElementById('modal-content').innerText = msg;
+            window._confirmCallback = callback;
+            document.getElementById('modal-actions').innerHTML = `
+                <button onclick="window.closeModal(); window._confirmCallback(false);" class="px-6 py-3 bg-gray-100 text-gray-600 text-lg font-bold rounded-full border-4 border-solid border-gray-300 shadow-[0_4px_0_#d1d5db] hover:-translate-y-1 transition-all active:translate-y-1 active:shadow-none">取消 ❌</button>
+                <button onclick="window.closeModal(); window._confirmCallback(true);" class="px-6 py-3 bg-teal-400 text-white text-lg font-black rounded-full border-4 border-solid border-teal-500 shadow-[0_4px_0_#0f766e] hover:-translate-y-1 hover:shadow-[0_6px_0_#0f766e] transition-all active:translate-y-1 active:shadow-none">確定 ✅</button>
+            `;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        };
+
+        // ================= 4. 畫面切換與 UI 工具 =================
+        window.switchView = (viewId) => {
+            ['view-login', 'view-dashboard', 'view-quiz', 'view-review'].forEach(v => {
+                document.getElementById(v).classList.add('hidden');
+            });
+            document.getElementById(viewId).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.renderRecentLogins = () => {
+            const recents = JSON.parse(localStorage.getItem('cc-354-recents') || '[]');
+            const container = document.getElementById('recent-logins');
+            if(recents.length === 0) {
+                container.innerHTML = '<span class="text-gray-300 font-bold text-sm">尚無紀錄 🍃</span>';
+                return;
             }
+            container.innerHTML = recents.map(name => `
+                <button onclick="window.quickLogin('${name}')" class="bg-rose-50 border-2 border-solid border-rose-300 text-rose-700 font-bold px-4 py-2 rounded-full hover:bg-rose-100 transition-colors shadow-sm text-sm active:scale-95">
+                    🧑‍🎓 ${name}
+                </button>
+            `).join('');
+        };
+
+        window.quickLogin = (name) => {
+            document.getElementById('username-input').value = name;
+            window.startQuizFlow();
+        };
+
+        // ================= 5. Firebase Auth & 資料監聽 =================
+        const initAuthFlow = async () => {
+            if(!auth) return;
+            try {
+                if (initialToken) await signInWithCustomToken(auth, initialToken);
+                else await signInAnonymously(auth);
+            } catch (e) {
+                console.error("Auth error", e);
+            }
+        };
+
+        if(auth) {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    window.renderRecentLogins();
+                }
+            });
+            initAuthFlow();
         }
 
-        // --- Login & Navigation ---
-        function quickLogin(name) {
-            ui.usernameInput.value = name;
-            startQuiz();
-        }
+        window.startQuizFlow = () => {
+            const name = document.getElementById('username-input').value.trim();
+            if (!name) return window.customAlert('請輸入姓名喔！🧑‍🎓');
+            if (!currentUser) return window.customAlert('系統連線中，請稍候再試 ⏳');
 
-        function switchView(viewName) {
-            Object.values(views).forEach(el => el.classList.add('hidden'));
-            views[viewName].classList.remove('hidden');
-            window.scrollTo(0, 0);
-        }
+            window.state.username = name;
+            
+            // 儲存最近登入供快選
+            let recents = JSON.parse(localStorage.getItem('cc-354-recents') || '[]');
+            if (!recents.includes(name)) {
+                recents.unshift(name);
+                if (recents.length > 5) recents.pop();
+                localStorage.setItem('cc-354-recents', JSON.stringify(recents));
+            }
 
-        function startQuiz() {
-            const name = ui.usernameInput.value.trim();
-            if (!name) {
-                alert('請輸入姓名');
+            document.getElementById('display-username').innerText = name;
+            document.getElementById('header-user').classList.remove('hidden');
+            document.getElementById('header-user').classList.add('flex');
+            document.getElementById('header-username').innerText = name;
+
+            // 啟動 Firebase 監聽 (Rule 1 & 3)
+            if (unsubscribeSnapshot) unsubscribeSnapshot();
+            const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, COLLECTION_NAME, name);
+            
+            unsubscribeSnapshot = onSnapshot(docRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.data();
+                    window.state.answers = data.answers || {};
+                    window.state.mistakes = data.mistakes || [];
+                    window.state.favorites = data.favorites || [];
+                } else {
+                    window.state.answers = {};
+                    window.state.mistakes = [];
+                    window.state.favorites = [];
+                    setDoc(docRef, { answers: {}, mistakes: [], favorites: [] }, { merge: true }).catch(e=>console.error(e));
+                }
+                
+                // 無論身處哪一個畫面，只要資料變更就重新渲染
+                window.updateWaterfallUI();
+                if (!document.getElementById('view-review').classList.contains('hidden')) {
+                    const isMistake = document.getElementById('review-title').innerText.includes('❌');
+                    window.renderReview(isMistake ? 'mistakes' : 'favorites');
+                }
+            }, (err) => {
+                console.error("Snapshot error:", err);
+                window.customAlert('資料同步失敗 😢');
+            });
+
+            window.switchView('view-dashboard');
+        };
+
+        const saveToFirebase = () => {
+            if(!currentUser || !window.state.username) return;
+            const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, COLLECTION_NAME, window.state.username);
+            setDoc(docRef, {
+                answers: window.state.answers,
+                mistakes: window.state.mistakes,
+                favorites: window.state.favorites
+            }, { merge: true }).catch(e => console.error(e));
+        };
+
+        // ================= 6. 核心業務邏輯與渲染 =================
+        window.goHome = () => {
+            if (window.state.username) window.switchView('view-dashboard');
+            else window.switchView('view-login');
+        };
+
+        window.logout = () => {
+            window.customConfirm('確定要登出嗎？進度會自動保存在雲端喔！☁️', (confirmed) => {
+                if(confirmed) {
+                    window.state.username = '';
+                    if(unsubscribeSnapshot) {
+                        unsubscribeSnapshot();
+                        unsubscribeSnapshot = null;
+                    }
+                    document.getElementById('header-user').classList.add('hidden');
+                    document.getElementById('header-user').classList.remove('flex');
+                    document.getElementById('username-input').value = '';
+                    window.renderRecentLogins();
+                    window.switchView('view-login');
+                }
+            });
+        };
+
+        window.goQuiz = () => {
+            window.renderWaterfallDOM();
+            window.updateWaterfallUI();
+            window.switchView('view-quiz');
+        };
+
+        // 初次生成瀑布流 DOM 結構
+        window.renderWaterfallDOM = () => {
+            const container = document.getElementById('quiz-waterfall');
+            if(container.children.length > 0) return; // 避免重複生成
+            
+            container.innerHTML = questionsData.map(q => `
+                <div id="q-card-${q.id}" class="p-8 rounded-[2.5rem] border-4 border-solid border-gray-200 bg-white relative transition-colors duration-300 shadow-[0_6px_0_#e5e7eb]">
+                    <div class="flex justify-between items-start mb-6 gap-4">
+                        <div>
+                            <div class="inline-block bg-rose-100 border-2 border-solid border-rose-300 text-rose-700 font-bold px-3 py-1 rounded-full text-sm mb-4 shadow-[0_2px_0_#fda4af]">
+                                📌 【${q.category}】
+                            </div>
+                            <h3 class="text-2xl font-black text-gray-800 leading-relaxed font-serif tracking-wide">
+                                ${q.id}. ${q.question}
+                            </h3>
+                        </div>
+                        <button id="fav-btn-${q.id}" onclick="window.toggleFavorite(${q.id})" class="text-4xl hover:scale-110 transition-transform active:scale-95 shrink-0 mt-2">🤍</button>
+                    </div>
+                    
+                    <div id="opts-${q.id}" class="flex flex-col gap-4 mt-6">
+                        ${q.options.map((opt, idx) => `
+                            <button onclick="window.handleAnswer(${q.id}, ${idx})" class="opt-btn w-full text-left p-5 rounded-[1.5rem] border-4 border-solid border-gray-200 bg-white hover:border-amber-400 hover:bg-amber-50 hover:-translate-y-1 transition-all flex items-center justify-between text-gray-700 font-bold text-xl shadow-[0_4px_0_#e5e7eb] active:shadow-none active:translate-y-1">
+                                <div class="flex items-center gap-5">
+                                    <span class="opt-prefix w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 border-4 border-solid border-gray-200 font-black text-gray-500 shrink-0 text-xl">${['A','B','C','D'][idx]}</span>
+                                    <span class="leading-relaxed">${opt}</span>
+                                </div>
+                                <span class="opt-suffix font-black text-3xl shrink-0 ml-2"></span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div id="exp-${q.id}" class="hidden mt-10 pt-6 relative border-t-4 border-dashed border-gray-200">
+                        <div class="absolute -top-7 -left-3 text-5xl bg-white rounded-full p-1 border-4 border-solid border-yellow-400 shadow-md z-10 rotate-[-10deg]">💡</div>
+                        <div class="bg-yellow-50 border-4 border-solid border-yellow-300 p-6 rounded-[2rem] text-gray-700 leading-relaxed pl-12 font-bold text-lg shadow-[0_4px_0_#fde047]">
+                            ${q.explanation}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        // 僅更新 DOM 狀態 (不破壞 Scroll 位置)
+        window.updateWaterfallUI = () => {
+            let correct = 0, wrong = 0, answered = 0;
+            
+            questionsData.forEach(q => {
+                const card = document.getElementById(`q-card-${q.id}`);
+                if (!card) return;
+                
+                const ans = window.state.answers[q.id];
+                const favBtn = document.getElementById(`fav-btn-${q.id}`);
+                if(favBtn) favBtn.innerText = window.state.favorites.includes(q.id) ? '⭐' : '🤍';
+                
+                if (ans !== undefined) {
+                    answered++;
+                    const isCorrect = ans === q.answer;
+                    if(isCorrect) correct++; else wrong++;
+                    
+                    // 卡片底色
+                    card.className = `p-8 rounded-[2.5rem] border-4 border-solid relative transition-colors duration-300 ${isCorrect ? 'bg-teal-50 border-teal-400 shadow-[0_6px_0_#2dd4bf]' : 'bg-rose-50 border-rose-400 shadow-[0_6px_0_#fb7185]'}`;
+                    
+                    // 選項按鈕狀態
+                    const buttons = document.getElementById(`opts-${q.id}`).querySelectorAll('.opt-btn');
+                    buttons.forEach((btn, idx) => {
+                        btn.disabled = true;
+                        const prefix = btn.querySelector('.opt-prefix');
+                        const suffix = btn.querySelector('.opt-suffix');
+                        
+                        if (idx === ans) {
+                            btn.className = `opt-btn w-full text-left p-5 rounded-[1.5rem] border-4 border-solid transition-all flex items-center justify-between font-black text-xl shadow-none translate-y-1 ${isCorrect ? 'bg-teal-400 border-teal-500 text-white' : 'bg-rose-400 border-rose-500 text-white'}`;
+                            prefix.className = `opt-prefix w-12 h-12 flex items-center justify-center rounded-full border-4 border-solid font-black shrink-0 text-xl ${isCorrect ? 'bg-teal-300 border-teal-200 text-teal-800' : 'bg-rose-300 border-rose-200 text-rose-800'}`;
+                            suffix.innerText = isCorrect ? '⭕' : '❌';
+                        } else if (idx === q.answer) {
+                            btn.className = `opt-btn w-full text-left p-5 rounded-[1.5rem] border-4 border-solid transition-all flex items-center justify-between font-black text-xl bg-teal-100 border-teal-300 text-teal-800 shadow-none`;
+                            prefix.className = `opt-prefix w-12 h-12 flex items-center justify-center rounded-full border-4 border-solid font-black shrink-0 text-xl bg-teal-200 border-teal-400 text-teal-900`;
+                            suffix.innerText = '⭕';
+                        } else {
+                            btn.className = `opt-btn w-full text-left p-5 rounded-[1.5rem] border-4 border-solid transition-all flex items-center justify-between font-bold text-xl bg-white border-gray-200 text-gray-400 opacity-60 shadow-none`;
+                            prefix.className = `opt-prefix w-12 h-12 flex items-center justify-center rounded-full border-4 border-solid font-black shrink-0 text-xl bg-gray-50 border-gray-200 text-gray-400`;
+                            suffix.innerText = '';
+                        }
+                    });
+                    
+                    document.getElementById(`exp-${q.id}`).classList.remove('hidden');
+                } else {
+                    // 未作答狀態復原
+                    card.className = `p-8 rounded-[2.5rem] border-4 border-solid border-gray-200 bg-white relative transition-colors duration-300 shadow-[0_6px_0_#e5e7eb]`;
+                    const buttons = document.getElementById(`opts-${q.id}`).querySelectorAll('.opt-btn');
+                    buttons.forEach((btn, idx) => {
+                        btn.disabled = false;
+                        btn.className = `opt-btn w-full text-left p-5 rounded-[1.5rem] border-4 border-solid border-gray-200 bg-white hover:border-amber-400 hover:bg-amber-50 hover:-translate-y-1 transition-all flex items-center justify-between text-gray-700 font-bold text-xl shadow-[0_4px_0_#e5e7eb] active:shadow-none active:translate-y-1`;
+                        const prefix = btn.querySelector('.opt-prefix');
+                        prefix.className = `opt-prefix w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 border-4 border-solid border-gray-200 font-black text-gray-500 shrink-0 text-xl`;
+                        btn.querySelector('.opt-suffix').innerText = '';
+                    });
+                    document.getElementById(`exp-${q.id}`).classList.add('hidden');
+                }
+            });
+            
+            // 更新頂部數據
+            const elCorrect = document.getElementById('stat-correct');
+            const elWrong = document.getElementById('stat-wrong');
+            const elTotal = document.getElementById('stat-total');
+            if(elCorrect) elCorrect.innerText = correct;
+            if(elWrong) elWrong.innerText = wrong;
+            if(elTotal) elTotal.innerText = `${answered}/${questionsData.length}`;
+        };
+
+        window.handleAnswer = (qId, idx) => {
+            if(window.state.answers[qId] !== undefined) return; 
+            
+            window.state.answers[qId] = idx;
+            const q = questionsData.find(x => x.id === qId);
+            
+            if(idx !== q.answer && !window.state.mistakes.includes(qId)) {
+                window.state.mistakes.push(qId);
+            }
+            
+            saveToFirebase();
+            window.updateWaterfallUI(); // 立即套用以增加流暢感
+            
+            // 答題後稍微滾動以展示解析
+            setTimeout(() => {
+               const exp = document.getElementById(`exp-${qId}`);
+               if(exp) {
+                   const y = exp.getBoundingClientRect().top + window.scrollY - 150;
+                   window.scrollTo({top: y, behavior: 'smooth'});
+               }
+            }, 100);
+        };
+
+        window.toggleFavorite = (qId) => {
+            const idx = window.state.favorites.indexOf(qId);
+            if(idx > -1) window.state.favorites.splice(idx, 1);
+            else window.state.favorites.push(qId);
+            
+            saveToFirebase();
+            window.updateWaterfallUI();
+            
+            // 如果在複習畫面也同步更新
+            if (!document.getElementById('view-review').classList.contains('hidden') && document.getElementById('review-title').innerText.includes('⭐')) {
+                window.renderReview('favorites');
+            }
+        };
+
+        window.confirmRestart = () => {
+            window.customConfirm('確定要清除「作答紀錄與錯題」並重新開始嗎？🧹 (收藏會保留)', (confirmed) => {
+                if(confirmed) {
+                    window.state.answers = {};
+                    window.state.mistakes = [];
+                    saveToFirebase();
+                    window.updateWaterfallUI();
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                }
+            });
+        };
+
+        // ================= 7. 錯題本與最愛畫面 =================
+        window.goReview = (type) => {
+            window.renderReview(type);
+            window.switchView('view-review');
+        };
+
+        window.renderReview = (type) => {
+            const titleText = type === 'mistakes' ? '❌ 錯題本' : '⭐ 我的最愛';
+            document.getElementById('review-title').innerText = titleText;
+            
+            const list = type === 'mistakes' ? window.state.mistakes : window.state.favorites;
+            const container = document.getElementById('review-container');
+            
+            if(list.length === 0) {
+                container.innerHTML = `<div class="text-center p-12 bg-white border-4 border-dashed border-gray-300 rounded-[2.5rem] text-gray-400 font-bold text-2xl shadow-sm mt-10">目前空空如也喔！🍃</div>`;
                 return;
             }
             
-            currentState.username = name;
-            
-            // Update known users list
-            let users = JSON.parse(localStorage.getItem(getStorageKey('users')) || '[]');
-            if (!users.includes(name)) {
-                users.unshift(name); // Add to front
-                if (users.length > 5) users.pop(); // Keep max 5
-                localStorage.setItem(getStorageKey('users'), JSON.stringify(users));
-            }
-
-            // UI Update
-            ui.userDisplay.classList.remove('hidden');
-            ui.userDisplay.classList.add('flex');
-            ui.usernameSpan.textContent = name;
-            
-            // Load persistent data specific to user
-            loadUserProgress(name);
-        }
-
-        function loadUserProgress(name) {
-            // 1. Favorites (Always persistent)
-            const storedFavs = JSON.parse(localStorage.getItem(getStorageKey('favorites', name)) || '[]');
-            currentState.favorites = storedFavs;
-
-            // 2. Progress (Current Session state)
-            const savedProgress = JSON.parse(localStorage.getItem(getStorageKey('progress', name)));
-
-            if (savedProgress && !savedProgress.isFinished) {
-                // Resume session
-                const resume = confirm(`歡迎回來，${name}！\n系統發現您上次作答到第 ${savedProgress.questionIndex + 1} 題，是否繼續？`);
-                if (resume) {
-                    currentState.questionIndex = savedProgress.questionIndex;
-                    currentState.answers = savedProgress.answers || {};
-                    currentState.mistakes = savedProgress.mistakes || [];
-                    currentState.isFinished = false;
-                    switchView('quiz');
-                    loadQuestion(currentState.questionIndex);
-                    return;
-                }
-            }
-            
-            // Start New
-            resetQuizState();
-            switchView('quiz');
-            loadQuestion(0);
-        }
-
-        function resetQuizState() {
-            currentState.questionIndex = 0;
-            currentState.answers = {};
-            currentState.mistakes = [];
-            currentState.isFinished = false;
-            // Clear progress storage for fresh start
-            saveProgress(); 
-        }
-
-        function saveProgress() {
-            const data = {
-                questionIndex: currentState.questionIndex,
-                answers: currentState.answers,
-                mistakes: currentState.mistakes,
-                isFinished: currentState.isFinished,
-                timestamp: new Date().getTime()
-            };
-            localStorage.setItem(getStorageKey('progress', currentState.username), JSON.stringify(data));
-        }
-
-        function logout() {
-            if (confirm("確定要登出嗎？您的作答進度已保存。")) {
-                currentState.username = '';
-                ui.userDisplay.classList.add('hidden');
-                ui.userDisplay.classList.remove('flex');
-                ui.usernameInput.value = '';
-                renderRecentUsers();
-                switchView('login');
-            }
-        }
-        
-        function goHome() {
-            if (currentState.username) {
-               // If logged in, maybe confirm or just stay on current view? 
-               // Standard UX: Logo takes to "Dashboard" or Home. 
-               // Here Home is Login if not logged in, or Quiz view if logged in.
-               // Let's just alert simple info
-            } else {
-                switchView('login');
-            }
-        }
-
-        // --- Quiz Logic ---
-        function loadQuestion(index) {
-            const q = questionsData[index];
-            ui.currentQNum.textContent = index + 1;
-            ui.qCategory.textContent = q.category;
-            ui.qText.textContent = q.question;
-            
-            // Progress Bar
-            const percent = ((index) / questionsData.length) * 100;
-            ui.progressBarFill.style.width = `${Math.max(5, percent)}%`;
-
-            // Update Favorite Icon
-            updateFavoriteIcon(q.id);
-
-            // Reset Options
-            ui.optionsContainer.innerHTML = '';
-            
-            // Check if already answered (when resuming)
-            const answeredIdx = currentState.answers[q.id];
-            
-            q.options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = `option-btn w-full text-left p-4 rounded-xl border-2 border-orange-100 hover:border-orange-300 hover:bg-orange-50 transition duration-200 bg-white group flex items-center`;
+            container.innerHTML = list.map(qId => {
+                const q = questionsData.find(x => x.id === qId);
+                if(!q) return '';
+                const userAns = window.state.answers[q.id];
+                const isAnswered = userAns !== undefined;
                 
-                const letter = ['A','B','C','D'][idx];
-                
-                btn.innerHTML = `
-                    <span class="w-8 h-8 flex items-center justify-center rounded-full bg-orange-100 text-orange-600 font-bold mr-4 group-hover:bg-orange-500 group-hover:text-white transition-colors">${letter}</span>
-                    <span class="text-gray-700 font-medium text-lg">${opt}</span>
-                `;
-                
-                btn.onclick = () => handleAnswer(index, idx, btn);
-                ui.optionsContainer.appendChild(btn);
-            });
-
-            // Hide explanation
-            ui.explanationArea.classList.add('hidden');
-            
-            // If already answered, restore state (Visual only, no logic trigger)
-            if (answeredIdx !== undefined) {
-                // Find button and trigger visual state
-                const buttons = ui.optionsContainer.querySelectorAll('button');
-                buttons.forEach((b, i) => {
-                    b.disabled = true;
-                    if (i === answeredIdx) {
-                        if (i === q.answer) {
-                            b.classList.remove('bg-white', 'border-orange-100');
-                            b.classList.add('bg-green-50', 'border-green-500', 'text-green-800');
-                            b.querySelector('span').classList.add('bg-green-500', 'text-white');
-                        } else {
-                            b.classList.remove('bg-white', 'border-orange-100');
-                            b.classList.add('bg-red-50', 'border-red-500', 'text-red-800');
-                            b.querySelector('span').classList.add('bg-red-500', 'text-white');
-                        }
-                    } else if (i === q.answer) {
-                        b.classList.remove('bg-white', 'border-orange-100');
-                        b.classList.add('bg-green-50', 'border-green-500', 'text-green-800');
-                        b.querySelector('span').classList.add('bg-green-500', 'text-white');
-                    }
-                });
-                
-                // Show explanation
-                const isCorrect = answeredIdx === q.answer;
-                ui.feedbackIcon.className = isCorrect ? "fas fa-check-circle text-green-500 text-2xl" : "fas fa-times-circle text-red-500 text-2xl";
-                ui.feedbackTitle.textContent = isCorrect ? "答對了！" : "答錯了！";
-                ui.feedbackTitle.className = isCorrect ? "text-lg font-bold text-green-700 mb-2" : "text-lg font-bold text-red-700 mb-2";
-                ui.feedbackText.textContent = q.explanation;
-                ui.explanationArea.classList.remove('hidden');
-            }
-        }
-
-        function handleAnswer(qIndex, selectedIdx, btnElement) {
-            // Disable all buttons
-            const buttons = ui.optionsContainer.querySelectorAll('button');
-            buttons.forEach(b => b.disabled = true);
-
-            const q = questionsData[qIndex];
-            const isCorrect = selectedIdx === q.answer;
-            const letterSpan = btnElement.querySelector('span'); // The A/B/C/D circle
-            
-            // Style selection
-            if (isCorrect) {
-                btnElement.classList.remove('bg-white', 'border-orange-100');
-                btnElement.classList.add('bg-green-50', 'border-green-500', 'text-green-800');
-                letterSpan.classList.remove('bg-orange-100', 'text-orange-600');
-                letterSpan.classList.add('bg-green-500', 'text-white');
-                
-                ui.feedbackIcon.className = "fas fa-check-circle text-green-500 text-2xl";
-                ui.feedbackTitle.textContent = "答對了！";
-                ui.feedbackTitle.className = "text-lg font-bold text-green-700 mb-2";
-            } else {
-                btnElement.classList.remove('bg-white', 'border-orange-100');
-                btnElement.classList.add('bg-red-50', 'border-red-500', 'text-red-800');
-                letterSpan.classList.remove('bg-orange-100', 'text-orange-600');
-                letterSpan.classList.add('bg-red-500', 'text-white');
-                
-                // Highlight correct answer
-                const correctBtn = buttons[q.answer];
-                correctBtn.classList.remove('bg-white', 'border-orange-100');
-                correctBtn.classList.add('bg-green-50', 'border-green-500', 'text-green-800');
-                correctBtn.querySelector('span').classList.add('bg-green-500', 'text-white');
-
-                ui.feedbackIcon.className = "fas fa-times-circle text-red-500 text-2xl";
-                ui.feedbackTitle.textContent = "答錯了！";
-                ui.feedbackTitle.className = "text-lg font-bold text-red-700 mb-2";
-                
-                // Record mistake
-                if (!currentState.mistakes.includes(q.id)) {
-                    currentState.mistakes.push(q.id);
-                }
-            }
-
-            // Save state
-            currentState.answers[q.id] = selectedIdx;
-            // Important: Save to storage immediately
-            saveProgress();
-
-            // Show explanation
-            ui.feedbackText.textContent = q.explanation;
-            ui.explanationArea.classList.remove('hidden');
-            
-            // Scroll to explanation
-            ui.explanationArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-
-        function nextQuestion() {
-            currentState.questionIndex++;
-            saveProgress(); // Save new index
-            
-            if (currentState.questionIndex < questionsData.length) {
-                loadQuestion(currentState.questionIndex);
-            } else {
-                finishQuiz();
-            }
-        }
-
-        function finishQuiz() {
-            currentState.isFinished = true;
-            saveProgress(); // Mark finished
-            
-            // Calculate Score
-            let correctCount = 0;
-            questionsData.forEach(q => {
-                if (currentState.answers[q.id] === q.answer) {
-                    correctCount++;
-                }
-            });
-            const score = Math.round((correctCount / questionsData.length) * 100);
-            
-            // Update UI
-            ui.resultScore.textContent = score;
-            ui.resultCorrect.textContent = correctCount;
-            ui.resultWrong.textContent = questionsData.length - correctCount;
-            
-            switchView('result');
-        }
-
-        function restartQuiz() {
-            resetQuizState();
-            startQuiz(); // Reloads fresh
-        }
-
-        // --- Favorites Logic ---
-        function toggleFavorite() {
-            const currentQ = questionsData[currentState.questionIndex];
-            const id = currentQ.id;
-            
-            const index = currentState.favorites.indexOf(id);
-            if (index === -1) {
-                currentState.favorites.push(id);
-            } else {
-                currentState.favorites.splice(index, 1);
-            }
-            
-            // Persist favorites immediately
-            localStorage.setItem(getStorageKey('favorites', currentState.username), JSON.stringify(currentState.favorites));
-            
-            updateFavoriteIcon(id);
-        }
-
-        function updateFavoriteIcon(id) {
-            const icon = ui.btnFavorite.querySelector('i');
-            if (currentState.favorites.includes(id)) {
-                icon.className = "fas fa-star text-2xl text-amber-500";
-                ui.btnFavorite.classList.add('text-amber-500');
-                ui.btnFavorite.classList.remove('text-gray-300');
-            } else {
-                icon.className = "far fa-star text-2xl";
-                ui.btnFavorite.classList.remove('text-amber-500');
-                ui.btnFavorite.classList.add('text-gray-300');
-            }
-        }
-
-        // --- Review Logic ---
-        function showReview(type) {
-            const ids = type === 'wrong' ? currentState.mistakes : currentState.favorites;
-            ui.reviewTitle.textContent = type === 'wrong' ? '錯題本' : '我的最愛';
-            const iconClass = type === 'wrong' ? 'fas fa-times-circle text-red-500' : 'fas fa-star text-amber-500';
-            const bgClass = type === 'wrong' ? 'bg-red-100' : 'bg-amber-100';
-            
-            ui.reviewList.innerHTML = '';
-            
-            if (ids.length === 0) {
-                ui.reviewList.innerHTML = `
-                    <div class="text-center py-10 bg-white rounded-xl shadow-sm border border-orange-100">
-                        <i class="far fa-folder-open text-4xl text-gray-300 mb-3"></i>
-                        <p class="text-gray-500">目前沒有紀錄。</p>
-                    </div>`;
-            } else {
-                ids.forEach(id => {
-                    const q = questionsData.find(item => item.id === id);
-                    if (!q) return;
-
-                    const item = document.createElement('div');
-                    item.className = 'bg-white p-6 rounded-xl shadow-sm border border-orange-100 hover:shadow-md transition';
-                    
-                    const optionsHtml = q.options.map((opt, idx) => {
-                        const isCorrect = idx === q.answer;
-                        const userSelectedIdx = currentState.answers[q.id];
-                        const isUserSelected = userSelectedIdx === idx;
-                        
-                        let classStr = "ml-3 p-3 rounded-lg border flex items-center ";
-                        let icon = "";
-                        
-                        if (isCorrect) {
-                            classStr += "bg-green-50 border-green-200 text-green-800 font-bold";
-                            icon = '<i class="fas fa-check text-green-600 mr-2"></i>';
-                        } else if (isUserSelected && !isCorrect) {
-                            classStr += "bg-red-50 border-red-200 text-red-800 line-through opacity-75";
-                            icon = '<i class="fas fa-times text-red-600 mr-2"></i>';
-                        } else {
-                            classStr += "border-transparent text-gray-500";
-                            icon = '<span class="w-6 inline-block"></span>';
-                        }
-                        
-                        return `<div class="${classStr}">${icon} ${['A','B','C','D'][idx]}. ${opt}</div>`;
-                    }).join('');
-
-                    item.innerHTML = `
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-md font-bold">${q.category}</span>
-                            <div class="flex items-center gap-2">
-                                <span class="text-gray-300 text-xs">#${q.id}</span>
+                return `
+                <div class="p-8 rounded-[2.5rem] border-4 border-solid border-amber-300 bg-white relative shadow-[0_6px_0_#fcd34d]">
+                    <div class="flex justify-between items-start mb-6 gap-4">
+                        <div>
+                            <div class="inline-block bg-rose-100 border-2 border-solid border-rose-300 text-rose-700 font-bold px-3 py-1 rounded-full text-sm mb-4 shadow-[0_2px_0_#fda4af]">
+                                📌 【${q.category}】
                             </div>
+                            <h3 class="text-2xl font-black text-gray-800 leading-relaxed font-serif tracking-wide">
+                                ${q.id}. ${q.question}
+                            </h3>
                         </div>
-                        <p class="font-bold text-lg mb-4 text-gray-800">${q.question}</p>
-                        <div class="space-y-2 mb-4 text-sm">
-                            ${optionsHtml}
+                        <button onclick="window.toggleFavorite(${q.id})" class="text-4xl hover:scale-110 transition-transform active:scale-95 shrink-0 mt-2">${window.state.favorites.includes(q.id) ? '⭐' : '🤍'}</button>
+                    </div>
+                    
+                    <div class="flex flex-col gap-4 mt-6">
+                        ${q.options.map((opt, idx) => {
+                            let btnClass = "w-full text-left p-5 rounded-[1.5rem] border-4 border-solid flex items-center justify-between font-bold text-xl transition-colors ";
+                            let prefixClass = "w-12 h-12 flex items-center justify-center rounded-full border-4 border-solid font-black shrink-0 text-xl ";
+                            let suffixText = "";
+                            
+                            if (idx === q.answer) {
+                                btnClass += "bg-teal-100 border-teal-400 text-teal-800";
+                                prefixClass += "bg-teal-200 border-teal-500 text-teal-900";
+                                suffixText = "⭕ 正解";
+                            } else if (isAnswered && idx === userAns) {
+                                btnClass += "bg-rose-100 border-rose-300 text-rose-800 line-through opacity-80";
+                                prefixClass += "bg-rose-200 border-rose-400 text-rose-900";
+                                suffixText = "❌ 你的作答";
+                            } else {
+                                btnClass += "bg-gray-50 border-gray-200 text-gray-500 opacity-70";
+                                prefixClass += "bg-gray-100 border-gray-300 text-gray-400";
+                            }
+                            
+                            return `
+                            <div class="${btnClass}">
+                                <div class="flex items-center gap-5">
+                                    <span class="${prefixClass}">${['A','B','C','D'][idx]}</span>
+                                    <span class="leading-relaxed">${opt}</span>
+                                </div>
+                                <span class="font-black text-2xl shrink-0 ml-2">${suffixText}</span>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                    
+                    <div class="mt-10 pt-6 relative border-t-4 border-dashed border-amber-200">
+                        <div class="absolute -top-7 -left-3 text-5xl bg-white rounded-full p-1 border-4 border-solid border-yellow-400 shadow-md z-10 rotate-[-10deg]">💡</div>
+                        <div class="bg-yellow-50 border-4 border-solid border-yellow-300 p-6 rounded-[2rem] text-gray-700 leading-relaxed pl-12 font-bold text-lg shadow-[0_4px_0_#fde047]">
+                            ${q.explanation}
                         </div>
-                        <div class="bg-amber-50 p-4 rounded-lg text-sm text-gray-700 border border-amber-100 leading-relaxed">
-                            <span class="font-bold text-orange-600"><i class="fas fa-lightbulb mr-1"></i>解析：</span> ${q.explanation}
-                        </div>
-                    `;
-                    ui.reviewList.appendChild(item);
-                });
-            }
-            
-            switchView('review');
-        }
+                    </div>
+                </div>
+                `;
+            }).join('');
+        };
 
-        function backToResult() {
-            switchView('result');
-        }
-
-        function clearData() {
-            if(confirm("警告：這將會清除「這台裝置」上所有使用者的作答紀錄、錯題本與最愛清單，且無法復原。\n\n確定要執行嗎？")) {
-                Object.keys(localStorage).forEach(key => {
-                    if(key.startsWith(DB_PREFIX)) localStorage.removeItem(key);
-                });
-                location.reload();
-            }
-        }
-
-        // Start
-        init();
-
+        // 初始化
+        window.renderRecentLogins();
     </script>
 </body>
 </html>
