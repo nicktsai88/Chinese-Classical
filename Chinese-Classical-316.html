@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第12篇 趙人鼠患 - 文言文測驗</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@500;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            /* 嚴格遵守：藍粉交錯點點背景 */
+            background-image: radial-gradient(#bae6fd 1.5px, transparent 1.5px), radial-gradient(#fecdd3 1.5px, transparent 1.5px); 
+            background-size: 24px 24px; 
+            background-position: 0 0, 12px 12px; 
+            background-color: #ffffff;
+            color: #374151;
+        }
+        
+        .serif {
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        .biaukai {
+            font-family: 'BiauKai', 'DFKai-SB', '標楷體', serif;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 選項按鈕微小浮動動畫 */
+        .option-btn {
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0px rgba(0,0,0,0.1);
+        }
+
+        /* 狀態燈號 */
+        .status-dot {
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            border: 2px solid #fff;
+        }
+        .status-loading { background-color: #fbbf24; }
+        .status-success { background-color: #34d399; }
+        .status-error { background-color: #ef4444; }
+
+        /* 粉色系客製化滾動條 */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #fdf2f8; border-left: 2px solid #fbcfe8; }
+        ::-webkit-scrollbar-thumb { background: #f472b6; border-radius: 10px; border: 2px solid #fdf2f8; }
+        ::-webkit-scrollbar-thumb:hover { background: #db2777; }
+        
+        /* 隱藏原生捲軸 (某些特定區塊) */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative">
+
+    <!-- 客製化 Modal (取代 alert 與 confirm) -->
+    <div id="custom-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity">
+        <div class="bg-white border-4 border-solid border-rose-300 rounded-[2.5rem] p-8 max-w-sm w-[90%] shadow-2xl transform scale-95 transition-transform" id="custom-modal-box">
+            <div class="text-center">
+                <div class="text-5xl mb-4" id="modal-icon">💬</div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4" id="modal-text">提示訊息</h3>
+                <div class="flex justify-center gap-4 mt-6" id="modal-buttons">
+                    <!-- Buttons injected via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-rose-100 border-b-4 border-solid border-rose-300 shadow-md sticky top-0 z-50 h-[4.5rem] flex items-center">
+        <div class="w-full mx-auto px-4 md:px-6 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold tracking-wider flex items-center gap-2 text-rose-800 cursor-pointer hover:scale-105 transition-transform" onclick="goHome()">
+                <span class="text-3xl">🎒</span>
+                <span class="hidden sm:inline">文言文推與敲 - </span>
+                <span>第12篇 趙人鼠患</span>
+            </h1>
+            
+            <div class="flex items-center gap-3">
+                <!-- Status Indicator -->
+                <div id="connection-status" class="hidden sm:flex items-center text-sm bg-white border-2 border-solid border-rose-200 px-3 py-1.5 rounded-full font-bold text-rose-600 shadow-sm">
+                    <span id="status-dot" class="status-dot status-loading"></span>
+                    <span id="status-text">連線中...</span>
+                </div>
+
+                <div id="user-display" class="hidden flex items-center gap-2">
+                    <div class="text-base bg-white border-2 border-solid border-teal-200 px-4 py-1.5 rounded-full flex items-center shadow-sm text-teal-800">
+                        <span class="mr-2 text-xl">🧑‍🎓</span>
+                        <span id="username-span" class="font-bold"></span>
+                    </div>
+                    <button onclick="window.customConfirm('👋 確定要登出嗎？', window.logout)" class="text-sm font-bold bg-rose-400 hover:bg-rose-500 text-white px-4 py-2 rounded-full border-2 border-solid border-rose-600 shadow-[0_4px_0_#9f1239] active:translate-y-1 active:shadow-none transition-all">
+                        登出
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow w-full py-8">
+        
+        <!-- View: Login -->
+        <div id="view-login" class="fade-in max-w-lg mx-auto mt-6 px-4">
+            <div class="bg-white border-4 border-solid border-rose-300 rounded-[2.5rem] shadow-xl overflow-hidden p-6 md:p-8">
+                <!-- 封面圖片 -->
+                <img src="images/cc-316.jpg" alt="趙人鼠患" onerror="this.src='https://images.unsplash.com/photo-1548681528-6a5c45b66b42?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'" class="w-full h-48 md:h-56 object-cover rounded-[2rem] border-4 border-solid border-rose-200 mb-6 shadow-sm">
+                
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-black text-gray-800 mb-2">文言文推與敲</h2>
+                    <p class="text-rose-500 font-bold text-xl">第12篇 趙人鼠患</p>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <label for="username" class="block text-lg font-bold text-gray-600 mb-2 pl-2">請輸入姓名開始挑戰 ✏️</label>
+                        <input type="text" id="username" 
+                            class="w-full px-6 py-4 text-xl border-4 border-solid border-teal-200 rounded-full focus:outline-none focus:border-teal-400 focus:bg-teal-50 transition-all font-bold text-gray-700" 
+                            placeholder="例如：王小明"
+                            onkeypress="if(event.key === 'Enter') window.attemptLogin()">
+                    </div>
+                    
+                    <button onclick="window.attemptLogin()" class="w-full bg-amber-300 hover:bg-amber-400 text-amber-900 py-4 px-6 rounded-full text-2xl font-black border-4 border-solid border-amber-500 shadow-[0_6px_0_#b45309] active:translate-y-2 active:shadow-none transition-all flex justify-center items-center gap-2">
+                        進入學習 🚀
+                    </button>
+
+                    <!-- Quick Login Section -->
+                    <div id="quick-login-area" class="hidden pt-6 mt-4 border-t-4 border-dashed border-gray-200">
+                        <p class="text-center text-gray-500 font-bold mb-4">✨ 雲端最近登入 ✨</p>
+                        <div id="recent-users-list" class="flex flex-wrap justify-center gap-3 max-h-48 overflow-y-auto no-scrollbar pb-2">
+                            <!-- JS Injected -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Dashboard -->
+        <div id="view-dashboard" class="hidden fade-in max-w-3xl mx-auto mt-6 px-4">
+            <div class="bg-white border-4 border-solid border-teal-300 rounded-[2.5rem] shadow-xl p-8">
+                <div class="text-center mb-10">
+                    <div class="text-6xl mb-4">🌟</div>
+                    <h2 class="text-3xl md:text-4xl font-black text-gray-800">歡迎回來，<span id="dashboard-username" class="text-teal-600 border-b-4 border-teal-200 pb-1"></span>！</h2>
+                    <p class="text-gray-500 text-lg mt-4 font-bold">今天想先進行哪個項目呢？</p>
+                </div>
+
+                <!-- 選單排版調整：第一排佔據整欄 (col-span-2) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- 佔據一整排的「開始全真測驗」大按鈕 -->
+                    <button onclick="window.startExam()" class="md:col-span-2 bg-rose-100 hover:bg-rose-200 border-4 border-solid border-rose-300 p-8 rounded-[2.5rem] transition-transform hover:-translate-y-2 shadow-[0_6px_0_#fda4af] active:translate-y-1 active:shadow-none flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
+                        <span class="text-6xl md:text-7xl">📝</span>
+                        <span class="text-3xl md:text-4xl font-black text-rose-800 tracking-wide">開始全真測驗</span>
+                    </button>
+
+                    <!-- 下方兩欄 -->
+                    <button onclick="window.showReview('wrong')" class="bg-amber-100 hover:bg-amber-200 border-4 border-solid border-amber-300 p-6 rounded-[2.5rem] transition-transform hover:-translate-y-2 shadow-[0_6px_0_#fcd34d] active:translate-y-1 active:shadow-none flex flex-col items-center justify-center gap-3 relative">
+                        <span class="text-5xl">❌</span>
+                        <span class="text-2xl font-bold text-amber-800">錯題本</span>
+                        <span class="absolute top-4 right-4 bg-white border-2 border-solid border-amber-400 text-amber-600 font-black px-3 py-1 rounded-full text-lg shadow-sm" id="dash-wrong-count">0</span>
+                    </button>
+
+                    <button onclick="window.showReview('favorite')" class="bg-teal-100 hover:bg-teal-200 border-4 border-solid border-teal-300 p-6 rounded-[2.5rem] transition-transform hover:-translate-y-2 shadow-[0_6px_0_#5eead4] active:translate-y-1 active:shadow-none flex flex-col items-center justify-center gap-3 relative">
+                        <span class="text-5xl">⭐</span>
+                        <span class="text-2xl font-bold text-teal-800">我的最愛</span>
+                        <span class="absolute top-4 right-4 bg-white border-2 border-solid border-teal-400 text-teal-600 font-black px-3 py-1 rounded-full text-lg shadow-sm" id="dash-fav-count">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Quiz List (35/65 雙欄排版) -->
+        <div id="view-quiz" class="hidden fade-in max-w-[95rem] mx-auto px-4 pb-20">
+            <div class="flex flex-col lg:flex-row gap-6 lg:gap-8">
+                
+                <!-- 左側：古文全文 (35%) - 嚴格遵守 Sticky 且淡黃底粗邊框 -->
+                <div class="w-full lg:w-[35%] shrink-0">
+                    <div class="sticky top-[5.5rem] bg-yellow-50/95 border-4 border-solid border-amber-300 rounded-[2.5rem] p-8 md:p-10 shadow-xl max-h-[85vh] overflow-y-auto">
+                        <div class="flex items-center gap-3 mb-6 border-b-4 border-solid border-amber-200 pb-4">
+                            <span class="text-4xl">📜</span>
+                            <h2 class="text-2xl font-black text-amber-800">古文全文</h2>
+                        </div>
+                        <!-- 古文內容 -->
+                        <div class="biaukai text-[1.5rem] leading-[2.2] tracking-wider text-gray-800 font-medium text-justify">
+                            趙人患鼠，乞貓於中山。中山人予之貓，善捕鼠及雞。<br>
+                            月餘，鼠盡而其雞亦盡。其子患之，告其父曰：「盍去諸？」其父曰：「是非若所知也。吾之患在鼠，不在乎無雞。夫有鼠，則竊吾食，毀吾衣，穿吾垣墉，壞傷吾器用，吾將饑寒焉，何病於無雞乎？無雞者，弗食雞則已爾，去飢寒猶遠，若之何而去夫貓也？」
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右側：測驗區 (65%) -->
+                <div class="w-full lg:w-[65%] flex-grow space-y-6">
+                    
+                    <!-- 頂部固定列：統計與重置 -->
+                    <div class="sticky top-[5.5rem] z-40 bg-white/90 backdrop-blur-md border-4 border-solid border-gray-200 p-4 rounded-[2rem] shadow-md flex flex-wrap justify-between items-center gap-4">
+                        <div id="quiz-header-title" class="text-xl md:text-2xl font-black text-gray-800 flex items-center gap-2">
+                            <!-- Title Injected via JS -->
+                        </div>
+                        
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center bg-green-100 border-2 border-solid border-green-400 px-4 py-1.5 rounded-full shadow-sm text-green-800">
+                                <span class="text-lg mr-2">⭕ 答對:</span>
+                                <span id="stat-correct" class="font-black text-xl">0</span>
+                            </div>
+                            <div class="flex items-center bg-rose-100 border-2 border-solid border-rose-400 px-4 py-1.5 rounded-full shadow-sm text-rose-800">
+                                <span class="text-lg mr-2">❌ 答錯:</span>
+                                <span id="stat-wrong" class="font-black text-xl">0</span>
+                            </div>
+                            <button onclick="window.restartQuiz()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border-2 border-solid border-gray-300 p-2 rounded-full w-10 h-10 flex items-center justify-center transition-colors" title="重新開始">
+                                🔄
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 瀑布流卡片容器 -->
+                    <div id="quiz-list-container" class="space-y-6">
+                        <!-- Questions will be injected here -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, onSnapshot, arrayUnion } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+
+        // --- Custom Modal Logic ---
+        const modalEl = document.getElementById('custom-modal');
+        const modalBox = document.getElementById('custom-modal-box');
+        const modalText = document.getElementById('modal-text');
+        const modalIcon = document.getElementById('modal-icon');
+        const modalButtons = document.getElementById('modal-buttons');
+
+        function openModal() {
+            modalEl.classList.remove('hidden');
+            setTimeout(() => {
+                modalEl.classList.add('opacity-100');
+                modalBox.classList.remove('scale-95');
+                modalBox.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            modalEl.classList.remove('opacity-100');
+            modalBox.classList.remove('scale-100');
+            modalBox.classList.add('scale-95');
+            setTimeout(() => {
+                modalEl.classList.add('hidden');
+            }, 200);
+        }
+
+        window.customAlert = function(msg) {
+            modalIcon.textContent = '💡';
+            modalText.textContent = msg;
+            modalButtons.innerHTML = `<button onclick="window._closeModal()" class="bg-teal-300 hover:bg-teal-400 text-teal-900 border-4 border-solid border-teal-500 font-bold py-2 px-8 rounded-full shadow-[0_4px_0_#0f766e] active:translate-y-1 active:shadow-none transition-all">知道囉！</button>`;
+            openModal();
+        };
+
+        window._currentConfirmCallback = null;
+        window.customConfirm = function(msg, onYes) {
+            window._currentConfirmCallback = onYes;
+            modalIcon.textContent = '🤔';
+            modalText.innerHTML = msg.replace(/\n/g, '<br>');
+            modalButtons.innerHTML = `
+                <button onclick="window._closeModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 border-4 border-solid border-gray-400 font-bold py-2 px-6 rounded-full shadow-[0_4px_0_#9ca3af] active:translate-y-1 active:shadow-none transition-all">再想想</button>
+                <button onclick="window._closeModal(); setTimeout(window._currentConfirmCallback, 200);" class="bg-rose-300 hover:bg-rose-400 text-rose-900 border-4 border-solid border-rose-500 font-bold py-2 px-6 rounded-full shadow-[0_4px_0_#be123c] active:translate-y-1 active:shadow-none transition-all">確定執行</button>
+            `;
+            openModal();
+        };
+        window._closeModal = closeModal;
+
+        // --- Configuration ---
+        const COLLECTION_NAME = 'Chinese-Classical-316';
+        const DOC_GLOBAL = 'global';
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyAxQFt76ZPXE7d0i1XeNZ1yiiD2WYNIfHs",
+          authDomain: "chinese-learning-47f4d.firebaseapp.com",
+          projectId: "chinese-learning-47f4d",
+          storageBucket: "chinese-learning-47f4d.firebasestorage.app",
+          messagingSenderId: "76289812052",
+          appId: "1:76289812052:web:898384a916f9f341f62fc1"
+        };
+
+        let app, db, auth;
+        let isFirebaseReady = false;
+        let currentUserUnsubscribe = null;
+
+        // Initialize Firebase
+        try {
+            if(firebaseConfig.apiKey) {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                signInAnonymously(auth).catch(console.error);
+                isFirebaseReady = true;
+            } else {
+                updateConnectionStatus('error', '未連線');
+            }
+        } catch (e) {
+            console.error("Firebase init error:", e);
+            updateConnectionStatus('error', '連線錯誤');
+        }
+
+        // --- Questions Data ---
+        const questionsData = [
+            { id: 1, category: "字音字形", question: "下列選項「」中字詞的讀音，何者標示完全正確？", options: ["「乞」貓於中山：ㄑㄧˋ", "穿吾「垣」墉：ㄏㄨㄢˊ", "「盍」去諸：ㄏㄜˊ", "「弗」食雞則已：ㄈㄛˊ"], answer: 2, explanation: "(C)正確。盍讀音為ㄏㄜˊ。(A)乞，音ㄑㄧˇ。(B)垣，音ㄩㄢˊ，矮牆。(D)弗，音ㄈㄨˊ，不。" },
+            { id: 2, category: "字義辨析", question: "文言文中的「患」字常隨語境改變詞性與字義。關於文中三個「患」字的解釋，下列何者正確？<br>甲、趙人「患」鼠<br>乙、其子「患」之<br>丙、吾之「患」在鼠", options: ["三者皆為動詞，指擔憂、苦於。", "甲、乙為動詞（苦於、擔憂），丙為名詞（禍害）。", "三者皆為名詞，指災禍。", "甲、丙為名詞，乙為動詞。"], answer: 1, explanation: "(B)正確。甲「患鼠」指把老鼠當作禍患（苦於老鼠），動詞。乙「患之」指為這件事感到擔憂，動詞。丙「吾之患」指我的禍害，名詞。" },
+            { id: 3, category: "代詞辨析", question: "文言文中常以「之」字作為代名詞，省略具體事物。關於下列文句中的「之」字，何者代指「貓把雞吃光這件事」？", options: ["中山人予「之」貓", "其子患「之」", "盍去「諸」（之乎）", "吾「之」患在鼠"], answer: 1, explanation: "(B)正確。「其子患之」的「之」代指前文「鼠盡而其雞亦盡（貓把雞吃光）」的狀況。(A)代指趙人。(C)代指貓。(D)助詞，的。" },
+            { id: 4, category: "虛詞辨析", question: "「盍去諸」中的「盍」為合音詞，是「何不」的連音。下列文句中的「盍」字，何者也是「何不」的意思？", options: ["「盍」各言爾志", "冠「盍」雲集", "「盍」然而逝", "欲「盍」彌彰"], answer: 0, explanation: "(A)正確。語出《論語》，意為「何不各自說說你們的志向」。(B)應為「蓋」，車蓋。(C)應為「溘」，忽然。(D)應為「蓋」，遮掩。" },
+            { id: 5, category: "省略主語判斷", question: "參考道明段考題考法，古文常為精簡而省略主語。文句「善捕鼠及雞」省略了主語，請問該主語應為下列何者？", options: ["趙人", "中山人", "中山人給的貓", "趙人之子"], answer: 2, explanation: "(C)正確。前文為「中山人予之貓」，接著描述這隻貓的特性是「善捕鼠及雞」，故省略的主語為「貓」。" },
+            { id: 6, category: "句法與修辭", question: "父親說：「吾將饑寒焉，何病於無雞乎？」關於此句的翻譯與修辭語氣，下列何者正確？", options: ["沒有雞吃會生什麼病呢？（疑問語氣）", "對於沒有雞這件事，有什麼好擔憂／有害的呢？（激問語氣）", "為什麼生病了就不吃雞呢？（提問語氣）", "沒有雞的毛病到底出在哪裡呢？（懸問語氣）"], answer: 1, explanation: "(B)正確。「病」在此為動詞，指擔憂、以為害。「何病於無雞乎？」意即「何必把沒有雞當作禍害呢？」，答案在問題反面（即不需擔憂），為激問修辭。" },
+            { id: 7, category: "成語應用", question: "父親認為，雖然貓會吃雞（小害），但能消滅導致飢寒交迫的老鼠（大害），因此決定把貓留下。下列成語，何者最適合用來形容父親的決策邏輯？", options: ["削足適履", "兩害相權取其輕", "殺雞取卵", "因噎廢食"], answer: 1, explanation: "(B)正確。父親在「老鼠造成的飢寒（大害）」與「貓吃掉雞（小害）」兩者之間，選擇了承受較小的損害（失去雞）來避免毀滅性的災難，即「兩害相權取其輕」。(A)勉強遷就。(C)只顧眼前利益。(D)因小挫折而放棄重要之事。" },
+            { id: 8, category: "邏輯推演", question: "父親認為沒有雞也無所謂，其理由是「弗食雞則已爾，去飢寒猶遠」。這句話反映了父親在價值判斷上的哪一種前提假設？", options: ["雞肉有毒，不如吃素保平安", "生存的基本需求（免於飢寒）遠比物質享受（吃雞肉）來得重要", "貓在市場上的交易價值遠比雞來得高", "只要習慣了沒有雞肉的日子，以後就不會想吃了"], answer: 1, explanation: "(B)正確。老鼠會吃糧食、咬破衣物，威脅到人類最基本的生存（免於飢寒）；而沒有雞只是吃不到雞肉（物質享受的降低），兩者層次不同，生存需求絕對優先。" },
+            { id: 9, category: "詞類活用", question: "「趙人『患』鼠」的「患」字，由名詞轉為動詞，屬於「意動用法」（以……為患）。下列文句「」中的字，何者也屬於「意動用法」？", options: ["且「藉」寇兵而齎盜糧", "獨「樂」樂不如眾樂樂", "巫醫樂師百工之「人」", "不「恥」下問"], answer: 3, explanation: "(D)正確。「恥」原為名詞，轉為動詞意動用法，意即「以向地位低的人請教為恥」。(A)動詞，借。(B)動詞，欣賞音樂。(C)名詞，指人。" },
+            { id: 10, category: "跨文本比較", question: "孟子曾言：「魚與熊掌不可得兼，舍魚而取熊掌者也。」若將本文父親的選擇與孟子此言相比，下列敘述何者最為恰當？", options: ["兩者皆在探討「面對兩難時的價值取捨」，父親捨雞取貓保命，如同孟子捨生取義", "孟子強調追求高階的物質享受，父親則強調修練內在的精神素養", "兩者皆為「兩害相權取其輕」的被動妥協，並非出於自願", "孟子主張順其自然不強求，父親則主張強硬干預自然生態"], answer: 0, explanation: "(A)正確。兩篇文本都在探討「價值排序與取捨」。父親認為「免於飢寒」比「吃雞」重要，如同孟子認為「義」比「生命」更重要，皆是在衝突中選擇核心價值最高的一方。" },
+            { id: 11, category: "現代情境轉化", question: "若將《趙人鼠患》的故事改寫為現代商業週刊的管理專欄，下列哪一個文章標題最契合本寓言的核心思想？", options: ["《員工培訓：如何讓業務員既能抓大客戶又能顧好小散戶》", "《管理決策：在核心利益與次要損失之間，CEO該如何抉擇？》", "《風險控管：引進外部人才時，如何防範商業機密外洩》", "《績效考核：為什麼表現最好的員工往往也是最難搞的？》"], answer: 1, explanation: "(B)正確。老鼠代表「核心危機」，貓吃雞代表「次要損失」。管理者（父親）必須有宏觀的視角，為了保全公司的核心生存利益，果斷承受次要的損失。" },
+            { id: 12, category: "文言虛詞", question: "「乞貓『於』中山」的「於」字作介詞用，解釋為「從、自」。下列文句中的「於」字，何者意思與此相同？", options: ["己所不欲，勿施「於」人", "不戚戚「於」貧賤", "舜發「於」畎畝之中", "苛政猛「於」虎"], answer: 2, explanation: "(C)正確。「發於畎畝」意即從田野中被發掘，與題幹的「從」相同。(A)給、對。(B)對於。(D)比。" },
+            { id: 13, category: "深層意涵", question: "古代寓言常帶有政治諷喻。若將本文的「鼠、貓、雞」對應到國家政治的運作，下列哪一種象徵解讀最符合本文邏輯？", options: ["鼠＝外患，貓＝忠臣，雞＝君王", "鼠＝貪官汙吏（巨害），貓＝有才幹但帶有瑕疵的能臣，雞＝百姓的小利", "鼠＝小人，貓＝昏君，雞＝良民", "鼠＝盜賊，貓＝法律，雞＝道德"], answer: 1, explanation: "(B)正確。鼠會敗壞國家根本（巨害），貓能除大患但也會損害一些小利益（瑕疵能臣），主事者必須明白孰輕孰重，任用能臣除大弊，而不應為了小瑕疵而棄用人才。" },
+            { id: 14, category: "語氣判斷", question: "父親最後反問兒子：「若之何而去夫貓也？」這句話在情境中帶有何種強烈的語氣？", options: ["婉言勸戒，希望兒子多加考慮", "憤怒咆哮，責怪兒子不懂事", "反詰語氣，強調「絕對不能把貓趕走」的堅定立場", "猶豫不決，對自己的決定感到懷疑"], answer: 2, explanation: "(C)正確。「若之何（怎麼可以）而去夫貓也？」是用強烈的反問句式，來肯定「絕對不能趕走貓」的結論。" },
+            { id: 15, category: "邏輯思辨", question: "在整場辯論中，兒子與父親在看待「貓吃雞」這件事情上，產生分歧的最根本原因為何？", options: ["兒子著眼於未來的發展，父親只看重眼前的利益", "兒子只看到「貓吃雞」的局部損失，父親則看透「貓滅鼠」保全生存的整體核心利益", "兒子具備動物保育的現代觀念，父親只在乎人類的死活", "兒子認為雞肉比糧食美味，父親則偏好素食"], answer: 1, explanation: "(B)正確。兒子目光如豆，只盯著「失去雞」的眼前小損害；父親則具備大局觀，明白「保全糧食衣物免於飢寒」才是關乎生死存亡的核心利益。" },
+            { id: 16, category: "文字訓詁", question: "「是非『若』所知也」中的「若」字，代名詞，意為「你」。下列文句中的「若」字，何者意思與此相同？", options: ["「若」合一契", "吾翁即「若」翁", "旁人觀「若」無睹", "曾不「若」孀妻弱子"], answer: 1, explanation: "(B)正確。語出劉邦，意即「我的父親就是『你』的父親」。(A)動詞，好像。(C)動詞，好像。(D)動詞，比得上、如。" },
+            { id: 17, category: "成語應用", question: "兒子因為貓會吃雞，就想把能抓老鼠的貓趕走，完全忘記了老鼠會帶來更大的災難。下列哪一個成語最適合用來批評兒子的這種思維？", options: ["見微知著", "因小失大", "亡羊補牢", "守株待兔"], answer: 1, explanation: "(B)正確。兒子為了保留幾隻雞（小利），卻要把貓趕走，這將導致老鼠重新氾濫，造成糧食與衣物的巨大損失（大害），正是「因小失大」。" },
+            { id: 18, category: "細節推敲", question: "根據文本第一段，趙人為何要特地向「中山人」討貓？", options: ["中山國是當時唯一合法販賣貓隻的國家", "文中並未明言原因，但從後文可推知中山人給的貓極具捕獵本領", "因為中山國的貓只吃老鼠，絕對不吃雞", "趙國與中山國有邦交，貓是專屬的外交禮物"], answer: 1, explanation: "(B)正確。文中僅提到「乞貓於中山。中山人予之貓，善捕鼠及雞」，並未交代為何一定要去中山要貓，但從結果來看，這隻貓展現了極強的捕獵本能（連雞都能抓）。" },
+            { id: 19, category: "國學常識", question: "本篇寓言《趙人鼠患》出自明代開國功臣劉基（劉伯溫）的著作。若進脩想在圖書館借閱更多這類充滿政治哲理與思辨的寓言故事，他應該尋找劉基的哪一本代表作？", options: ["《莊子》", "《郁離子》", "《搜神記》", "《世說新語》"], answer: 1, explanation: "(B)正確。《郁離子》為劉基的代表作，書中透過大量寓言故事闡述治國理政與人生哲學。(A)戰國莊周。(C)晉代干寶的志怪小說。(D)南朝劉義慶的筆記小說。" },
+            { id: 20, category: "總合鑑賞", question: "關於這則文言寓言《趙人鼠患》的文學與哲學價值，下列敘述何者「最不恰當」？", options: ["全文採對話形式，藉由父子的辯論，層層遞進地闡述了「權衡輕重」的哲理", "故事善用生活化的題材（貓、鼠、雞），將抽象的政治大道理具體化，淺顯易懂", "父親的結論帶有強烈的宿命論色彩，認為人無法改變天意，只能被動接受貓吃雞的悲劇", "本文啟示我們：在解決核心問題時，必須有容忍附帶次要缺點的智慧，不可求全責備"], answer: 2, explanation: "(C)錯誤。父親的選擇並非「宿命論」的消極接受，而是經過理性分析、衡量利弊得失之後，所做出的主動且充滿智慧的戰略決策。" }
+        ];
+
+        // --- State Management ---
+        let currentState = {
+            username: '',
+            answers: {},
+            mistakes: [], 
+            favorites: [],
+            viewMode: 'all',
+        };
+
+        const ui = {
+            usernameInput: document.getElementById('username'),
+            userDisplay: document.getElementById('user-display'),
+            usernameSpan: document.getElementById('username-span'),
+            dashboardUsername: document.getElementById('dashboard-username'),
+            dashWrongCount: document.getElementById('dash-wrong-count'),
+            dashFavCount: document.getElementById('dash-fav-count'),
+            quickLoginArea: document.getElementById('quick-login-area'),
+            recentUsersList: document.getElementById('recent-users-list'),
+            statCorrect: document.getElementById('stat-correct'),
+            statWrong: document.getElementById('stat-wrong'),
+            quizListContainer: document.getElementById('quiz-list-container'),
+            statusDot: document.getElementById('status-dot'),
+            statusText: document.getElementById('status-text'),
+            quizHeaderTitle: document.getElementById('quiz-header-title'),
+            views: {
+                login: document.getElementById('view-login'),
+                dashboard: document.getElementById('view-dashboard'),
+                quiz: document.getElementById('view-quiz')
+            }
+        };
+
+        // --- Initialization ---
+        function init() {
+            if (isFirebaseReady) {
+                const globalRef = doc(db, COLLECTION_NAME, DOC_GLOBAL);
+                onSnapshot(globalRef, (docSnap) => {
+                    updateConnectionStatus('success', '連線成功');
+                    if (docSnap.exists()) {
+                        renderRecentUsers(docSnap.data().users || []);
+                    }
+                }, (error) => {
+                    console.error("Global listen error", error);
+                    updateConnectionStatus('error', '雲端錯誤');
+                });
+            } else {
+                renderRecentUsers([]); 
+            }
+        }
+
+        function updateConnectionStatus(type, text) {
+            ui.statusText.textContent = text;
+            ui.statusDot.className = 'status-dot';
+            if (type === 'loading') ui.statusDot.classList.add('status-loading');
+            else if (type === 'success') ui.statusDot.classList.add('status-success');
+            else if (type === 'error') ui.statusDot.classList.add('status-error');
+        }
+
+        function renderRecentUsers(users) {
+            if (users && users.length > 0) {
+                ui.quickLoginArea.classList.remove('hidden');
+                ui.recentUsersList.innerHTML = '';
+                [...users].reverse().slice(0, 10).forEach(user => {
+                    const btn = document.createElement('button');
+                    btn.className = 'bg-white hover:bg-teal-50 border-4 border-solid border-teal-200 text-teal-800 rounded-[1.5rem] px-4 py-2 transition-transform hover:-translate-y-1 shadow-[0_4px_0_#99f6e4] active:translate-y-1 active:shadow-none font-bold flex items-center gap-2 text-lg';
+                    btn.innerHTML = `<span class="text-4xl">🧑‍🎓</span> <span>${user}</span>`;
+                    btn.onclick = () => {
+                        ui.usernameInput.value = user;
+                        window.attemptLogin();
+                    };
+                    ui.recentUsersList.appendChild(btn);
+                });
+            } else {
+                 ui.quickLoginArea.classList.add('hidden');
+            }
+        }
+
+        // --- Login Logic ---
+        window.attemptLogin = async function() {
+            const name = ui.usernameInput.value.trim();
+            if (!name) { window.customAlert('請輸入姓名才能開始喔！✨'); return; }
+            
+            currentState.username = name;
+            
+            if (isFirebaseReady) {
+                const globalRef = doc(db, COLLECTION_NAME, DOC_GLOBAL);
+                setDoc(globalRef, { users: arrayUnion(name) }, { merge: true })
+                    .catch(e => console.error("Global user update error:", e));
+                startUserListener(name);
+            }
+
+            ui.userDisplay.classList.remove('hidden');
+            ui.usernameSpan.textContent = name;
+            ui.dashboardUsername.textContent = name;
+            
+            switchView('dashboard');
+        }
+
+        function startUserListener(username) {
+            if (currentUserUnsubscribe) currentUserUnsubscribe();
+
+            const userRef = doc(db, COLLECTION_NAME, username);
+            
+            currentUserUnsubscribe = onSnapshot(userRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    currentState.favorites = data.favorites || [];
+                    currentState.mistakes = data.mistakes || [];
+                    ui.dashWrongCount.textContent = currentState.mistakes.length;
+                    ui.dashFavCount.textContent = currentState.favorites.length;
+
+                    if (data.progress) {
+                        currentState.answers = data.progress.answers || {};
+                    }
+                } else {
+                    currentState.favorites = [];
+                    currentState.mistakes = [];
+                    currentState.answers = {};
+                    ui.dashWrongCount.textContent = 0;
+                    ui.dashFavCount.textContent = 0;
+                }
+                if(currentState.username && !ui.views.quiz.classList.contains('hidden')) {
+                    renderWaterfallQuiz();
+                }
+            });
+        }
+
+        function switchView(viewName) {
+            Object.values(ui.views).forEach(el => el.classList.add('hidden'));
+            ui.views[viewName].classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        window.startExam = function() {
+            currentState.viewMode = 'all';
+            switchView('quiz');
+            renderWaterfallQuiz();
+        }
+
+        window.showDashboard = function() {
+            switchView('dashboard');
+        }
+
+        window.restartQuiz = function() {
+            window.customConfirm("確定要重新開始測驗嗎？🔄\n這會清除本回的「作答紀錄」，但「錯題本」與「收藏」都會保留喔！", () => {
+                currentState.answers = {};
+                saveProgress();
+                renderWaterfallQuiz();
+                window.scrollTo({top:0, behavior:'smooth'});
+            });
+        }
+
+        // --- Waterfall Render Logic ---
+        function renderWaterfallQuiz() {
+            const container = ui.quizListContainer;
+            container.innerHTML = ''; 
+
+            let questionsToRender = questionsData;
+            let titleHtml = '';
+
+            if (currentState.viewMode === 'wrong') {
+                questionsToRender = questionsData.filter(q => currentState.mistakes.includes(q.id));
+                titleHtml = `<span class="text-3xl">❌</span> <span class="text-amber-600">錯題本複習</span> <span class="text-base text-gray-400 ml-2 border-2 border-dashed border-gray-300 rounded-full px-3 py-1">共 ${questionsToRender.length} 題</span>`;
+                
+                if (questionsToRender.length === 0) {
+                    container.innerHTML = `<div class="text-center py-20 bg-white border-4 border-solid border-gray-200 rounded-[2.5rem]"><div class="text-6xl mb-4">🎉</div><p class="text-2xl font-bold text-gray-500">太棒了！目前沒有錯題紀錄！</p></div>`;
+                }
+            } else if (currentState.viewMode === 'favorite') {
+                questionsToRender = questionsData.filter(q => currentState.favorites.includes(q.id));
+                titleHtml = `<span class="text-3xl">⭐</span> <span class="text-teal-600">我的最愛</span> <span class="text-base text-gray-400 ml-2 border-2 border-dashed border-gray-300 rounded-full px-3 py-1">共 ${questionsToRender.length} 題</span>`;
+                
+                if (questionsToRender.length === 0) {
+                    container.innerHTML = `<div class="text-center py-20 bg-white border-4 border-solid border-gray-200 rounded-[2.5rem]"><div class="text-6xl mb-4">🤍</div><p class="text-2xl font-bold text-gray-500">目前還沒有收藏的題目喔！</p></div>`;
+                }
+            } else {
+                questionsToRender = questionsData;
+                titleHtml = `<span class="text-3xl">📝</span> <span class="text-rose-600">全真模擬試題</span> <span class="text-base text-gray-400 ml-2 border-2 border-dashed border-gray-300 rounded-full px-3 py-1">共 ${questionsData.length} 題</span>`;
+            }
+
+            ui.quizHeaderTitle.innerHTML = titleHtml;
+
+            let correctCount = 0;
+            let wrongCount = 0;
+
+            questionsToRender.forEach((q) => {
+                const userAnswer = currentState.answers[q.id];
+                const isAnswered = userAnswer !== undefined;
+                const isCorrect = isAnswered && userAnswer === q.answer;
+                
+                if (isAnswered) {
+                    if (isCorrect) correctCount++;
+                    else wrongCount++;
+                }
+
+                let borderColor = 'border-gray-300';
+                let bgColor = 'bg-white';
+                if (isAnswered) {
+                    if (isCorrect) {
+                        borderColor = 'border-teal-400';
+                        bgColor = 'bg-teal-50';
+                    } else {
+                        borderColor = 'border-rose-400';
+                        bgColor = 'bg-rose-50';
+                    }
+                }
+
+                const card = document.createElement('div');
+                card.className = `relative rounded-[2.5rem] shadow-sm border-4 border-solid p-6 md:p-8 transition-colors duration-300 ${borderColor} ${bgColor}`;
+                
+                const isFav = currentState.favorites.includes(q.id);
+                const headerHtml = `
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="flex flex-col w-full">
+                            <div class="mb-3">
+                                <span class="inline-block bg-rose-100 border-2 border-solid border-rose-300 text-rose-700 font-bold rounded-xl px-3 py-1 text-sm tracking-widest shadow-sm">
+                                    📌 【${q.category}】
+                                </span>
+                            </div>
+                            <div class="flex items-start gap-3 w-full">
+                                <span class="flex-shrink-0 bg-amber-400 border-2 border-solid border-amber-500 text-amber-900 font-black rounded-full w-10 h-10 flex items-center justify-center text-lg shadow-sm mt-1">
+                                    ${q.id}
+                                </span>
+                                <h3 class="text-xl md:text-2xl font-black text-gray-800 leading-relaxed font-serif tracking-wide pt-1">
+                                    ${q.question}
+                                </h3>
+                            </div>
+                        </div>
+                        <button onclick="window.toggleFavorite(${q.id})" class="text-4xl transition-transform hover:scale-110 flex-shrink-0 mt-1 ml-4 focus:outline-none">
+                            ${isFav ? '⭐' : '🤍'}
+                        </button>
+                    </div>
+                `;
+
+                let optionsHtml = '<div class="grid gap-4">';
+                q.options.forEach((opt, optIdx) => {
+                    const letter = ['A','B','C','D'][optIdx];
+                    let btnClass = "option-btn w-full text-left p-4 md:p-5 rounded-[1.5rem] border-4 border-solid flex items-center group ";
+                    let badgeClass = "w-10 h-10 flex items-center justify-center rounded-full font-black mr-4 text-xl flex-shrink-0 border-2 border-solid ";
+                    let resultIcon = "";
+                    
+                    if (isAnswered) {
+                        if (optIdx === q.answer) {
+                            btnClass += "bg-teal-100 border-teal-500 text-teal-900";
+                            badgeClass += "bg-teal-500 border-teal-600 text-white";
+                            resultIcon = '<span class="ml-auto text-3xl">⭕</span>';
+                        } else if (optIdx === userAnswer) {
+                            btnClass += "bg-rose-100 border-rose-500 text-rose-900";
+                            badgeClass += "bg-rose-500 border-rose-600 text-white";
+                            resultIcon = '<span class="ml-auto text-3xl">❌</span>';
+                        } else {
+                            btnClass += "bg-white border-gray-200 text-gray-400 opacity-70";
+                            badgeClass += "bg-gray-100 border-gray-300 text-gray-400";
+                        }
+                    } else {
+                        btnClass += "bg-white border-gray-300 hover:border-amber-400 hover:bg-amber-50 text-gray-700 cursor-pointer";
+                        badgeClass += "bg-gray-100 border-gray-300 text-gray-500 group-hover:bg-amber-400 group-hover:border-amber-500 group-hover:text-amber-900 transition-colors";
+                    }
+
+                    const clickAction = isAnswered ? "" : `onclick="window.handleAnswer(${q.id}, ${optIdx})"`;
+
+                    optionsHtml += `
+                        <button ${clickAction} class="${btnClass}" ${isAnswered ? 'disabled' : ''}>
+                            <span class="${badgeClass}">${letter}</span>
+                            <span class="font-bold text-lg md:text-xl leading-relaxed font-serif">${opt}</span>
+                            ${resultIcon}
+                        </button>
+                    `;
+                });
+                optionsHtml += '</div>';
+
+                let explanationHtml = '';
+                if (isAnswered) {
+                    explanationHtml = `
+                        <div class="mt-6 bg-yellow-50 p-6 rounded-[2rem] border-4 border-solid border-amber-200 animate-fade-in-up relative">
+                            <div class="absolute -top-5 left-6 text-4xl bg-white rounded-full p-1 border-4 border-solid border-amber-200 shadow-sm">💡</div>
+                            <div class="pt-4">
+                                <span class="font-black text-amber-800 block mb-2 text-xl">解析小幫手：</span>
+                                <p class="text-gray-700 text-lg md:text-xl leading-relaxed text-justify font-medium">${q.explanation}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = headerHtml + optionsHtml + explanationHtml;
+                container.appendChild(card);
+            });
+
+            ui.statCorrect.textContent = correctCount;
+            ui.statWrong.textContent = wrongCount;
+        }
+
+        window.handleAnswer = function(qId, selectedIdx) {
+            if (!currentState.username) return;
+
+            currentState.answers[qId] = selectedIdx;
+            
+            const q = questionsData.find(x => x.id === qId);
+            const isCorrect = q.answer === selectedIdx;
+            
+            if (!isCorrect) {
+                if (!currentState.mistakes.includes(qId)) {
+                    currentState.mistakes.push(qId);
+                    saveUserData('mistakes');
+                }
+            }
+
+            saveProgress();
+            renderWaterfallQuiz();
+        }
+
+        window.toggleFavorite = function(qId) {
+            if (!currentState.username) {
+                window.customAlert('請先登入才能收藏題目喔！');
+                return;
+            }
+            
+            const idx = currentState.favorites.indexOf(qId);
+            if (idx === -1) currentState.favorites.push(qId);
+            else currentState.favorites.splice(idx, 1);
+            
+            saveUserData('favorites');
+            renderWaterfallQuiz(); 
+        }
+
+        // --- Implementation of Review Modes ---
+        window.showReview = function(type) {
+            if (!currentState.username) return;
+
+            if (type === 'wrong') {
+                if (currentState.mistakes.length === 0) {
+                    window.customAlert("太棒了！目前沒有錯題紀錄 🎉");
+                    return;
+                }
+                currentState.viewMode = 'wrong';
+            } else if (type === 'favorite') {
+                if (currentState.favorites.length === 0) {
+                    window.customAlert("目前沒有收藏任何題目喔 🤍");
+                    return;
+                }
+                currentState.viewMode = 'favorite';
+            } else {
+                currentState.viewMode = 'all';
+            }
+            
+            switchView('quiz');
+            renderWaterfallQuiz();
+        }
+
+        // --- Persistence Helpers ---
+        function saveProgress() {
+            if (!isFirebaseReady || !currentState.username) return;
+            const userRef = doc(db, COLLECTION_NAME, currentState.username);
+            const progressData = {
+                answers: currentState.answers,
+                timestamp: new Date().getTime()
+            };
+            setDoc(userRef, { progress: progressData }, { merge: true });
+        }
+
+        function saveUserData(type) {
+            if (!isFirebaseReady || !currentState.username) return;
+            const userRef = doc(db, COLLECTION_NAME, currentState.username);
+            const data = {};
+            data[type] = currentState[type];
+            setDoc(userRef, data, { merge: true });
+        }
+
+        window.logout = function() {
+            if (currentUserUnsubscribe) currentUserUnsubscribe();
+            currentState.username = '';
+            ui.views.login.classList.remove('hidden');
+            ui.views.dashboard.classList.add('hidden');
+            ui.views.quiz.classList.add('hidden');
+            ui.userDisplay.classList.add('hidden');
+            document.getElementById('username').value = '';
+        }
+        
+        window.goHome = function() {
+            if (currentState.username) {
+                window.scrollTo({top:0, behavior:'smooth'});
+                switchView('dashboard');
+            } else {
+                window.location.reload();
+            }
+        }
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(15px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-in-up {
+                animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+        `;
+        document.head.appendChild(style);
+
+        init();
+
+    </script>
+</body>
+</html>
