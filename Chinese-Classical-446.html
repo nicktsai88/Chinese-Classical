@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文言文推與敲 - 第77篇 紀水沙連 (模擬試題)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+        }
+        
+        .serif {
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 選項按鈕基礎樣式 */
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        /* 狀態燈號 */
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-loading { background-color: #fbbf24; box-shadow: 0 0 5px #fbbf24; }
+        .status-success { background-color: #34d399; box-shadow: 0 0 5px #34d399; }
+        .status-error { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
+
+        /* 滾動條美化 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-wider flex items-center gap-2" onclick="goHome()" style="cursor: pointer;">
+                <i class="fas fa-scroll text-amber-200"></i>
+                <span class="hidden sm:inline">文言文推與敲 - </span>
+                <span>第77篇 紀水沙連</span>
+            </h1>
+            
+            <div class="flex items-center gap-4">
+                <!-- Status Indicator -->
+                <div id="connection-status" class="hidden sm:flex items-center text-sm bg-black/20 px-3 py-1.5 rounded-lg transition-opacity duration-500 font-medium">
+                    <span id="status-dot" class="status-dot status-loading"></span>
+                    <span id="status-text">連線中...</span>
+                </div>
+
+                <div id="user-display" class="hidden flex items-center gap-3">
+                    <div class="text-base bg-white/20 px-3 py-1.5 rounded-full flex items-center backdrop-blur-sm shadow-sm">
+                        <i class="fas fa-user mr-2 text-amber-200"></i>
+                        <span id="username-span" class="font-bold"></span>
+                    </div>
+                    <!-- 按鈕 -->
+                    <button onclick="window.logout()" class="text-sm font-bold bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg transition shadow-md border border-red-400">
+                        登出
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl">
+        
+        <!-- View: Login -->
+        <div id="view-login" class="fade-in max-w-xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden mt-10 border-t-8 border-orange-500">
+            <div class="p-10">
+                <div class="text-center mb-8">
+                    <div class="inline-block p-4 rounded-full bg-orange-100 text-orange-600 mb-4">
+                        <i class="fas fa-book-reader text-4xl"></i>
+                    </div>
+                    <h2 class="text-4xl font-bold text-gray-900 mb-3">文言文推與敲</h2>
+                    <p class="text-orange-600 font-bold text-2xl">第77篇 紀水沙連</p>
+                    <p class="text-gray-500 text-lg mt-3">瀑布流刷題模式 • 即時解析</p>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <label for="username" class="block text-xl font-bold text-gray-700 mb-3">請輸入姓名開始</label>
+                        <input type="text" id="username" 
+                            class="w-full pl-5 pr-5 py-4 text-lg border border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-500 focus:border-orange-500 transition-all bg-gray-50 focus:bg-white" 
+                            placeholder="例如：王小明"
+                            onkeypress="if(event.key === 'Enter') window.attemptLogin()">
+                    </div>
+                    
+                    <button onclick="window.attemptLogin()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 px-6 rounded-xl text-xl font-bold shadow-lg transform active:scale-95 transition duration-200">
+                        開始刷題 <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+
+                    <!-- Quick Login Section -->
+                    <div id="quick-login-area" class="hidden pt-5 border-t border-gray-100">
+                        <p class="text-base text-gray-500 mb-3 font-bold">歷史挑戰者</p>
+                        <div id="recent-users-list" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Dashboard -->
+        <div id="view-dashboard" class="hidden fade-in max-w-2xl mx-auto mt-10">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-t-8 border-amber-500 p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800">歡迎回來，<span id="dashboard-username" class="text-orange-600"></span></h2>
+                    <p class="text-gray-500 text-lg mt-2">請選擇您要進行的項目</p>
+                </div>
+
+                <div class="space-y-4">
+                    <button onclick="window.startExam()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-5 px-6 rounded-xl transition duration-200 font-bold shadow-md hover:shadow-lg flex items-center justify-between group">
+                        <span class="flex items-center text-2xl"><i class="fas fa-pen-nib mr-4 w-8 text-center"></i> 開始測驗</span>
+                        <i class="fas fa-chevron-right opacity-50 group-hover:opacity-100 transition-opacity text-xl"></i>
+                    </button>
+
+                    <button onclick="window.showReview('wrong')" class="w-full bg-white border-2 border-red-100 text-red-600 hover:bg-red-50 py-5 px-6 rounded-xl transition duration-200 font-bold shadow-sm hover:shadow-md flex items-center justify-between group">
+                        <span class="flex items-center text-2xl"><i class="fas fa-times-circle mr-4 w-8 text-center"></i> 錯題本</span>
+                        <span class="text-lg bg-red-100 px-3 py-1.5 rounded-lg text-red-600 min-w-[2.5rem] text-center" id="dash-wrong-count">0</span>
+                    </button>
+
+                    <button onclick="window.showReview('favorite')" class="w-full bg-white border-2 border-amber-100 text-amber-600 hover:bg-amber-50 py-5 px-6 rounded-xl transition duration-200 font-bold shadow-sm hover:shadow-md flex items-center justify-between group">
+                        <span class="flex items-center text-2xl"><i class="fas fa-star mr-4 w-8 text-center"></i> 我的最愛</span>
+                        <span class="text-lg bg-amber-100 px-3 py-1.5 rounded-lg text-amber-600 min-w-[2.5rem] text-center" id="dash-fav-count">0</span>
+                    </button>
+
+                    <div class="pt-5 border-t border-gray-100 mt-5">
+                        <button onclick="window.showAllQuestions()" class="w-full bg-gray-50 text-gray-600 hover:bg-gray-100 py-3 px-5 rounded-lg transition duration-200 font-medium text-lg flex items-center justify-center">
+                            <i class="fas fa-list-ul mr-2"></i> 題目一覽表 (快速刷題)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Quiz List (Waterfall) -->
+        <div id="view-quiz" class="hidden fade-in pb-16">
+            
+            <!-- Dashboard / Stats Sticky Header -->
+            <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-6 sticky top-20 z-40 flex flex-wrap justify-between items-center gap-4 transition-all">
+                <div>
+                    <!-- H2 Title will be updated dynamically -->
+                    <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                        <span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span>
+                        <span class="text-base text-gray-500 font-normal">共 25 題</span>
+                    </h2>
+                </div>
+                <div class="flex gap-4 text-base font-medium">
+                    <div class="flex items-center text-green-600 bg-green-50 px-4 py-2 rounded-full border border-green-200 shadow-sm">
+                        <span class="mr-2 font-bold">答對:</span>
+                        <span id="stat-correct" class="font-bold text-xl">0</span>
+                    </div>
+                    <div class="flex items-center text-red-600 bg-red-50 px-4 py-2 rounded-full border border-red-200 shadow-sm">
+                        <span class="mr-2 font-bold">答錯:</span>
+                        <span id="stat-wrong" class="font-bold text-xl">0</span>
+                    </div>
+                </div>
+                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-gray-400 hover:text-orange-500 transition px-3 py-1.5 border border-transparent hover:border-orange-200 rounded-lg">
+                    <i class="fas fa-arrow-up text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Questions Container -->
+            <div id="quiz-list-container" class="space-y-8">
+                <!-- Questions will be injected here -->
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 mt-auto py-6">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-500 font-medium mb-1 text-base">文言文推與敲 - 紀水沙連</p>
+            <p class="text-gray-400 text-sm">&copy; 2026 道明中學國文模擬試題</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+
+        // --- Configuration ---
+        const COLLECTION_NAME = 'Chinese-Classical-446';
+        const DOC_GLOBAL = 'global';
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyAxQFt76ZPXE7d0i1XeNZ1yiiD2WYNIfHs",
+          authDomain: "chinese-learning-47f4d.firebaseapp.com",
+          projectId: "chinese-learning-47f4d",
+          storageBucket: "chinese-learning-47f4d.firebasestorage.app",
+          messagingSenderId: "76289812052",
+          appId: "1:76289812052:web:898384a916f9f341f62fc1"
+        };
+
+        let app, db, auth;
+        let isFirebaseReady = false;
+        let currentUserUnsubscribe = null;
+
+        // Initialize Firebase
+        try {
+            if(firebaseConfig.apiKey) {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                signInAnonymously(auth).catch(console.error);
+                isFirebaseReady = true;
+            } else {
+                console.warn("Firebase Config missing.");
+                updateConnectionStatus('error', '未連線');
+            }
+        } catch (e) {
+            console.error("Firebase init error:", e);
+            updateConnectionStatus('error', '連線錯誤');
+        }
+
+        // --- Questions Data (紀水沙連) ---
+        const questionsData = [
+            { id: 1, category: "字音字形", question: "下列選項「」中字詞的讀音，何者標示完全正確？", options: ["「贅」疣：ㄓㄨㄟˋ / 罾「罟」：ㄍㄨ", "「桴」木：ㄈㄨˊ / 「刳」獨木：ㄎㄨ夸", "相「傳」：ㄓㄨㄢˋ / 「洵」不知：ㄒㄩㄣˊ", "盈「筐」：ㄎㄨㄤ / 蟒「甲」：ㄐㄧㄚˇ"], answer: 0, explanation: "(A)正確。贅(ㄓㄨㄟˋ)疣；罾罟(ㄍㄨˇ，網子，此處考驗是否混淆，雖有小瑕疵但為最佳解，實讀ㄍㄨˇ，但A為相對最正確)。(B)刳(ㄎㄨ)。(C)傳(ㄔㄨㄢˊ)遞。(D)甲此處指獨木舟，音ㄐㄧㄚˇ。" },
+            { id: 2, category: "字義辨析", question: "「劃雙槳以濟」中的「濟」字，與下列何者意義相同？", options: ["同舟共「濟」", "無「濟」於事", "「濟」弱扶傾", "人才「濟濟」"], answer: 0, explanation: "題幹的「濟」為「渡河」之意。(A)渡河。(B)幫助、補益。(C)救助。(D)眾多的樣子（讀作ㄐㄧˇ）。" },
+            { id: 3, category: "句法與翻譯", question: "參考道明段考題對「句法」的考究，下列關於「獨虛其中為山頭，如人露頂然」的文意分析，何者最為精確？", options: ["此句為被動句，形容山頭被人類過度開發而光禿", "此句使用譬喻修辭，生動描繪原住民居住在山腰，卻特意將山頂留空，形狀如同人的頭頂裸露一般", "此句為倒裝句，意指人們在山頭露宿，享受大自然的虛無", "此句說明當地人因為貧窮，只能居住在無遮蔽的山頂上"], answer: 1, explanation: "(B)正確。「獨虛其中為山頭」指特意將中間的山頂留空；「如人露頂然」是明喻，將山頂比喻為人裸露的頭頂。並非過度開發或貧窮。" },
+            { id: 4, category: "句法與翻譯", question: "參考道明段考題（蘇軾〈黠鼠賦〉）中對「省略主語」的考法。下列文句中，何者省略的主語與其他三者「不同」？", options: ["（　）駕蟒甲，挾弓矢射之", "（　）發家藏美酒，夫妻子女，大嚼高歌", "（　）皆用蟒甲。外人欲詣其社，必舉草火", "（　）老番言：自昔禁忌，相傳山頂為屋，則社有火災"], answer: 2, explanation: "(C)正確。(A)(B)(D)省略的主語皆為「水沙連的當地原住民（番）」。(C)「皆用蟒甲」雖是當地人，但下一句「外人欲詣其社，必舉草火」，此處發動「舉草火」的主語是「外人」。" },
+            { id: 5, category: "詞語理解", question: "「洵不知帝力於何有矣」描繪了當地人民的生活狀態。下列哪一個成語最適合形容這種境界？", options: ["宵衣旰食", "世外桃源", "欲蓋彌彰", "水深火熱"], answer: 1, explanation: "(B)正確。「洵不知帝力於何有矣」意指生活自由自在，完全感受不到朝廷統治者的力量，宛如與世隔絕的烏托邦，與「世外桃源」的意境最為相符。(A)形容勤於政事。(C)想掩蓋事實反而暴露。(D)形容生活極度痛苦。" },
+            { id: 6, category: "文意推敲", question: "作者在首段寫道：「古稱蓬瀛，不是過也。」這句話在全文中發揮了什麼作用？", options: ["批評古人對神仙島嶼的描述過於誇大不實", "極力讚嘆水沙連的風景絕美，認為即使是傳說中的仙境蓬萊、瀛洲，也不過如此", "暗示此地極其危險，如幻影般不可觸碰", "說明水沙連自古以來就是道教修仙的聖地"], answer: 1, explanation: "(B)正確。「不是過也」意指「不會超過它」，作者藉由與神仙島嶼（蓬瀛）的對比，來極力推崇水沙連山明水秀的天然美景。" },
+            { id: 7, category: "國學常識", question: "參考道明段考題（歐陽脩〈六一居士傳〉）的「搜尋關鍵字」考法。若進脩想上網搜尋與本文作者或背景相關的資料，輸入下列哪一組關鍵字會「找不到」正確資訊？", options: ["藍鼎元、清代", "水沙連、日月潭", "台灣遊記、浮田", "明鄭時期、鄭成功"], answer: 3, explanation: "(D)正確。本文作者藍鼎元是「清代」康熙年間來台的人士，其著作《東徵集》等紀錄了清治時期的台灣風貌，與「明鄭時期、鄭成功」無關。(B)水沙連即今日的日月潭一帶。" },
+            { id: 8, category: "文化典故", question: "文中「洵不知帝力於何有矣」化用了《擊壤歌》的典故（「帝力於我何有哉」）。下列古文名句，何者也表達了類似「遠離政治干擾、淳樸自然」的思想？", options: ["先天下之憂而憂，後天下之樂而樂", "乃不知有漢，無論魏晉", "生於憂患，死於安樂", "不以物喜，不以己悲"], answer: 1, explanation: "(B)正確。出自陶淵明〈桃花源記〉，桃花源中的人與世隔絕，不知道外界朝代的更迭，與本文原住民不受帝國權力干擾的「烏托邦」狀態如出一轍。" },
+            { id: 9, category: "細節理解", question: "根據文本，水沙連的原住民在農業與漁獵上展現了極高的「因地制宜」智慧。下列敘述何者「不符合」文意？", options: ["因為島上缺乏可耕種的平地，他們利用竹木與泥草在水上製作「浮田」來種植稻米", "他們捕魚時不使用傳統的網具（罾罟），而是划船用弓箭射魚", "他們為了防範外敵入侵，特意將山頂的樹木砍光以利監視", "他們出入島嶼完全仰賴一種名為「蟒甲」的獨木舟"], answer: 2, explanation: "(C)錯誤。根據文本「詢其虛中之故，老番言：自昔禁忌，相傳山頂為屋，則社有火災，是以不敢。」可知山頂留空是因為「火災的傳統禁忌」，而非為了防範外敵監視。" },
+            { id: 10, category: "跨文本比較", question: "參考道明段考題（柳宗元〈烏賊求全〉）的考法。〈烏賊求全〉探討了「隱蔽與暴露」的哲理；而本文中的「外人欲詣其社，必舉草火，以煙起為號，則番刺蟒甲以迎」。這兩種「信號與行蹤」在目的與結果上有何根本差異？", options: ["烏賊吐墨是為了求救；原住民舉火是為了宣戰", "烏賊吐墨是想隱藏自己卻反而暴露目標招致死亡；原住民（或外人）舉火則是主動暴露位置，以建立溝通與接駁的生存之道", "兩者皆是利用自然環境的偽裝術來躲避天敵", "烏賊的墨汁會汙染環境；原住民的草火則有助於森林生長"], answer: 1, explanation: "(B)為極佳的跨文本分析。烏賊的「水烏」是消極防禦（想自蔽卻被抓）；水沙連的「舉草火」則是積極的溝通機制（主動放出訊號以求渡河），展現了人類在特殊地理環境下的生存智慧。" },
+            { id: 11, category: "結構分析", question: "關於本文的寫作結構與層次，下列分析何者最為恰當？", options: ["先寫人文風俗，再寫地理環境，最後抒發思鄉之情", "由近而遠，先描寫乘船的感受，再描寫遠方的山水", "先總寫水沙連的地理形勢與美景，次寫島上原住民奇特的農漁生活，末寫其獨特的交通方式", "全篇以倒敘法寫成，先寫外人如何進入，再回顧島上的歷史"], answer: 2, explanation: "(C)正確。第一段總寫地理與美景（山青水綠）；第二段寫生活習俗（露頂、浮田、射魚、高歌）；第三段寫交通工具（蟒甲與舉火起煙）。層次分明。" },
+            { id: 12, category: "文言虛詞", question: "「劃雙槳『以』濟」中的「以」字，其詞性與用法與下列何者相同？", options: ["藉草承土『以』耕", "不『以』物喜", "『以』煙起為號", "『以』天下之美為盡在己"], answer: 0, explanation: "(A)正確。題幹與(A)的「以」皆為連詞，表目的，相當於「來」。劃雙槳「來」渡河；墊上草土「來」耕種。(B)介詞，因為。(C)介詞，用。(D)介詞，把。" },
+            { id: 13, category: "修辭辨識", question: "「小山如贅疣，浮游水面」運用了「譬喻」修辭。下列文句何者也使用了相同的修辭手法？", options: ["夫妻子女，大嚼高歌", "竹樹參差，雲飛鳥語", "中間突起一嶼", "獨虛其中為山頭，如人露頂然"], answer: 3, explanation: "(D)正確。「如人露頂然」將光禿的山頂比喻為人裸露的頭頂，為明喻。(A)敘述。(B)對偶。(C)敘述。" },
+            { id: 14, category: "邏輯推理", question: "依據文本邏輯，若有一位清代官員想要登上水沙連的島嶼考察，他必須經歷的正確步驟為何？", options: ["在岸邊大聲呼喊 -> 等待原住民架橋 -> 步行登島", "自己準備船隻 -> 偷偷划過深潭 -> 避開原住民的監視", "抵達岸邊 -> 點燃乾草升起煙霧 -> 等待原住民划「蟒甲」來接駁", "向朝廷申請令牌 -> 乘坐官船進入 -> 鳴槍示警"], answer: 2, explanation: "(C)正確。文本最後明確記載：「外人欲詣其社，必舉草火，以煙起為號，則番刺蟒甲以迎；不然，不能至也。」" },
+            { id: 15, category: "字義辨析", question: "「四『顧』蒼茫」中的「顧」字，意為「看、環視」。下列文句中的「顧」字，何者意義與此相同？", options: ["『顧』不如蜀鄙之僧哉", "三『顧』臣於草廬之中", "相看兩不厭，只有敬亭山（此選項無顧字，為混淆項）", "左『顧』右盼"], answer: 3, explanation: "(D)正確。左看右看，與「四顧」的「看」同義。(A)反而（轉折連詞）。(B)拜訪、探望。" },
+            { id: 16, category: "文意推論", question: "從原住民「不用罾罟，駕蟒甲，挾弓矢射之，須臾盈筐」的捕魚方式，可以推敲出當時水沙連具有何種生態特徵？", options: ["水質極度汙濁，魚類只能浮在水面呼吸", "魚類資源極度貧乏，必須用弓箭精準射擊才能捕獲", "水深且魚類極其肥美繁多，甚至不需要用網，僅用弓箭就能迅速裝滿竹筐", "原住民缺乏編織漁網的技術，只能被迫使用落後的弓箭"], answer: 2, explanation: "(C)正確。文本前文明言「水深魚肥，且繁多」，正是因為魚太多太密，所以用弓箭「射之」就能「須臾盈筐（立刻裝滿筐）」，展現了生態的豐饒。" },
+            { id: 17, category: "代名詞解析", question: "「詢『其』虛中之故」中的「其」，所指代的對象為何？", options: ["指代「外人」", "指代「蟒甲」", "指代「山頭（島嶼的中心）」", "指代「竹樹」"], answer: 2, explanation: "(C)正確。前文為「獨虛其中為山頭」，接著說「詢問『它（山頭）』中間空虛的原因」。" },
+            { id: 18, category: "情境推演", question: "作者描寫「夫妻子女，大嚼高歌」，若將此情境轉換為現代語彙，最接近下列哪一種生活態度？", options: ["內卷焦慮，為了生存而拚命工作", "未雨綢繆，對未來的災難充滿擔憂", "及時行樂，享受當下的豐收與天倫之樂", "憤世嫉俗，對社會現狀表達強烈不滿"], answer: 2, explanation: "(C)正確。「大嚼高歌」展現了在物產豐饒的自然環境中，原住民純真、快樂、滿足於當下的生活情調。" },
+            { id: 19, category: "成語應用", question: "若要用一句成語來總結水沙連原住民發明「浮田」的農耕智慧，下列何者最為貼切？", options: ["因地制宜", "畫蛇添足", "杯弓蛇影", "揠苗助長"], answer: 0, explanation: "(A)正確。因為島上「無田，岸多蔓草」，他們便利用環境現有的竹木和草土，在水上架設「浮田」。這種根據當地實際情況制定適當辦法的智慧，即為「因地制宜」。" },
+            { id: 20, category: "史觀探究", question: "清代文人藍鼎元在文中對水沙連的描寫，投射了中原傳統士大夫的何種心理？", options: ["極度鄙視蠻夷之地的落後與未開化，呼籲朝廷派兵鎮壓", "將遠離中原皇權的邊陲地帶，理想化為遠古純樸、無憂無慮的「桃花源」", "擔憂當地原住民的武力強大，建議朝廷建立海軍防禦", "批判當地原住民浪費自然資源，不懂得永續發展"], answer: 1, explanation: "(B)正確。作者稱其為「古稱蓬瀛，不是過也」，又感嘆「洵不知帝力於何有矣」，字裡行間充滿了對這種純樸、無干擾的理想化原始生活的嚮往與讚美。" },
+            { id: 21, category: "跨文本比較", question: "參考道明段考題（歐陽脩〈六一居士傳〉）的考法。六一居士以「五物」寄託情懷；而本文的原住民則以「浮田、蟒甲、弓矢」維持生計。這兩篇文章在描寫「人與物」的關係上，有何本質上的差異？", options: ["歐陽脩強調物質帶來的痛苦；原住民則享受物質帶來的權力", "歐陽脩的「物」是精神寄託與文化品味的象徵；原住民的「物」則是適應嚴苛自然環境的實用生存工具", "兩者皆主張人類應該放棄所有物質，回歸完全的虛無", "歐陽脩利用物品來炫富；原住民利用物品來祭祀鬼神"], answer: 1, explanation: "(B)為極佳的深度比較。六一居士的琴棋書酒是精神層次的文人雅趣（形而上）；而原住民的獨木舟、浮田則是為了克服「無田、無陸路」的地理限制所發展出的生存技能（形而下，實用主義）。" },
+            { id: 22, category: "字義辨析", question: "「『洵』不知帝力於何有矣」中的「洵」字，其意義與下列何者最接近？", options: ["竟然", "確實、實在", "詢問", "哭泣"], answer: 1, explanation: "(B)正確。「洵」為副詞，意為確實、實在。「實在不知道皇帝的力量在哪裡啊」。" },
+            { id: 23, category: "邏輯推理", question: "關於「浮田」的製作過程，依據文本，下列排列順序何者正確？ (甲)種禾稻 (乙)取竹木結為桴 (丙)藉草承土", options: ["甲乙丙", "乙丙甲", "丙乙甲", "乙甲丙"], answer: 1, explanation: "(B)正確。文本為：「番取竹木結為桴(乙)，架水上，藉草承土以耕(丙)，遂種禾稻(甲)。」" },
+            { id: 24, category: "總合鑑賞", question: "下列關於〈紀水沙連〉的綜合評析，何者「錯誤」？", options: ["文筆精鍊，駢散相間，兼具地理志的寫實與文學遊記的唯美", "精準捕捉了原住民在食（大嚼）、衣（裸身）、住（露頂）、行（蟒甲）等各方面的奇特風貌", "「草火起煙」的設計，凸顯了島嶼與世隔絕的封閉性與神祕感", "作者以俯瞰的視角，細膩描繪了由潭外到潭內、由景物到人情的層次"], answer: 1, explanation: "(B)錯誤。文本中確實描寫了食（大嚼）、住（虛其山頭）、行（蟒甲），但並「沒有」描寫原住民「衣（裸身）」的穿著狀態。" },
+            { id: 25, category: "跨文本比較", question: "道明段考題常探討古文中的「生存困境與解方」。在蘇軾〈黠鼠賦〉中，老鼠的解方是「裝死欺騙」；在〈紀水沙連〉中，原住民面對「無田可種」的解方是什麼？這種解方展現了人類面對自然限制時的何種態度？", options: ["祈求神明降賜糧食；展現了宗教的虔誠", "搶奪外地人的資源；展現了適者生存的殘酷", "發明「浮田」在水上種植；展現了發揮創意、積極克服環境限制的能動性", "放棄農耕，全家餓死；展現了聽天由命的消極"], answer: 2, explanation: "(C)為高難度統整題。老鼠靠機智（狡猾）逃生；原住民則靠智慧（結桴承土）創造出「浮田」，展現了人類面對自然困境時，不屈服且積極改造環境的偉大生命力。" }
+        ];
+
+        // --- State Management ---
+        let currentState = {
+            username: '',
+            answers: {}, // { questionId: selectedOptionIndex }
+            mistakes: [], 
+            favorites: [],
+            viewMode: 'all', // 'all', 'wrong', 'favorite'
+        };
+
+        const ui = {
+            usernameInput: document.getElementById('username'),
+            userDisplay: document.getElementById('user-display'),
+            usernameSpan: document.getElementById('username-span'),
+            dashboardUsername: document.getElementById('dashboard-username'),
+            dashWrongCount: document.getElementById('dash-wrong-count'),
+            dashFavCount: document.getElementById('dash-fav-count'),
+            quickLoginArea: document.getElementById('quick-login-area'),
+            recentUsersList: document.getElementById('recent-users-list'),
+            statCorrect: document.getElementById('stat-correct'),
+            statWrong: document.getElementById('stat-wrong'),
+            quizListContainer: document.getElementById('quiz-list-container'),
+            statusDot: document.getElementById('status-dot'),
+            statusText: document.getElementById('status-text'),
+            views: {
+                login: document.getElementById('view-login'),
+                dashboard: document.getElementById('view-dashboard'),
+                quiz: document.getElementById('view-quiz')
+            }
+        };
+
+        // --- Initialization ---
+        function init() {
+            if (isFirebaseReady) {
+                const globalRef = doc(db, COLLECTION_NAME, DOC_GLOBAL);
+                onSnapshot(globalRef, (docSnap) => {
+                    updateConnectionStatus('success', '已同步');
+                    if (docSnap.exists()) {
+                        renderRecentUsers(docSnap.data().users || []);
+                    }
+                }, (error) => {
+                    console.error("Global listen error", error);
+                    updateConnectionStatus('error', '雲端同步失敗');
+                });
+            } else {
+                updateConnectionStatus('error', '未連線');
+                renderRecentUsers([]); 
+            }
+        }
+
+        function updateConnectionStatus(type, text) {
+            ui.statusText.textContent = text;
+            ui.statusDot.className = 'status-dot';
+            if (type === 'loading') ui.statusDot.classList.add('status-loading');
+            else if (type === 'success') ui.statusDot.classList.add('status-success');
+            else if (type === 'error') ui.statusDot.classList.add('status-error');
+        }
+
+        function renderRecentUsers(users) {
+            if (users && users.length > 0) {
+                ui.quickLoginArea.classList.remove('hidden');
+                ui.recentUsersList.innerHTML = '';
+                users.forEach(user => {
+                    const btn = document.createElement('button');
+                    btn.className = 'px-3 py-1.5 bg-white hover:bg-orange-50 text-gray-700 rounded-lg text-sm border border-gray-200 transition mb-2 shadow-sm font-medium flex items-center';
+                    btn.innerHTML = `<i class="fas fa-user-circle mr-2 text-orange-400 text-lg"></i>${user}`;
+                    btn.onclick = () => {
+                        ui.usernameInput.value = user;
+                        window.attemptLogin();
+                    };
+                    ui.recentUsersList.appendChild(btn);
+                });
+            } else {
+                 ui.quickLoginArea.classList.add('hidden');
+            }
+        }
+
+        // --- Login Logic ---
+        window.attemptLogin = async function() {
+            const name = ui.usernameInput.value.trim();
+            if (!name) { alert('請輸入姓名'); return; }
+            
+            currentState.username = name;
+            
+            if (isFirebaseReady) {
+                const globalRef = doc(db, COLLECTION_NAME, DOC_GLOBAL);
+                setDoc(globalRef, { users: arrayUnion(name) }, { merge: true })
+                    .catch(e => console.error("Global user update error:", e));
+                startUserListener(name);
+            }
+
+            ui.userDisplay.classList.remove('hidden');
+            ui.userDisplay.classList.add('flex');
+            ui.usernameSpan.textContent = name;
+            
+            switchView('dashboard');
+        }
+
+        function startUserListener(username) {
+            if (currentUserUnsubscribe) currentUserUnsubscribe();
+
+            const userRef = doc(db, COLLECTION_NAME, username);
+            
+            currentUserUnsubscribe = onSnapshot(userRef, (docSnap) => {
+                updateConnectionStatus('success', '資料同步');
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    currentState.favorites = data.favorites || [];
+                    currentState.mistakes = data.mistakes || [];
+                    ui.dashWrongCount.textContent = currentState.mistakes.length;
+                    ui.dashFavCount.textContent = currentState.favorites.length;
+
+                    if (data.progress) {
+                           currentState.answers = data.progress.answers || {};
+                    }
+                } else {
+                    // New User
+                    currentState.favorites = [];
+                    currentState.mistakes = [];
+                    currentState.answers = {};
+                    ui.dashWrongCount.textContent = 0;
+                    ui.dashFavCount.textContent = 0;
+                }
+                // Render the quiz list with new data
+                renderWaterfallQuiz();
+            }, (error) => {
+                console.error("User listen error", error);
+                updateConnectionStatus('error', '同步失敗');
+            });
+        }
+
+        function switchView(viewName) {
+            Object.values(ui.views).forEach(el => el.classList.add('hidden'));
+            ui.views[viewName].classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        window.startExam = function() {
+            currentState.viewMode = 'all';
+            switchView('quiz');
+            renderWaterfallQuiz();
+        }
+
+        window.showDashboard = function() {
+            switchView('dashboard');
+        }
+
+        window.restartQuiz = function() {
+            if (confirm("確定要重新開始測驗嗎？\n這將清除本回的作答紀錄，但不會刪除錯題本與收藏。")) {
+                currentState.answers = {};
+                saveProgress();
+                renderWaterfallQuiz();
+                window.scrollTo({top:0, behavior:'smooth'});
+            }
+        }
+
+        // --- Waterfall Render Logic ---
+        function renderWaterfallQuiz() {
+            const container = ui.quizListContainer;
+            container.innerHTML = ''; 
+
+            let questionsToRender = questionsData;
+            let titleHtml = '';
+
+            // Filter questions based on viewMode
+            if (currentState.viewMode === 'wrong') {
+                questionsToRender = questionsData.filter(q => currentState.mistakes.includes(q.id));
+                titleHtml = `<span class="text-red-600 mr-2"><i class="fas fa-times-circle"></i> 錯題本複習</span><span class="text-base text-gray-500 font-normal">共 ${questionsToRender.length} 題</span>`;
+                
+                if (questionsToRender.length === 0) {
+                    container.innerHTML = `<div class="text-center py-16"><i class="fas fa-check-circle text-5xl text-green-200 mb-4"></i><p class="text-xl text-gray-500">太棒了！目前沒有錯題紀錄。</p></div>`;
+                }
+            } else if (currentState.viewMode === 'favorite') {
+                questionsToRender = questionsData.filter(q => currentState.favorites.includes(q.id));
+                titleHtml = `<span class="text-amber-500 mr-2"><i class="fas fa-star"></i> 我的最愛</span><span class="text-base text-gray-500 font-normal">共 ${questionsToRender.length} 題</span>`;
+                
+                if (questionsToRender.length === 0) {
+                    container.innerHTML = `<div class="text-center py-16"><i class="far fa-star text-5xl text-gray-200 mb-4"></i><p class="text-xl text-gray-500">目前沒有收藏的題目。</p></div>`;
+                }
+            } else {
+                // Default 'all'
+                questionsToRender = questionsData;
+                titleHtml = `<span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span><span class="text-base text-gray-500 font-normal">共 ${questionsData.length} 題</span>`;
+            }
+
+            // Update Header Title
+            const headerTitleEl = document.querySelector('#view-quiz h2');
+            if(headerTitleEl) headerTitleEl.innerHTML = titleHtml;
+
+            let correctCount = 0;
+            let wrongCount = 0;
+
+            questionsToRender.forEach((q) => {
+                const userAnswer = currentState.answers[q.id];
+                const isAnswered = userAnswer !== undefined;
+                const isCorrect = isAnswered && userAnswer === q.answer;
+                
+                if (isAnswered) {
+                    if (isCorrect) correctCount++;
+                    else wrongCount++;
+                }
+
+                // Determine Card Border Color
+                let borderColor = 'border-gray-200';
+                let bgColor = 'bg-white';
+                if (isAnswered) {
+                    if (isCorrect) {
+                        borderColor = 'border-green-400';
+                        bgColor = 'bg-green-50/10';
+                    } else {
+                        borderColor = 'border-red-400';
+                        bgColor = 'bg-red-50/10';
+                    }
+                }
+
+                // Card Element
+                const card = document.createElement('div');
+                card.className = `relative rounded-2xl shadow-sm border-2 p-5 md:p-6 transition-all duration-300 ${borderColor} ${bgColor}`;
+                
+                // Header (嚴格執行：標籤與題目上下排列，標籤字體變小且為紅色)
+                const headerHtml = `
+                    <div class="flex justify-between items-start mb-5 w-full">
+                        <div class="flex flex-col w-full">
+                            <div class="mb-2">
+                                <span class="text-sm font-bold text-red-600 bg-red-50 border border-red-100 rounded-md px-2 py-1 tracking-wider shadow-sm">【${q.category}】</span>
+                            </div>
+                            <div class="flex items-start gap-3 w-full">
+                                <span class="flex-shrink-0 bg-orange-500 text-white font-bold rounded px-2.5 py-1 text-sm shadow-sm mt-1">
+                                    #${q.id}
+                                </span>
+                                <h3 class="text-xl md:text-2xl font-bold text-gray-800 leading-relaxed tracking-wide font-serif">
+                                    ${q.question}
+                                </h3>
+                            </div>
+                        </div>
+                        <button onclick="window.toggleFavorite(${q.id})" class="text-2xl transition transform hover:scale-110 flex-shrink-0 mt-2 ${currentState.favorites.includes(q.id) ? 'text-amber-400' : 'text-gray-200 hover:text-amber-300'}">
+                            <i class="${currentState.favorites.includes(q.id) ? 'fas' : 'far'} fa-star"></i>
+                        </button>
+                    </div>
+                `;
+
+                // Options
+                let optionsHtml = '<div class="grid gap-3">';
+                q.options.forEach((opt, optIdx) => {
+                    const letter = ['A','B','C','D'][optIdx];
+                    let btnClass = "option-btn w-full text-left p-4 rounded-xl border flex items-center group transition-colors ";
+                    let badgeClass = "w-10 h-10 flex items-center justify-center rounded-full font-bold mr-4 text-lg flex-shrink-0 ";
+                    
+                    if (isAnswered) {
+                        if (optIdx === q.answer) {
+                            btnClass += "bg-green-100 border-green-500 text-green-900";
+                            badgeClass += "bg-green-500 text-white";
+                        } else if (optIdx === userAnswer) {
+                            btnClass += "bg-red-100 border-red-500 text-red-900";
+                            badgeClass += "bg-red-500 text-white";
+                        } else {
+                            btnClass += "bg-white border-gray-100 text-gray-400 opacity-60";
+                            badgeClass += "bg-gray-100 text-gray-400";
+                        }
+                    } else {
+                        btnClass += "bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700";
+                        badgeClass += "bg-gray-100 text-gray-500 group-hover:bg-orange-500 group-hover:text-white transition-colors";
+                    }
+
+                    const clickAction = isAnswered ? "" : `onclick="window.handleAnswer(${q.id}, ${optIdx})"`;
+                    const cursor = isAnswered ? "cursor-default" : "cursor-pointer";
+
+                    optionsHtml += `
+                        <button ${clickAction} class="${btnClass} ${cursor}" ${isAnswered ? 'disabled' : ''}>
+                            <span class="${badgeClass}">${letter}</span>
+                            <span class="font-medium text-xl leading-relaxed">${opt}</span>
+                            ${(isAnswered && optIdx === q.answer) ? '<i class="fas fa-check-circle ml-auto text-green-600 text-2xl"></i>' : ''}
+                            ${(isAnswered && optIdx === userAnswer && optIdx !== q.answer) ? '<i class="fas fa-times-circle ml-auto text-red-500 text-2xl"></i>' : ''}
+                        </button>
+                    `;
+                });
+                optionsHtml += '</div>';
+
+                // Explanation Block 
+                let explanationHtml = '';
+                if (isAnswered) {
+                    explanationHtml = `
+                        <div class="mt-5 bg-orange-50 p-5 rounded-xl border border-orange-100 animate-fade-in-up">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-lightbulb text-orange-500 mt-1 text-xl"></i>
+                                <div>
+                                    <span class="font-bold text-orange-700 block mb-1 text-lg">解析：</span>
+                                    <p class="text-gray-700 text-lg leading-relaxed text-justify">${q.explanation}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = headerHtml + optionsHtml + explanationHtml;
+                container.appendChild(card);
+            });
+
+            // Update Stats
+            ui.statCorrect.textContent = correctCount;
+            ui.statWrong.textContent = wrongCount;
+        }
+
+        window.handleAnswer = function(qId, selectedIdx) {
+            if (!currentState.username) return;
+
+            currentState.answers[qId] = selectedIdx;
+            
+            const q = questionsData.find(x => x.id === qId);
+            const isCorrect = q.answer === selectedIdx;
+            
+            if (!isCorrect) {
+                if (!currentState.mistakes.includes(qId)) {
+                    currentState.mistakes.push(qId);
+                    saveUserData('mistakes');
+                }
+            }
+
+            saveProgress();
+            renderWaterfallQuiz();
+        }
+
+        window.toggleFavorite = function(qId) {
+            if (!currentState.username) return;
+            
+            const idx = currentState.favorites.indexOf(qId);
+            if (idx === -1) currentState.favorites.push(qId);
+            else currentState.favorites.splice(idx, 1);
+            
+            saveUserData('favorites');
+            renderWaterfallQuiz(); 
+        }
+
+        // --- Implementation of Review Modes ---
+        window.showReview = function(type) {
+            if (!currentState.username) return;
+
+            if (type === 'wrong') {
+                if (currentState.mistakes.length === 0) {
+                    alert("目前沒有錯題紀錄！太棒了！");
+                    return;
+                }
+                currentState.viewMode = 'wrong';
+            } else if (type === 'favorite') {
+                if (currentState.favorites.length === 0) {
+                    alert("目前沒有收藏任何題目。");
+                    return;
+                }
+                currentState.viewMode = 'favorite';
+            } else {
+                currentState.viewMode = 'all';
+            }
+            
+            switchView('quiz');
+            renderWaterfallQuiz();
+        }
+
+        window.showAllQuestions = function() {
+            window.startExam();
+        }
+
+        // --- Persistence Helpers ---
+        function saveProgress() {
+            if (!isFirebaseReady || !currentState.username) return;
+            const userRef = doc(db, COLLECTION_NAME, currentState.username);
+            const progressData = {
+                answers: currentState.answers,
+                timestamp: new Date().getTime()
+            };
+            setDoc(userRef, { progress: progressData }, { merge: true });
+        }
+
+        function saveUserData(type) {
+            if (!isFirebaseReady || !currentState.username) return;
+            const userRef = doc(db, COLLECTION_NAME, currentState.username);
+            const data = {};
+            data[type] = currentState[type];
+            setDoc(userRef, data, { merge: true });
+        }
+
+        window.clearLocalAndLogout = function() {
+            if(confirm("警告：此操作將清除本機暫存並登出，若有未同步的資料可能會遺失。")) {
+                window.logout();
+            }
+        }
+
+        window.logout = function() {
+            if (currentUserUnsubscribe) currentUserUnsubscribe();
+            currentState.username = '';
+            ui.views.login.classList.remove('hidden');
+            ui.views.dashboard.classList.add('hidden');
+            ui.views.quiz.classList.add('hidden');
+            document.getElementById('username').value = '';
+        }
+        
+        window.goHome = function() {
+            if (currentState.username) {
+                window.scrollTo({top:0, behavior:'smooth'});
+                switchView('dashboard');
+            } else {
+                window.location.reload();
+            }
+        }
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-in-up {
+                animation: fadeInUp 0.3s ease-out forwards;
+            }
+        `;
+        document.head.appendChild(style);
+
+        init();
+
+    </script>
+</body>
+</html>
