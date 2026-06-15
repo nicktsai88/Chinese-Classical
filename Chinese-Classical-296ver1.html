@@ -53,18 +53,13 @@
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        /* 雙欄滾動優化 */
-        .custom-sticky {
-            position: sticky;
-            top: 5rem; /* 配合 header 高度 */
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col text-gray-800">
 
+    <!-- Header -->
     <header class="bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-lg sticky top-0 z-50">
-        <div class="w-full max-w-[1500px] mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <h1 class="text-xl font-bold tracking-wider flex items-center gap-2" onclick="goHome()" style="cursor: pointer;">
                 <i class="fas fa-scroll text-amber-200"></i>
                 <span class="hidden sm:inline">文言文推與敲 - </span>
@@ -72,6 +67,7 @@
             </h1>
             
             <div class="flex items-center gap-4">
+                <!-- Status Indicator -->
                 <div id="connection-status" class="hidden sm:flex items-center text-sm bg-black/20 px-3 py-1.5 rounded-lg transition-opacity duration-500 font-medium">
                     <span id="status-dot" class="status-dot status-loading"></span>
                     <span id="status-text">連線中...</span>
@@ -82,6 +78,7 @@
                         <i class="fas fa-user mr-2 text-amber-200"></i>
                         <span id="username-span" class="font-bold"></span>
                     </div>
+                    <!-- 按鈕 -->
                     <button onclick="window.logout()" class="text-sm font-bold bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg transition shadow-md border border-red-400">
                         登出
                     </button>
@@ -90,7 +87,8 @@
         </div>
     </header>
 
-    <main class="flex-grow w-full max-w-[1500px] mx-auto px-3 md:px-6 py-6 md:py-8">
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl">
         
         <!-- View: Login -->
         <div id="view-login" class="fade-in max-w-xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden mt-10 border-t-8 border-orange-500">
@@ -101,7 +99,7 @@
                     </div>
                     <h2 class="text-4xl font-bold text-gray-900 mb-3">文言文推與敲</h2>
                     <p class="text-orange-600 font-bold text-2xl">第2篇 鳥</p>
-                    <p class="text-gray-500 text-lg mt-3">瀑布流雙欄刷題模式 • 即時解析</p>
+                    <p class="text-gray-500 text-lg mt-3">瀑布流刷題模式 • 即時解析</p>
                 </div>
                 
                 <div class="space-y-6">
@@ -117,6 +115,7 @@
                         開始刷題 <i class="fas fa-arrow-right ml-2"></i>
                     </button>
 
+                    <!-- Quick Login Section -->
                     <div id="quick-login-area" class="hidden pt-5 border-t border-gray-100">
                         <p class="text-base text-gray-500 mb-3 font-bold">歷史挑戰者</p>
                         <div id="recent-users-list" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto"></div>
@@ -158,64 +157,36 @@
             </div>
         </div>
 
-        <!-- View: Quiz List (雙欄排版) -->
+        <!-- View: Quiz List (Waterfall) -->
         <div id="view-quiz" class="hidden fade-in pb-16">
             
-            <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 relative">
-                
-                <!-- 左側：古文瀏覽區 (40%) -->
-                <div class="w-full lg:w-[40%] shrink-0">
-                    <!-- 吸頂卡片 -->
-                    <div class="bg-[#fcfaf7] border border-orange-100 p-6 md:p-8 rounded-3xl shadow-md custom-sticky transition-all">
-                        <div class="text-center mb-6">
-                            <span class="inline-block px-4 py-1.5 bg-orange-100 text-orange-700 font-bold rounded-full text-sm mb-3 tracking-widest shadow-sm">第 2 篇</span>
-                            <h3 class="text-4xl md:text-5xl font-bold text-gray-900 font-serif tracking-widest">鳥</h3>
-                            <p class="text-gray-500 mt-4 text-lg font-medium tracking-widest">唐 · 白居易</p>
-                        </div>
-                        
-                        <!-- 古文內容 -->
-                        <div class="font-serif text-3xl md:text-4xl leading-[2.5] text-gray-800 space-y-2 tracking-widest text-center py-6 border-t border-b border-orange-100 my-4 bg-white/50 rounded-2xl">
-                            <p>誰道群生性命微？</p>
-                            <p>一般骨肉一般皮。</p>
-                            <p>勸君莫打枝頭鳥，</p>
-                            <p>子在巢中望母歸。</p>
-                        </div>
-                        
-                        <div class="mt-6 flex justify-center text-orange-400 opacity-60">
-                            <i class="fas fa-feather-alt text-2xl"></i>
-                        </div>
+            <!-- Dashboard / Stats Sticky Header -->
+            <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-6 sticky top-20 z-40 flex flex-wrap justify-between items-center gap-4 transition-all">
+                <div>
+                    <!-- H2 Title will be updated dynamically -->
+                    <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                        <span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span>
+                        <span class="text-base text-gray-500 font-normal">共 20 題</span>
+                    </h2>
+                </div>
+                <div class="flex gap-4 text-base font-medium">
+                    <div class="flex items-center text-green-600 bg-green-50 px-4 py-2 rounded-full border border-green-200 shadow-sm">
+                        <span class="mr-2 font-bold">答對:</span>
+                        <span id="stat-correct" class="font-bold text-xl">0</span>
+                    </div>
+                    <div class="flex items-center text-red-600 bg-red-50 px-4 py-2 rounded-full border border-red-200 shadow-sm">
+                        <span class="mr-2 font-bold">答錯:</span>
+                        <span id="stat-wrong" class="font-bold text-xl">0</span>
                     </div>
                 </div>
+                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-gray-400 hover:text-orange-500 transition px-3 py-1.5 border border-transparent hover:border-orange-200 rounded-lg">
+                    <i class="fas fa-arrow-up text-xl"></i>
+                </button>
+            </div>
 
-                <!-- 右側：測驗區 (60%) -->
-                <div class="w-full lg:w-[60%] flex flex-col">
-                    
-                    <!-- Dashboard / Stats Sticky Header -->
-                    <div class="bg-white/95 backdrop-blur p-4 rounded-2xl shadow-sm border border-gray-200 mb-6 custom-sticky z-40 flex flex-wrap justify-between items-center gap-4 transition-all">
-                        <div>
-                            <h2 class="text-xl md:text-2xl font-bold text-gray-800 flex items-center">
-                                <span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span>
-                                <span class="text-base text-gray-500 font-normal ml-2">共 20 題</span>
-                            </h2>
-                        </div>
-                        <div class="flex gap-3 text-base font-medium">
-                            <div class="flex items-center text-green-700 bg-green-50 px-4 py-2 rounded-xl border border-green-200 shadow-sm">
-                                <span class="mr-2 font-bold">答對:</span>
-                                <span id="stat-correct" class="font-bold text-xl">0</span>
-                            </div>
-                            <div class="flex items-center text-red-700 bg-red-50 px-4 py-2 rounded-xl border border-red-200 shadow-sm">
-                                <span class="mr-2 font-bold">答錯:</span>
-                                <span id="stat-wrong" class="font-bold text-xl">0</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Questions Container -->
-                    <div id="quiz-list-container" class="space-y-6">
-                        <!-- Questions will be injected here -->
-                    </div>
-                    
-                </div>
+            <!-- Questions Container -->
+            <div id="quiz-list-container" class="space-y-8">
+                <!-- Questions will be injected here -->
             </div>
 
         </div>
@@ -234,6 +205,7 @@
         import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
+        // --- Configuration ---
         const COLLECTION_NAME = 'Chinese-Classical-296';
         const DOC_GLOBAL = 'global';
 
@@ -250,6 +222,7 @@
         let isFirebaseReady = false;
         let currentUserUnsubscribe = null;
 
+        // Initialize Firebase
         try {
             if(firebaseConfig.apiKey) {
                 app = initializeApp(firebaseConfig);
@@ -530,12 +503,13 @@
             }
         ];
 
+        // --- State Management ---
         let currentState = {
             username: '',
-            answers: {}, 
+            answers: {}, // { questionId: selectedOptionIndex }
             mistakes: [], 
             favorites: [],
-            viewMode: 'all', 
+            viewMode: 'all', // 'all', 'wrong', 'favorite'
         };
 
         const ui = {
@@ -559,6 +533,7 @@
             }
         };
 
+        // --- Initialization ---
         function init() {
             if (isFirebaseReady) {
                 const globalRef = doc(db, COLLECTION_NAME, DOC_GLOBAL);
@@ -604,6 +579,7 @@
             }
         }
 
+        // --- Login Logic ---
         window.attemptLogin = async function() {
             const name = ui.usernameInput.value.trim();
             if (!name) { alert('請輸入姓名'); return; }
@@ -643,12 +619,14 @@
                            currentState.answers = data.progress.answers || {};
                     }
                 } else {
+                    // New User
                     currentState.favorites = [];
                     currentState.mistakes = [];
                     currentState.answers = {};
                     ui.dashWrongCount.textContent = 0;
                     ui.dashFavCount.textContent = 0;
                 }
+                // Render the quiz list with new data
                 renderWaterfallQuiz();
             }, (error) => {
                 console.error("User listen error", error);
@@ -681,7 +659,7 @@
             }
         }
 
-        // --- STREAMING_CHUNK:Render Waterfall Logic... ---
+        // --- Waterfall Render Logic ---
         function renderWaterfallQuiz() {
             const container = ui.quizListContainer;
             container.innerHTML = ''; 
@@ -689,25 +667,28 @@
             let questionsToRender = questionsData;
             let titleHtml = '';
 
+            // Filter questions based on viewMode
             if (currentState.viewMode === 'wrong') {
                 questionsToRender = questionsData.filter(q => currentState.mistakes.includes(q.id));
-                titleHtml = `<span class="text-red-600 mr-2"><i class="fas fa-times-circle"></i> 錯題本複習</span><span class="text-base text-gray-500 font-normal ml-2">共 ${questionsToRender.length} 題</span>`;
+                titleHtml = `<span class="text-red-600 mr-2"><i class="fas fa-times-circle"></i> 錯題本複習</span><span class="text-base text-gray-500 font-normal">共 ${questionsToRender.length} 題</span>`;
                 
                 if (questionsToRender.length === 0) {
                     container.innerHTML = `<div class="text-center py-16"><i class="fas fa-check-circle text-5xl text-green-200 mb-4"></i><p class="text-xl text-gray-500">太棒了！目前沒有錯題紀錄。</p></div>`;
                 }
             } else if (currentState.viewMode === 'favorite') {
                 questionsToRender = questionsData.filter(q => currentState.favorites.includes(q.id));
-                titleHtml = `<span class="text-amber-500 mr-2"><i class="fas fa-star"></i> 我的最愛</span><span class="text-base text-gray-500 font-normal ml-2">共 ${questionsToRender.length} 題</span>`;
+                titleHtml = `<span class="text-amber-500 mr-2"><i class="fas fa-star"></i> 我的最愛</span><span class="text-base text-gray-500 font-normal">共 ${questionsToRender.length} 題</span>`;
                 
                 if (questionsToRender.length === 0) {
                     container.innerHTML = `<div class="text-center py-16"><i class="far fa-star text-5xl text-gray-200 mb-4"></i><p class="text-xl text-gray-500">目前沒有收藏的題目。</p></div>`;
                 }
             } else {
+                // Default 'all'
                 questionsToRender = questionsData;
-                titleHtml = `<span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span><span class="text-base text-gray-500 font-normal ml-2">共 ${questionsData.length} 題</span>`;
+                titleHtml = `<span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span><span class="text-base text-gray-500 font-normal">共 ${questionsData.length} 題</span>`;
             }
 
+            // Update Header Title
             const headerTitleEl = document.querySelector('#view-quiz h2');
             if(headerTitleEl) headerTitleEl.innerHTML = titleHtml;
 
@@ -724,6 +705,7 @@
                     else wrongCount++;
                 }
 
+                // Determine Card Border Color
                 let borderColor = 'border-gray-200';
                 let bgColor = 'bg-white';
                 if (isAnswered) {
@@ -736,17 +718,19 @@
                     }
                 }
 
+                // Card Element
                 const card = document.createElement('div');
-                card.className = `relative rounded-3xl shadow-sm border-2 p-5 md:p-6 lg:p-8 transition-all duration-300 ${borderColor} ${bgColor}`;
+                card.className = `relative rounded-2xl shadow-sm border-2 p-5 md:p-6 transition-all duration-300 ${borderColor} ${bgColor}`;
                 
+                // Header (嚴格執行：標籤與題目上下排列，標籤字體變小且為紅色)
                 const headerHtml = `
-                    <div class="flex justify-between items-start mb-6 w-full">
+                    <div class="flex justify-between items-start mb-5 w-full">
                         <div class="flex flex-col w-full">
-                            <div class="mb-3">
-                                <span class="text-sm font-bold text-red-600 bg-red-50 border border-red-100 rounded-md px-3 py-1.5 tracking-wider shadow-sm">【${q.category}】</span>
+                            <div class="mb-2">
+                                <span class="text-sm font-bold text-red-600 bg-red-50 border border-red-100 rounded-md px-2 py-1 tracking-wider shadow-sm">【${q.category}】</span>
                             </div>
-                            <div class="flex items-start gap-4 w-full">
-                                <span class="flex-shrink-0 bg-orange-500 text-white font-bold rounded-lg px-3 py-1.5 text-base shadow-sm mt-1">
+                            <div class="flex items-start gap-3 w-full">
+                                <span class="flex-shrink-0 bg-orange-500 text-white font-bold rounded px-2.5 py-1 text-sm shadow-sm mt-1">
                                     #${q.id}
                                 </span>
                                 <h3 class="text-xl md:text-2xl font-bold text-gray-800 leading-relaxed tracking-wide font-serif">
@@ -754,21 +738,22 @@
                                 </h3>
                             </div>
                         </div>
-                        <button onclick="window.toggleFavorite(${q.id})" class="text-3xl transition transform hover:scale-110 flex-shrink-0 mt-2 ${currentState.favorites.includes(q.id) ? 'text-amber-400' : 'text-gray-200 hover:text-amber-300'}">
+                        <button onclick="window.toggleFavorite(${q.id})" class="text-2xl transition transform hover:scale-110 flex-shrink-0 mt-2 ${currentState.favorites.includes(q.id) ? 'text-amber-400' : 'text-gray-200 hover:text-amber-300'}">
                             <i class="${currentState.favorites.includes(q.id) ? 'fas' : 'far'} fa-star"></i>
                         </button>
                     </div>
                 `;
 
-                let optionsHtml = '<div class="grid gap-3 md:gap-4">';
+                // Options
+                let optionsHtml = '<div class="grid gap-3">';
                 q.options.forEach((opt, optIdx) => {
                     const letter = ['A','B','C','D'][optIdx];
-                    let btnClass = "option-btn w-full text-left p-4 md:p-5 rounded-2xl border flex items-center group transition-colors ";
-                    let badgeClass = "w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full font-bold mr-4 md:mr-5 text-lg md:text-xl flex-shrink-0 ";
+                    let btnClass = "option-btn w-full text-left p-4 rounded-xl border flex items-center group transition-colors ";
+                    let badgeClass = "w-10 h-10 flex items-center justify-center rounded-full font-bold mr-4 text-lg flex-shrink-0 ";
                     
                     if (isAnswered) {
                         if (optIdx === q.answer) {
-                            btnClass += "bg-green-100 border-green-500 text-green-900 shadow-md";
+                            btnClass += "bg-green-100 border-green-500 text-green-900";
                             badgeClass += "bg-green-500 text-white";
                         } else if (optIdx === userAnswer) {
                             btnClass += "bg-red-100 border-red-500 text-red-900";
@@ -778,7 +763,7 @@
                             badgeClass += "bg-gray-100 text-gray-400";
                         }
                     } else {
-                        btnClass += "bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700 hover:shadow-md";
+                        btnClass += "bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700";
                         badgeClass += "bg-gray-100 text-gray-500 group-hover:bg-orange-500 group-hover:text-white transition-colors";
                     }
 
@@ -788,23 +773,24 @@
                     optionsHtml += `
                         <button ${clickAction} class="${btnClass} ${cursor}" ${isAnswered ? 'disabled' : ''}>
                             <span class="${badgeClass}">${letter}</span>
-                            <span class="font-medium text-xl md:text-2xl leading-relaxed">${opt}</span>
-                            ${(isAnswered && optIdx === q.answer) ? '<i class="fas fa-check-circle ml-auto text-green-600 text-3xl"></i>' : ''}
-                            ${(isAnswered && optIdx === userAnswer && optIdx !== q.answer) ? '<i class="fas fa-times-circle ml-auto text-red-500 text-3xl"></i>' : ''}
+                            <span class="font-medium text-xl leading-relaxed">${opt}</span>
+                            ${(isAnswered && optIdx === q.answer) ? '<i class="fas fa-check-circle ml-auto text-green-600 text-2xl"></i>' : ''}
+                            ${(isAnswered && optIdx === userAnswer && optIdx !== q.answer) ? '<i class="fas fa-times-circle ml-auto text-red-500 text-2xl"></i>' : ''}
                         </button>
                     `;
                 });
                 optionsHtml += '</div>';
 
+                // Explanation Block 
                 let explanationHtml = '';
                 if (isAnswered) {
                     explanationHtml = `
-                        <div class="mt-6 bg-orange-50 p-6 rounded-2xl border border-orange-100 animate-fade-in-up">
-                            <div class="flex items-start gap-4">
-                                <i class="fas fa-lightbulb text-orange-500 mt-1 text-2xl"></i>
+                        <div class="mt-5 bg-orange-50 p-5 rounded-xl border border-orange-100 animate-fade-in-up">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-lightbulb text-orange-500 mt-1 text-xl"></i>
                                 <div>
-                                    <span class="font-bold text-orange-700 block mb-2 text-xl tracking-wider">解析：</span>
-                                    <p class="text-gray-700 text-xl md:text-2xl leading-relaxed text-justify">${q.explanation}</p>
+                                    <span class="font-bold text-orange-700 block mb-1 text-lg">解析：</span>
+                                    <p class="text-gray-700 text-lg leading-relaxed text-justify">${q.explanation}</p>
                                 </div>
                             </div>
                         </div>
@@ -815,6 +801,7 @@
                 container.appendChild(card);
             });
 
+            // Update Stats
             ui.statCorrect.textContent = correctCount;
             ui.statWrong.textContent = wrongCount;
         }
@@ -849,6 +836,7 @@
             renderWaterfallQuiz(); 
         }
 
+        // --- Implementation of Review Modes ---
         window.showReview = function(type) {
             if (!currentState.username) return;
 
@@ -876,6 +864,7 @@
             window.startExam();
         }
 
+        // --- Persistence Helpers ---
         function saveProgress() {
             if (!isFirebaseReady || !currentState.username) return;
             const userRef = doc(db, COLLECTION_NAME, currentState.username);
