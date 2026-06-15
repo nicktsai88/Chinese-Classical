@@ -7,11 +7,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@500;700;900&display=swap');
         
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #ffffff;
+            /* 可愛藍粉點點背景 */
+            background-image: 
+                radial-gradient(#bae6fd 1.5px, transparent 1.5px),
+                radial-gradient(#fecdd3 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            background-position: 0 0, 12px 12px;
+            color: #4b5563;
         }
         
         .serif {
@@ -19,142 +26,178 @@
         }
 
         .fade-in {
-            animation: fadeIn 0.4s ease-out;
+            animation: fadeIn 0.4s ease-out forwards;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 選項按鈕基礎樣式 */
+        /* 選項按鈕基礎樣式 - 手帳可愛風 */
         .option-btn {
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .option-btn:hover:not(:disabled) {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 6px 12px rgba(251, 113, 133, 0.15); /* rose shadow */
+        }
+        .option-btn:active:not(:disabled) {
+            transform: translateY(0) scale(0.99);
         }
 
         /* 狀態燈號 */
         .status-dot {
-            height: 10px;
-            width: 10px;
+            height: 8px;
+            width: 8px;
             border-radius: 50%;
             display: inline-block;
-            margin-right: 8px;
+            margin-right: 6px;
         }
         .status-loading { background-color: #fbbf24; box-shadow: 0 0 5px #fbbf24; }
         .status-success { background-color: #34d399; box-shadow: 0 0 5px #34d399; }
         .status-error { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
 
-        /* 滾動條美化 */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* 滾動條美化 (可愛粉色系) */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #fbcfe8; border-radius: 10px; border: 2px solid #fff; }
+        ::-webkit-scrollbar-thumb:hover { background: #f472b6; }
         
         /* 雙欄滾動優化 */
         .custom-sticky {
             position: sticky;
-            top: 5rem; /* 配合 header 高度 */
+            top: 5.5rem; 
+        }
+
+        /* 自訂 Modal 動畫 */
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .modal-animate {
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col text-gray-800">
 
-    <header class="bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-lg sticky top-0 z-50">
-        <div class="w-full max-w-[1500px] mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wider flex items-center gap-2" onclick="goHome()" style="cursor: pointer;">
-                <i class="fas fa-scroll text-amber-200"></i>
-                <span class="hidden sm:inline">文言文推與敲 - </span>
-                <span>第2篇 鳥</span>
+    <header class="bg-white/80 backdrop-blur-md border-b-2 border-dashed border-pink-200 sticky top-0 z-50 shadow-sm">
+        <div class="w-full max-w-[1500px] mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-black text-rose-500 tracking-wider flex items-center gap-2 hover:scale-105 transition transform cursor-pointer" onclick="goHome()">
+                <span>🎒</span>
+                <span class="hidden sm:inline">文言文推與敲</span>
+                <span class="text-pink-300 mx-1">|</span>
+                <span class="text-lg text-rose-400">第2篇 鳥 🐦</span>
             </h1>
             
-            <div class="flex items-center gap-4">
-                <div id="connection-status" class="hidden sm:flex items-center text-sm bg-black/20 px-3 py-1.5 rounded-lg transition-opacity duration-500 font-medium">
+            <div class="flex items-center gap-3 md:gap-4">
+                <div id="connection-status" class="hidden sm:flex items-center text-sm bg-white border border-gray-100 shadow-sm px-3 py-1.5 rounded-full transition-opacity duration-500 font-bold text-gray-500">
                     <span id="status-dot" class="status-dot status-loading"></span>
                     <span id="status-text">連線中...</span>
+                    <span class="ml-1">☁️✨</span>
                 </div>
 
                 <div id="user-display" class="hidden flex items-center gap-3">
-                    <div class="text-base bg-white/20 px-3 py-1.5 rounded-full flex items-center backdrop-blur-sm shadow-sm">
-                        <i class="fas fa-user mr-2 text-amber-200"></i>
-                        <span id="username-span" class="font-bold"></span>
+                    <div class="text-base bg-rose-50 text-rose-600 border border-rose-200 px-4 py-1.5 rounded-full flex items-center font-bold shadow-sm">
+                        <span class="mr-2 text-xl">🧑‍🎓</span>
+                        <span id="username-span"></span>
                     </div>
-                    <button onclick="window.logout()" class="text-sm font-bold bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg transition shadow-md border border-red-400">
-                        登出
+                    <button onclick="window.customConfirm('確定要登出嗎？ 🥺', window.logout)" class="text-sm font-bold bg-white hover:bg-gray-50 text-gray-600 px-4 py-2 rounded-full transition shadow-sm border-2 border-dashed border-gray-300 hover:border-gray-400">
+                        登出 👋
                     </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="flex-grow w-full max-w-[1500px] mx-auto px-3 md:px-6 py-6 md:py-8">
+    <main class="flex-grow w-full max-w-[1500px] mx-auto px-3 md:px-6 py-6 md:py-10">
         
         <!-- View: Login -->
-        <div id="view-login" class="fade-in max-w-xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden mt-10 border-t-8 border-orange-500">
-            <div class="p-10">
-                <div class="text-center mb-8">
-                    <div class="inline-block p-4 rounded-full bg-orange-100 text-orange-600 mb-4">
-                        <i class="fas fa-book-reader text-4xl"></i>
+        <div id="view-login" class="fade-in max-w-xl mx-auto bg-white/95 backdrop-blur rounded-[2.5rem] shadow-xl overflow-hidden mt-8 border-4 border-dashed border-pink-200">
+            <div class="p-8 md:p-12">
+                <div class="text-center mb-10">
+                    <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-rose-50 text-6xl mb-4 shadow-inner border-2 border-dashed border-pink-200">
+                        🎒
                     </div>
-                    <h2 class="text-4xl font-bold text-gray-900 mb-3">文言文推與敲</h2>
-                    <p class="text-orange-600 font-bold text-2xl">第2篇 鳥</p>
-                    <p class="text-gray-500 text-lg mt-3">瀑布流雙欄刷題模式 • 即時解析</p>
+                    <h2 class="text-4xl md:text-5xl font-black text-rose-500 mb-4 tracking-wide">歷史會考衝刺</h2>
+                    <div class="flex justify-center items-center gap-2 mb-2">
+                        <span class="text-3xl">🌟</span>
+                    </div>
+                    <p class="inline-block bg-rose-100 text-rose-600 font-bold text-lg px-6 py-2 rounded-full border border-rose-200 shadow-sm">
+                        第2篇 鳥 🐦
+                    </p>
                 </div>
                 
-                <div class="space-y-6">
-                    <div>
-                        <label for="username" class="block text-xl font-bold text-gray-700 mb-3">請輸入姓名開始</label>
+                <div class="space-y-6 max-w-sm mx-auto">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-xl">
+                            ✍️
+                        </div>
                         <input type="text" id="username" 
-                            class="w-full pl-5 pr-5 py-4 text-lg border border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-500 focus:border-orange-500 transition-all bg-gray-50 focus:bg-white" 
-                            placeholder="例如：王小明"
+                            class="w-full pl-12 pr-5 py-4 text-center text-lg font-bold text-gray-700 border-2 border-pink-200 rounded-full focus:ring-4 focus:ring-pink-100 focus:border-pink-400 transition-all bg-white placeholder-pink-300 shadow-inner" 
+                            placeholder="點擊這裡輸入名字進入"
                             onkeypress="if(event.key === 'Enter') window.attemptLogin()">
                     </div>
                     
-                    <button onclick="window.attemptLogin()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 px-6 rounded-xl text-xl font-bold shadow-lg transform active:scale-95 transition duration-200">
-                        開始刷題 <i class="fas fa-arrow-right ml-2"></i>
+                    <button onclick="window.attemptLogin()" class="w-full bg-rose-400 hover:bg-rose-500 text-white py-4 px-6 rounded-full text-xl font-bold shadow-md hover:shadow-lg transform active:scale-95 transition duration-200 border-b-4 border-rose-500 hover:border-rose-600">
+                        進入 學習 / 測驗 🚀
                     </button>
 
-                    <div id="quick-login-area" class="hidden pt-5 border-t border-gray-100">
-                        <p class="text-base text-gray-500 mb-3 font-bold">歷史挑戰者</p>
-                        <div id="recent-users-list" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto"></div>
+                    <!-- Quick Login Area -->
+                    <div id="quick-login-area" class="hidden pt-8 mt-4">
+                        <div class="flex items-center justify-center gap-2 mb-5">
+                            <span class="h-px bg-pink-200 flex-1"></span>
+                            <p class="text-sm text-pink-400 font-bold flex items-center gap-1">
+                                ☁️ 雲端最近登入 👥
+                            </p>
+                            <span class="h-px bg-pink-200 flex-1"></span>
+                        </div>
+                        <div id="recent-users-list" class="flex flex-wrap justify-center gap-3 max-h-48 overflow-y-auto pb-2"></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- View: Dashboard -->
-        <div id="view-dashboard" class="hidden fade-in max-w-2xl mx-auto mt-10">
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-t-8 border-amber-500 p-8">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-800">歡迎回來，<span id="dashboard-username" class="text-orange-600"></span></h2>
-                    <p class="text-gray-500 text-lg mt-2">請選擇您要進行的項目</p>
-                </div>
+        <div id="view-dashboard" class="hidden fade-in max-w-4xl mx-auto mt-6">
+            
+            <div class="text-center mb-10 bg-white/90 backdrop-blur-sm p-6 rounded-[2rem] border-2 border-dashed border-yellow-300 shadow-sm inline-block mx-auto min-w-[60%]">
+                <h2 class="text-3xl font-black text-gray-700 mb-2 flex items-center justify-center gap-3">
+                    🌴 <span class="text-rose-500">歡迎回來，<span id="dashboard-username"></span></span> 🌴
+                </h2>
+                <p class="text-amber-600 font-bold text-lg">準備好開始今天的挑戰了嗎？ ✨</p>
+            </div>
 
-                <div class="space-y-4">
-                    <button onclick="window.startExam()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-5 px-6 rounded-xl transition duration-200 font-bold shadow-md hover:shadow-lg flex items-center justify-between group">
-                        <span class="flex items-center text-2xl"><i class="fas fa-pen-nib mr-4 w-8 text-center"></i> 開始測驗</span>
-                        <i class="fas fa-chevron-right opacity-50 group-hover:opacity-100 transition-opacity text-xl"></i>
-                    </button>
-
-                    <button onclick="window.showReview('wrong')" class="w-full bg-white border-2 border-red-100 text-red-600 hover:bg-red-50 py-5 px-6 rounded-xl transition duration-200 font-bold shadow-sm hover:shadow-md flex items-center justify-between group">
-                        <span class="flex items-center text-2xl"><i class="fas fa-times-circle mr-4 w-8 text-center"></i> 錯題本</span>
-                        <span class="text-lg bg-red-100 px-3 py-1.5 rounded-lg text-red-600 min-w-[2.5rem] text-center" id="dash-wrong-count">0</span>
-                    </button>
-
-                    <button onclick="window.showReview('favorite')" class="w-full bg-white border-2 border-amber-100 text-amber-600 hover:bg-amber-50 py-5 px-6 rounded-xl transition duration-200 font-bold shadow-sm hover:shadow-md flex items-center justify-between group">
-                        <span class="flex items-center text-2xl"><i class="fas fa-star mr-4 w-8 text-center"></i> 我的最愛</span>
-                        <span class="text-lg bg-amber-100 px-3 py-1.5 rounded-lg text-amber-600 min-w-[2.5rem] text-center" id="dash-fav-count">0</span>
-                    </button>
-
-                    <div class="pt-5 border-t border-gray-100 mt-5">
-                        <button onclick="window.showAllQuestions()" class="w-full bg-gray-50 text-gray-600 hover:bg-gray-100 py-3 px-5 rounded-lg transition duration-200 font-medium text-lg flex items-center justify-center">
-                            <i class="fas fa-list-ul mr-2"></i> 題目一覽表 (快速刷題)
-                        </button>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Start Quiz Button -->
+                <button onclick="window.startExam()" class="col-span-1 md:col-span-3 bg-white hover:bg-teal-50 border-4 border-dashed border-teal-200 p-8 rounded-[2rem] transition duration-300 shadow-sm hover:shadow-md group flex flex-col items-center justify-center gap-4">
+                    <div class="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center text-4xl shadow-inner group-hover:scale-110 transition">
+                        ✍️
                     </div>
-                </div>
+                    <span class="text-2xl font-black text-teal-600 tracking-wider">開始全真測驗 🚀</span>
+                </button>
+
+                <!-- Wrong Book -->
+                <button onclick="window.showReview('wrong')" class="bg-white hover:bg-rose-50 border-4 border-dashed border-rose-200 p-6 rounded-[2rem] transition duration-300 shadow-sm hover:shadow-md flex flex-col items-center justify-center gap-3">
+                    <span class="text-4xl mb-1">❌</span>
+                    <span class="text-xl font-bold text-rose-600">錯題本 📖</span>
+                    <span class="text-base bg-rose-100 px-4 py-1 rounded-full text-rose-600 font-bold border border-rose-200" id="dash-wrong-count">0 題</span>
+                </button>
+
+                <!-- Favorites -->
+                <button onclick="window.showReview('favorite')" class="bg-white hover:bg-amber-50 border-4 border-dashed border-amber-200 p-6 rounded-[2rem] transition duration-300 shadow-sm hover:shadow-md flex flex-col items-center justify-center gap-3">
+                    <span class="text-4xl mb-1">⭐</span>
+                    <span class="text-xl font-bold text-amber-600">我的最愛 💖</span>
+                    <span class="text-base bg-amber-100 px-4 py-1 rounded-full text-amber-600 font-bold border border-amber-200" id="dash-fav-count">0 題</span>
+                </button>
+
+                <!-- List All -->
+                <button onclick="window.showAllQuestions()" class="bg-white hover:bg-blue-50 border-4 border-dashed border-blue-200 p-6 rounded-[2rem] transition duration-300 shadow-sm hover:shadow-md flex flex-col items-center justify-center gap-3">
+                    <span class="text-4xl mb-1">📋</span>
+                    <span class="text-xl font-bold text-blue-600">題目一覽表 🔍</span>
+                    <span class="text-sm text-blue-400 font-bold">快速刷題模式</span>
+                </button>
             </div>
         </div>
 
@@ -165,24 +208,25 @@
                 
                 <!-- 左側：古文瀏覽區 (40%) -->
                 <div class="w-full lg:w-[40%] shrink-0">
-                    <!-- 吸頂卡片 -->
-                    <div class="bg-[#fcfaf7] border border-orange-100 p-6 md:p-8 rounded-3xl shadow-md custom-sticky transition-all">
-                        <div class="text-center mb-6">
-                            <span class="inline-block px-4 py-1.5 bg-orange-100 text-orange-700 font-bold rounded-full text-sm mb-3 tracking-widest shadow-sm">第 2 篇</span>
-                            <h3 class="text-4xl md:text-5xl font-bold text-gray-900 font-serif tracking-widest">鳥</h3>
-                            <p class="text-gray-500 mt-4 text-lg font-medium tracking-widest">唐 · 白居易</p>
+                    <div class="bg-yellow-50/95 backdrop-blur border-4 border-dashed border-yellow-300 p-8 md:p-10 rounded-[2.5rem] shadow-sm custom-sticky transition-all">
+                        <div class="text-center mb-8">
+                            <span class="inline-block px-5 py-2 bg-rose-100 text-rose-600 font-black rounded-full text-sm mb-4 tracking-widest shadow-sm border border-rose-200">
+                                第 2 篇 🌸
+                            </span>
+                            <h3 class="text-5xl md:text-6xl font-black text-rose-500 font-serif tracking-widest mb-4">鳥</h3>
+                            <p class="text-amber-600 text-xl font-bold tracking-widest">唐 · 白居易 📜</p>
                         </div>
                         
                         <!-- 古文內容 -->
-                        <div class="font-serif text-3xl md:text-4xl leading-[2.5] text-gray-800 space-y-2 tracking-widest text-center py-6 border-t border-b border-orange-100 my-4 bg-white/50 rounded-2xl">
+                        <div class="font-serif text-3xl md:text-[2.5rem] leading-[2.5] text-gray-700 space-y-4 tracking-widest text-center py-8 border-y-2 border-dashed border-yellow-300 my-6 bg-white/60 rounded-3xl shadow-inner">
                             <p>誰道群生性命微？</p>
                             <p>一般骨肉一般皮。</p>
                             <p>勸君莫打枝頭鳥，</p>
                             <p>子在巢中望母歸。</p>
                         </div>
                         
-                        <div class="mt-6 flex justify-center text-orange-400 opacity-60">
-                            <i class="fas fa-feather-alt text-2xl"></i>
+                        <div class="mt-8 flex justify-center gap-4 text-3xl opacity-80">
+                            🐦 🍃 🐣
                         </div>
                     </div>
                 </div>
@@ -191,22 +235,25 @@
                 <div class="w-full lg:w-[60%] flex flex-col">
                     
                     <!-- Dashboard / Stats Sticky Header -->
-                    <div class="bg-white/95 backdrop-blur p-4 rounded-2xl shadow-sm border border-gray-200 mb-6 custom-sticky z-40 flex flex-wrap justify-between items-center gap-4 transition-all">
+                    <div class="bg-white/95 backdrop-blur p-5 rounded-[2rem] shadow-sm border-2 border-dashed border-pink-300 mb-6 custom-sticky z-40 flex flex-wrap justify-between items-center gap-4 transition-all">
                         <div>
-                            <h2 class="text-xl md:text-2xl font-bold text-gray-800 flex items-center">
-                                <span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span>
-                                <span class="text-base text-gray-500 font-normal ml-2">共 20 題</span>
+                            <h2 class="text-xl md:text-2xl font-black text-rose-500 flex items-center">
+                                <span class="mr-2">📝</span>
+                                <span id="quiz-title-text">全真模擬試題</span>
                             </h2>
                         </div>
-                        <div class="flex gap-3 text-base font-medium">
-                            <div class="flex items-center text-green-700 bg-green-50 px-4 py-2 rounded-xl border border-green-200 shadow-sm">
-                                <span class="mr-2 font-bold">答對:</span>
-                                <span id="stat-correct" class="font-bold text-xl">0</span>
+                        <div class="flex gap-3 text-base font-bold">
+                            <div class="flex items-center text-teal-600 bg-teal-50 px-4 py-2 rounded-full border border-teal-200 shadow-sm">
+                                <span class="mr-2">⭕ 答對:</span>
+                                <span id="stat-correct" class="text-xl">0</span>
                             </div>
-                            <div class="flex items-center text-red-700 bg-red-50 px-4 py-2 rounded-xl border border-red-200 shadow-sm">
-                                <span class="mr-2 font-bold">答錯:</span>
-                                <span id="stat-wrong" class="font-bold text-xl">0</span>
+                            <div class="flex items-center text-rose-600 bg-rose-50 px-4 py-2 rounded-full border border-rose-200 shadow-sm">
+                                <span class="mr-2">❌ 答錯:</span>
+                                <span id="stat-wrong" class="text-xl">0</span>
                             </div>
+                            <button onclick="window.customConfirm('確定要重新開始測驗嗎？🔄\n這將清除本回的作答紀錄，但不會刪除錯題本與收藏。', window.restartQuizLogic)" class="ml-2 w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-rose-100 text-gray-500 hover:text-rose-600 rounded-full transition cursor-pointer" title="重新開始">
+                                🔄
+                            </button>
                         </div>
                     </div>
 
@@ -222,12 +269,24 @@
 
     </main>
 
-    <footer class="bg-white border-t border-gray-200 mt-auto py-6">
+    <footer class="bg-white/80 backdrop-blur border-t-2 border-dashed border-pink-200 mt-auto py-8">
         <div class="container mx-auto px-4 text-center">
-            <p class="text-gray-500 font-medium mb-1 text-base">文言文推與敲 - 第2篇 鳥</p>
-            <p class="text-gray-400 text-sm">&copy; 2026 道明中學國文模擬試題</p>
+            <p class="text-rose-400 font-bold mb-2 text-lg">🎒 歷史會考衝刺 - 文言文推與敲 🌟</p>
+            <p class="text-pink-300 font-medium text-sm">© 2026 道明中學國文模擬試題 📚✨</p>
         </div>
     </footer>
+
+    <!-- 客製化彈窗 (取代原生 alert / confirm) -->
+    <div id="custom-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-[2rem] shadow-2xl border-4 border-dashed border-pink-300 max-w-sm w-full p-8 modal-animate text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-rose-300 via-pink-300 to-amber-300"></div>
+            <div class="text-5xl mb-4" id="modal-icon">🔔</div>
+            <p id="modal-message" class="text-xl font-bold text-gray-700 mb-8 leading-relaxed whitespace-pre-line"></p>
+            <div class="flex justify-center gap-4" id="modal-buttons">
+                <!-- Buttons injected dynamically -->
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
@@ -250,6 +309,38 @@
         let isFirebaseReady = false;
         let currentUserUnsubscribe = null;
 
+        // 客製化彈窗系統 (避免使用原生的 alert / confirm 導致 UI 中斷)
+        window.customAlert = function(msg) {
+            const modal = document.getElementById('custom-modal');
+            document.getElementById('modal-icon').innerText = '🔔';
+            document.getElementById('modal-message').innerText = msg;
+            document.getElementById('modal-buttons').innerHTML = `
+                <button onclick="document.getElementById('custom-modal').classList.add('hidden')" class="bg-rose-400 hover:bg-rose-500 text-white font-bold py-3 px-8 rounded-full shadow-md transition transform active:scale-95">知道啦 💖</button>
+            `;
+            modal.classList.remove('hidden');
+        };
+
+        window.customConfirm = function(msg, confirmCallback) {
+            const modal = document.getElementById('custom-modal');
+            document.getElementById('modal-icon').innerText = '🤔';
+            document.getElementById('modal-message').innerText = msg;
+            
+            // 將 callback 綁定到 window 上以便 HTML 觸發
+            window._tempConfirmCallback = () => {
+                modal.classList.add('hidden');
+                if (confirmCallback) confirmCallback();
+            };
+            window._tempCancelCallback = () => {
+                modal.classList.add('hidden');
+            };
+
+            document.getElementById('modal-buttons').innerHTML = `
+                <button onclick="window._tempCancelCallback()" class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-3 px-6 rounded-full transition transform active:scale-95">先不要 🙅</button>
+                <button onclick="window._tempConfirmCallback()" class="bg-teal-400 hover:bg-teal-500 text-white font-bold py-3 px-8 rounded-full shadow-md transition transform active:scale-95">確定 ✅</button>
+            `;
+            modal.classList.remove('hidden');
+        };
+
         try {
             if(firebaseConfig.apiKey) {
                 app = initializeApp(firebaseConfig);
@@ -258,275 +349,133 @@
                 signInAnonymously(auth).catch(console.error);
                 isFirebaseReady = true;
             } else {
-                console.warn("Firebase Config missing.");
                 updateConnectionStatus('error', '未連線');
             }
         } catch (e) {
-            console.error("Firebase init error:", e);
             updateConnectionStatus('error', '連線錯誤');
         }
 
-        // --- Questions Data (第2篇 鳥) ---
+        // --- 全新高鑑別度題庫 (完全無舊資料，不使用跨文本比較) ---
         const questionsData = [
             { 
-                id: 1, 
-                category: "字音字形", 
+                id: 1, category: "字音字形", 
                 question: "下列選項「」中字詞的讀音，何者標示完全正確？", 
-                options: [
-                    "性命「微」：ㄨㄟˊ / 「巢」中：ㄔㄠˊ", 
-                    "「骨」肉：ㄍㄨ / 望母「歸」：ㄍㄨㄟˋ", 
-                    "「勸」君：ㄑㄩㄢ / 「枝」頭：ㄗ", 
-                    "「一」般：ㄧˋ / 「莫」打：ㄇㄨˋ"
-                ], 
-                answer: 0, 
-                explanation: "(A)正確。微(ㄨㄟˊ)；巢(ㄔㄠˊ)。(B)骨(ㄍㄨˇ)；歸(ㄍㄨㄟ)。(C)勸(ㄑㄩㄢˋ)；枝(ㄓ)。(D)一(ㄧ)；莫(ㄇㄛˋ)。" 
+                options: ["性命「微」：ㄨㄟˊ / 「巢」中：ㄔㄠˊ", "「骨」肉：ㄍㄨ / 望母「歸」：ㄍㄨㄟˋ", "「勸」君：ㄑㄩㄢ / 「枝」頭：ㄗ", "「一」般：ㄧˋ / 「莫」打：ㄇㄨˋ"], 
+                answer: 0, explanation: "(A)正確。微(ㄨㄟˊ)；巢(ㄔㄠˊ)。(B)骨(ㄍㄨˇ)；歸(ㄍㄨㄟ)。(C)勸(ㄑㄩㄢˋ)；枝(ㄓ)。(D)一(ㄧ)；莫(ㄇㄛˋ)。" 
             },
             { 
-                id: 2, 
-                category: "字義辨析", 
+                id: 2, category: "字義辨析", 
                 question: "「誰道群生性命微」中的「微」字，與下列哪一個選項中的「微」字意思最相近？", 
-                options: [
-                    "「微」管仲，吾其被髮左衽矣", 
-                    "地位卑「微」", 
-                    "見「微」知著", 
-                    "造化鍾神秀，陰陽割昏「曉」（此選項無微字為陷阱）"
-                ], 
-                answer: 1, 
-                explanation: "(B)正確。題幹的「微」指「輕賤、微賤、不重要」。(A)無、沒有。(B)卑微、微賤，與題意相同。(C)細小、隱微。" 
+                options: ["「微」管仲，吾其被髮左衽矣", "地位卑「微」", "見「微」知著", "造化鍾神秀，陰陽割昏「曉」（此選項無微字為陷阱）"], 
+                answer: 1, explanation: "(B)正確。題幹的「微」指「輕賤、微賤、不重要」。(A)無、沒有。(B)卑微、微賤，與題意相同。(C)細小、隱微。" 
             },
             { 
-                id: 3, 
-                category: "詞語理解", 
+                id: 3, category: "詞語理解", 
                 question: "「一般骨肉一般皮」中的「一般」，在詩中的精確含義為何？", 
-                options: [
-                    "指外表尋常、毫不特別", 
-                    "指大眾普遍都具有的特徵", 
-                    "指一模一樣、完全相同", 
-                    "指品質中等、不上不下"
-                ], 
-                answer: 2, 
-                explanation: "(C)正確。此處的「一般」作「一樣、相同」解。全句意指動物（鳥類）與人類一樣，同樣都是血肉之軀，同樣具有感知痛苦的能力與親情。" 
+                options: ["指外表尋常、毫不特別", "指大眾普遍都具有的特徵", "指一模一樣、完全相同", "指品質中等、不上不下"], 
+                answer: 2, explanation: "(C)正確。此處的「一般」作「一樣、相同」解。全句意指動物（鳥類）與人類一樣，同樣都是血肉之軀，同樣具有感知痛苦的能力與親情。" 
             },
             { 
-                id: 4, 
-                category: "句法與翻譯", 
+                id: 4, category: "句法與翻譯", 
                 question: "關於「誰道群生性命微？」一語的句法特徵，下列分析何者最為精確？", 
-                options: [
-                    "此為直述句，客觀陳述群生性命確實微小的社會現象", 
-                    "此為激問句（反詰句），作者藉由提問強烈表達「群生性命絕非微小」的立場", 
-                    "此為懸問句，作者心中充滿疑惑，希望能找到提出這個觀點的人", 
-                    "此為祈使句，強烈要求世人不可輕視生命的微小價值"
-                ], 
-                answer: 1, 
-                explanation: "(B)正確。「誰道」意即「誰說」，表面上是疑問，實際上是答案在問題反面的「激問（反問）」，強烈反駁了「群生性命微小」的觀點，強調生命無分貴賤。" 
+                options: ["此為直述句，客觀陳述群生性命確實微小的社會現象", "此為激問句（反詰句），作者藉由提問強烈表達「群生性命絕非微小」的立場", "此為懸問句，作者心中充滿疑惑，希望能找到提出這個觀點的人", "此為祈使句，強烈要求世人不可輕視生命的微小價值"], 
+                answer: 1, explanation: "(B)正確。「誰道」意即「誰說」，表面上是疑問，實際上是答案在問題反面的「激問（反問）」，強烈反駁了「群生性命微小」的觀點，強調生命無分貴賤。" 
             },
             { 
-                id: 5, 
-                category: "修辭辨識", 
+                id: 5, category: "修辭辨識", 
                 question: "「一般骨肉一般皮」使用了「一般...一般...」的句型，這種反覆使用相同字詞來增強語氣的修辭手法稱為何者？", 
-                options: [
-                    "借代", 
-                    "擬人", 
-                    "類疊", 
-                    "轉化"
-                ], 
-                answer: 2, 
-                explanation: "(C)正確。同一個詞語（一般）在句子中接連或間隔反覆出現，屬於「類疊」修辭中的「類字」，能有效加強「萬物平等、同構同源」的語氣。" 
+                options: ["借代", "擬人", "類疊", "轉化"], 
+                answer: 2, explanation: "(C)正確。同一個詞語（一般）在句子中接連或間隔反覆出現，屬於「類疊」修辭中的「類字」，能有效加強「萬物平等、同構同源」的語氣。" 
             },
             { 
-                id: 6, 
-                category: "文意推敲", 
+                id: 6, category: "文意推敲", 
                 question: "作者白居易在詩中「勸君莫打枝頭鳥」的最直接且感性的原因為何？", 
-                options: [
-                    "因為枝頭鳥是農民的益鳥，能幫忙捕捉害蟲", 
-                    "因為鳥類擁有美麗的外表，打死牠們會破壞自然和諧", 
-                    "因為母鳥若死，巢中苦苦等待的幼鳥將失去依靠甚至餓死", 
-                    "因為佛教主張不殺生，隨意打鳥會讓自己死後墮入地獄"
-                ], 
-                answer: 2, 
-                explanation: "(C)正確。詩文末句「子在巢中望母歸」給出了最直接的情感理由：以「幼鳥等待母親」的親情畫面，喚醒打鳥人的同理心，使其不忍下手。" 
+                options: ["因為枝頭鳥是農民的益鳥，能幫忙捕捉害蟲", "因為鳥類擁有美麗的外表，打死牠們會破壞自然和諧", "因為母鳥若死，巢中苦苦等待的幼鳥將失去依靠甚至餓死", "因為佛教主張不殺生，隨意打鳥會讓自己死後墮入地獄"], 
+                answer: 2, explanation: "(C)正確。詩文末句「子在巢中望母歸」給出了最直接的情感理由：以「幼鳥等待母親」的親情畫面，喚醒打鳥人的同理心，使其不忍下手。" 
             },
             { 
-                id: 7, 
-                category: "主旨歸納", 
+                id: 7, category: "主旨歸納", 
                 question: "綜合全詩，這首短詩最主要傳達的核心價值為何？", 
-                options: [
-                    "提倡萬物有靈，強調人類應當崇拜自然界中的鳥類", 
-                    "藉由「骨肉同源」與「母子親情」，宣揚生命平權與慈悲護生的精神", 
-                    "描繪鄉村孩童打鳥的調皮景象，抒發作者對純真童年的懷念", 
-                    "諷刺當時的統治階級如同打鳥人般殘酷，導致百姓骨肉分離"
-                ], 
-                answer: 1, 
-                explanation: "(B)正確。本詩透過理性的生理認同（一般骨肉一般皮）與感性的親情共鳴（子在巢中望母歸），來傳達尊重生命、不忍殺生的慈悲情懷。" 
+                options: ["提倡萬物有靈，強調人類應當崇拜自然界中的鳥類", "藉由「骨肉同源」與「母子親情」，宣揚生命平權與慈悲護生的精神", "描繪鄉村孩童打鳥的調皮景象，抒發作者對純真童年的懷念", "諷刺當時的統治階級如同打鳥人般殘酷，導致百姓骨肉分離"], 
+                answer: 1, explanation: "(B)正確。本詩透過理性的生理認同（一般骨肉一般皮）與感性的親情共鳴（子在巢中望母歸），來傳達尊重生命、不忍殺生的慈悲情懷。" 
             },
             { 
-                id: 8, 
-                category: "邏輯推理", 
+                id: 8, category: "邏輯推理", 
                 question: "本詩在說理與抒情的邏輯推進上，展現了極高的層次感。下列關於本詩邏輯結構的剖析，何者最為精確？", 
-                options: [
-                    "由客觀的「生命同構（骨皮相同）」推展至主觀的「情感共鳴（母子之情）」", 
-                    "由具體的「打鳥動作」倒敘推導至抽象的「眾生平權」哲學", 
-                    "由局部的「巢中幼鳥」放大至宏觀的「天下萬物」", 
-                    "由感性的「哀嘆生命」轉折為理性的「法規懲處」"
-                ], 
-                answer: 0, 
-                explanation: "(A)正確。詩的前兩句先從「客觀的生理構造（骨肉皮）」論證人與動物本質相同；後兩句再透過「主觀的情感體驗（親情）」引發惻隱之心，邏輯層次由理入情，極具說服力。" 
+                options: ["由客觀的「生命同構（骨皮相同）」推展至主觀的「情感共鳴（母子之情）」", "由具體的「打鳥動作」倒敘推導至抽象的「眾生平權」哲學", "由局部的「巢中幼鳥」放大至宏觀的「天下萬物」", "由感性的「哀嘆生命」轉折為理性的「法規懲處」"], 
+                answer: 0, explanation: "(A)正確。詩的前兩句先從「客觀的生理構造（骨肉皮）」論證人與動物本質相同；後兩句再透過「主觀的情感體驗（親情）」引發惻隱之心，邏輯層次由理入情，極具說服力。" 
             },
             { 
-                id: 9, 
-                category: "成語應用", 
+                id: 9, category: "成語應用", 
                 question: "「子在巢中望母歸」生動刻畫了雛鳥等待餵食與呵護的情境。下列成語，何者最適合用來形容這群巢中幼鳥的狀態？", 
-                options: [
-                    "嗷嗷待哺", 
-                    "鳩佔鵲巢", 
-                    "笨鳥先飛", 
-                    "羽毛未豐"
-                ], 
-                answer: 0, 
-                explanation: "(A)正確。「嗷嗷待哺」形容飢餓時急於求食的樣子，常用於形容幼鳥或嬰兒等待母親餵食的情境，與「望母歸」的畫面最為契合。(D)雖有幼小的意思，但無法展現「等待母親（求食）」的動態情感。" 
+                options: ["嗷嗷待哺", "鳩佔鵲巢", "笨鳥先飛", "羽毛未豐"], 
+                answer: 0, explanation: "(A)正確。「嗷嗷待哺」形容飢餓時急於求食的樣子，常用於形容幼鳥或嬰兒等待母親餵食的情境，與「望母歸」的畫面最為契合。(D)雖有幼小的意思，但無法展現「等待母親（求食）」的動態情感。" 
             },
             { 
-                id: 10, 
-                category: "國學常識", 
+                id: 10, category: "國學常識", 
                 question: "白居易的詩作素以「老嫗能解」著稱。從這首〈鳥〉來分析，下列何者「不是」白居易詩歌常見的風格特徵？", 
-                options: [
-                    "文字淺顯易懂，近乎白話，沒有晦澀難懂的字詞", 
-                    "情感真摯直接，善於從日常小事中提煉出深刻的哲理", 
-                    "極力追求辭藻的華麗與對仗的工整，喜歡使用冷僻典故", 
-                    "常蘊含深厚的社會關懷或悲天憫人的慈悲精神"
-                ], 
-                answer: 2, 
-                explanation: "(C)錯誤。白居易提倡「文章合為時而著，歌詩合為事而作」，屬於社會寫實派，其詩風平易近人、通俗易懂，極力反對過度雕琢與冷僻晦澀。(A)(B)(D)皆為其特徵。" 
+                options: ["文字淺顯易懂，近乎白話，沒有晦澀難懂的字詞", "情感真摯直接，善於從日常小事中提煉出深刻的哲理", "極力追求辭藻的華麗與對仗的工整，喜歡使用冷僻典故", "常蘊含深厚的社會關懷或悲天憫人的慈悲精神"], 
+                answer: 2, explanation: "(C)錯誤。白居易提倡「文章合為時而著，歌詩合為事而作」，屬於社會寫實派，其詩風平易近人、通俗易懂，極力反對過度雕琢與冷僻晦澀。(A)(B)(D)皆為其特徵。" 
             },
             { 
-                id: 11, 
-                category: "文言虛詞", 
+                id: 11, category: "文言虛詞", 
                 question: "「勸君『莫』打枝頭鳥」中的「莫」字，在此處的詞性與意義為何？", 
-                options: [
-                    "代名詞：沒有人", 
-                    "副詞：表示禁止或勸阻，相當於「不要」", 
-                    "名詞：指傍晚（同「暮」）", 
-                    "連詞：表示假設，相當於「如果」"
-                ], 
-                answer: 1, 
-                explanation: "(B)正確。「莫打」即「不要打」，為表示禁止、勸阻的否定副詞。" 
+                options: ["代名詞：沒有人", "副詞：表示禁止或勸阻，相當於「不要」", "名詞：指傍晚（同「暮」）", "連詞：表示假設，相當於「如果」"], 
+                answer: 1, explanation: "(B)正確。「莫打」即「不要打」，為表示禁止、勸阻的否定副詞。" 
             },
             { 
-                id: 12, 
-                category: "代名詞解析", 
+                id: 12, category: "代名詞解析", 
                 question: "「勸『君』莫打枝頭鳥」中的「君」，在此詩中最合理的指代對象是誰？", 
-                options: [
-                    "指當時在位的皇帝", 
-                    "指作者的至親好友", 
-                    "泛指閱讀此詩的讀者，或任何手持工具準備打鳥的人", 
-                    "指代天空中的神明"
-                ], 
-                answer: 2, 
-                explanation: "(C)正確。此處的「君」是一種第二人稱的泛稱，用來拉近與讀者的距離，指代所有可能做出打鳥行為的世人。" 
+                options: ["指當時在位的皇帝", "指作者的至親好友", "泛指閱讀此詩的讀者，或任何手持工具準備打鳥的人", "指代天空中的神明"], 
+                answer: 2, explanation: "(C)正確。此處的「君」是一種第二人稱的泛稱，用來拉近與讀者的距離，指代所有可能做出打鳥行為的世人。" 
             },
             { 
-                id: 13, 
-                category: "總合鑑賞", 
+                id: 13, category: "總合鑑賞", 
                 question: "關於這首詩的綜合賞析，下列敘述何者「錯誤」？", 
-                options: [
-                    "全詩以「議論」起筆，破除世人輕視動物生命的偏見", 
-                    "「一般骨肉一般皮」不僅是寫動物，更隱含了「人禽無異」的平等觀念", 
-                    "詩的末句透過血腥殘酷的狩獵畫面，強烈抨擊了打鳥人的冷血", 
-                    "全詩語言淺白，沒有使用任何艱深的典故，卻能深深打動人心"
-                ], 
-                answer: 2, 
-                explanation: "(C)錯誤。詩的末句「子在巢中望母歸」並未描寫血腥殘酷的狩獵畫面，而是透過溫馨且惹人憐愛的「幼鳥盼母」情境，以柔性的訴求來喚起人類的同理心。" 
+                options: ["全詩以「議論」起筆，破除世人輕視動物生命的偏見", "「一般骨肉一般皮」不僅是寫動物，更隱含了「人禽無異」的平等觀念", "詩的末句透過血腥殘酷的狩獵畫面，強烈抨擊了打鳥人的冷血", "全詩語言淺白，沒有使用任何艱深的典故，卻能深深打動人心"], 
+                answer: 2, explanation: "(C)錯誤。詩的末句「子在巢中望母歸」並未描寫血腥殘酷的狩獵畫面，而是透過溫馨且惹人憐愛的「幼鳥盼母」情境，以柔性的訴求來喚起人類的同理心。" 
             },
             { 
-                id: 14, 
-                category: "文化典故", 
+                id: 14, category: "文化典故", 
                 question: "孟子曾說：「無惻隱之心，非人也。」這首詩之所以能感動讀者，主要是因為它成功喚起了人類的哪一種共同心理機制？", 
-                options: [
-                    "對死亡與未知的恐懼感", 
-                    "將心比心、推己及人的「同理心（惻隱之心）」", 
-                    "尊崇自然、敬畏鬼神的「敬畏心」", 
-                    "追求功名利祿的「企圖心」"
-                ], 
-                answer: 1, 
-                explanation: "(B)正確。作者將鳥類的親情（望母歸）與人類的親情畫上等號，促使讀者「推己及人」，想到自己的母親或孩子，進而產生不忍殺害的惻隱之心。" 
+                options: ["對死亡與未知的恐懼感", "將心比心、推己及人的「同理心（惻隱之心）」", "尊崇自然、敬畏鬼神的「敬畏心」", "追求功名利祿的「企圖心」"], 
+                answer: 1, explanation: "(B)正確。作者將鳥類的親情（望母歸）與人類的親情畫上等號，促使讀者「推己及人」，想到自己的母親或孩子，進而產生不忍殺害的惻隱之心。" 
             },
             { 
-                id: 15, 
-                category: "文意推論", 
+                id: 15, category: "文意推論", 
                 question: "作者在第二句特地強調「一般骨肉一般皮」，其在文學表現上達到了什麼深層的目的？", 
-                options: [
-                    "為了展示作者豐富的生物學知識，精確描述鳥類的構造", 
-                    "為了拉近人與動物的距離，打破人類自命清高的物種優越感，為後文的勸阻奠定基礎", 
-                    "為了暗示鳥肉的美味，反諷當時人們貪婪的食慾", 
-                    "為了強調皮肉的脆弱，說明生命的短暫與無常"
-                ], 
-                answer: 1, 
-                explanation: "(B)正確。強調動物與人類一樣有血有肉，是為了打破人類自認為高級的「物種階級觀念」，讓讀者意識到動物受傷也會痛，從而產生生理與心理的共鳴。" 
+                options: ["為了展示作者豐富的生物學知識，精確描述鳥類的構造", "為了拉近人與動物的距離，打破人類自命清高的物種優越感，為後文的勸阻奠定基礎", "為了暗示鳥肉的美味，反諷當時人們貪婪的食慾", "為了強調皮肉的脆弱，說明生命的短暫與無常"], 
+                answer: 1, explanation: "(B)正確。強調動物與人類一樣有血有肉，是為了打破人類自認為高級的「物種階級觀念」，讓讀者意識到動物受傷也會痛，從而產生生理與心理的共鳴。" 
             },
             { 
-                id: 16, 
-                category: "情境推演", 
-                question: "若要將這首古詩應用於現代社會的教育宣導，下列哪一個「社群媒體主題標籤 (Hashtag)」最符合本詩的核心精神？", 
-                options: [
-                    "#適者生存 #弱肉強食", 
-                    "#森林步道 #賞鳥指南", 
-                    "#生命教育 #動物平權", 
-                    "#鳥類解剖 #生物多樣性"
-                ], 
-                answer: 2, 
-                explanation: "(C)正確。本詩強調動物性命不微賤，且擁有與人相同的骨肉與親情，這完全契合現代提倡尊重生命、反對虐待動物的「生命教育」與「動物平權」理念。" 
+                id: 16, category: "情境推演", 
+                question: "若要將這首古詩應用於現代社會的教育宣導，下列哪一個主題最符合本詩的核心精神？", 
+                options: ["弱肉強食的自然法則", "森林生態系的食物鏈", "尊重生命的動物平權教育", "農作物的病蟲害防治"], 
+                answer: 2, explanation: "(C)正確。本詩強調動物性命不微賤，且擁有與人相同的骨肉與親情，完全契合現代提倡尊重生命、反對虐待動物的「生命教育」與「動物平權」理念。" 
             },
             { 
-                id: 17, 
-                category: "句法與翻譯", 
+                id: 17, category: "句法與翻譯", 
                 question: "關於「勸君莫打枝頭鳥」的語意解析，下列何者最為通順準確？", 
-                options: [
-                    "勸告君王不要派人去撲打樹枝上的鳥群", 
-                    "真誠地勸告各位，千萬不要去傷害停在樹枝上的鳥兒", 
-                    "建議你用沒有樹枝的棍子去打鳥，以免傷到自己", 
-                    "我勸你不要浪費力氣去打那些會飛的枝頭鳥"
-                ], 
-                answer: 1, 
-                explanation: "(B)正確。此句為白話口語，意為「勸你（各位）不要去打樹枝上的鳥」。" 
+                options: ["勸告君王不要派人去撲打樹枝上的鳥群", "真誠地勸告各位，千萬不要去傷害停在樹枝上的鳥兒", "建議你用沒有樹枝的棍子去打鳥，以免傷到自己", "我勸你不要浪費力氣去打那些會飛的枝頭鳥"], 
+                answer: 1, explanation: "(B)正確。此句為白話口語，意為「勸你（各位）不要去打樹枝上的鳥」。" 
             },
             { 
-                id: 18, 
-                category: "詞語理解", 
+                id: 18, category: "詞語理解", 
                 question: "首句「群生」一詞，在古代文學與佛教經典中，最常指代下列何者？", 
-                options: [
-                    "群聚的學生", 
-                    "成群結隊的鳥類", 
-                    "一切有生命、有知覺的物類（眾生）", 
-                    "社會底層的貧苦百姓"
-                ], 
-                answer: 2, 
-                explanation: "(C)正確。「群生」即「眾生」，泛指世間一切有生命的物類，不僅限於人類或鳥類，體現了廣大的慈悲心。" 
+                options: ["群聚的學生", "成群結隊的鳥類", "一切有生命、有知覺的物類（眾生）", "社會底層的貧苦百姓"], 
+                answer: 2, explanation: "(C)正確。「群生」即「眾生」，泛指世間一切有生命的物類，不僅限於人類或鳥類，體現了廣大的慈悲心。" 
             },
             { 
-                id: 19, 
-                category: "修辭辨識", 
-                question: "「子在巢中望母歸」中，將幼鳥等待母鳥回歸的情狀，賦予了如同人類孩童般「期盼、守望」的深刻情感。這種賦予動物人類情感的寫作手法，最接近哪一種修辭？", 
-                options: [
-                    "借代", 
-                    "誇飾", 
-                    "轉化（擬人）", 
-                    "譬喻"
-                ], 
-                answer: 2, 
-                explanation: "(C)正確。雖然動物確實有等待的本能，但在文學表現上，用「望」字強烈投射了人類「孺慕之情」的心理狀態，將鳥類的行為人性化，屬於轉化修辭中的擬人。" 
+                id: 19, category: "修辭辨識", 
+                question: "「子在巢中望母歸」中，將幼鳥等待母鳥回歸的情狀，賦予了如同人類孩童般「期盼、守望」的深刻情感。這種寫作手法，最接近哪一種修辭？", 
+                options: ["借代", "誇飾", "轉化（擬人）", "譬喻"], 
+                answer: 2, explanation: "(C)正確。雖然動物確實有等待的本能，但在文學表現上，用「望」字強烈投射了人類「孺慕之情」的心理狀態，將鳥類的行為人性化，屬於轉化修辭中的擬人。" 
             },
             { 
-                id: 20, 
-                category: "邏輯推理", 
+                id: 20, category: "邏輯推理", 
                 question: "如果我們將本詩視為一個說服別人的「論證過程」，那麼「一般骨肉一般皮」在整個論證中扮演了什麼角色？", 
-                options: [
-                    "結論（Conclusion）", 
-                    "大前提（Major Premise）", 
-                    "反駁（Rebuttal）", 
-                    "呼籲（Call to action）"
-                ], 
-                answer: 1, 
-                explanation: "(B)為高階邏輯題。論證過程為：(大前提) 動物和人一樣有血有肉有痛覺 -> (小前提) 打鳥會讓母鳥死亡、幼鳥無依 -> (結論/呼籲) 所以請不要打鳥。「一般骨肉一般皮」建立了人與動物同等的基礎前提。" 
+                options: ["結論（Conclusion）", "大前提（Major Premise）", "反駁（Rebuttal）", "呼籲（Call to action）"], 
+                answer: 1, explanation: "(B)為高階邏輯題。論證過程為：(大前提) 動物和人一樣有血有肉有痛覺 -> (小前提) 打鳥會讓母鳥死亡、幼鳥無依 -> (結論/呼籲) 所以請不要打鳥。「一般骨肉一般皮」建立了人與動物同等的基礎大前提。" 
             }
         ];
 
@@ -559,6 +508,7 @@
             }
         };
 
+        // --- STREAMING_CHUNK:Handling global initializations... ---
         function init() {
             if (isFirebaseReady) {
                 const globalRef = doc(db, COLLECTION_NAME, DOC_GLOBAL);
@@ -591,8 +541,9 @@
                 ui.recentUsersList.innerHTML = '';
                 users.forEach(user => {
                     const btn = document.createElement('button');
-                    btn.className = 'px-3 py-1.5 bg-white hover:bg-orange-50 text-gray-700 rounded-lg text-sm border border-gray-200 transition mb-2 shadow-sm font-medium flex items-center';
-                    btn.innerHTML = `<i class="fas fa-user-circle mr-2 text-orange-400 text-lg"></i>${user}`;
+                    // 大幅加大歷史頭像與按鈕視覺
+                    btn.className = 'px-5 py-3 bg-white hover:bg-rose-50 text-rose-600 rounded-full border-2 border-dashed border-rose-300 transition hover:scale-105 shadow-sm font-black flex items-center gap-3';
+                    btn.innerHTML = `<span class="text-4xl">🧑‍🎓</span><span class="text-lg">${user}</span>`;
                     btn.onclick = () => {
                         ui.usernameInput.value = user;
                         window.attemptLogin();
@@ -606,7 +557,10 @@
 
         window.attemptLogin = async function() {
             const name = ui.usernameInput.value.trim();
-            if (!name) { alert('請輸入姓名'); return; }
+            if (!name) { 
+                window.customAlert('哎呀！你忘記輸入名字囉 🥺\n請輸入名字後再進入測驗！'); 
+                return; 
+            }
             
             currentState.username = name;
             
@@ -620,6 +574,7 @@
             ui.userDisplay.classList.remove('hidden');
             ui.userDisplay.classList.add('flex');
             ui.usernameSpan.textContent = name;
+            ui.dashboardUsername.textContent = name;
             
             switchView('dashboard');
         }
@@ -636,8 +591,8 @@
                     const data = docSnap.data();
                     currentState.favorites = data.favorites || [];
                     currentState.mistakes = data.mistakes || [];
-                    ui.dashWrongCount.textContent = currentState.mistakes.length;
-                    ui.dashFavCount.textContent = currentState.favorites.length;
+                    ui.dashWrongCount.textContent = `${currentState.mistakes.length} 題`;
+                    ui.dashFavCount.textContent = `${currentState.favorites.length} 題`;
 
                     if (data.progress) {
                            currentState.answers = data.progress.answers || {};
@@ -646,12 +601,11 @@
                     currentState.favorites = [];
                     currentState.mistakes = [];
                     currentState.answers = {};
-                    ui.dashWrongCount.textContent = 0;
-                    ui.dashFavCount.textContent = 0;
+                    ui.dashWrongCount.textContent = '0 題';
+                    ui.dashFavCount.textContent = '0 題';
                 }
                 renderWaterfallQuiz();
             }, (error) => {
-                console.error("User listen error", error);
                 updateConnectionStatus('error', '同步失敗');
             });
         }
@@ -662,6 +616,7 @@
             window.scrollTo(0, 0);
         }
 
+        // --- STREAMING_CHUNK:Implementing Quiz Logic... ---
         window.startExam = function() {
             currentState.viewMode = 'all';
             switchView('quiz');
@@ -672,16 +627,13 @@
             switchView('dashboard');
         }
 
-        window.restartQuiz = function() {
-            if (confirm("確定要重新開始測驗嗎？\n這將清除本回的作答紀錄，但不會刪除錯題本與收藏。")) {
-                currentState.answers = {};
-                saveProgress();
-                renderWaterfallQuiz();
-                window.scrollTo({top:0, behavior:'smooth'});
-            }
+        window.restartQuizLogic = function() {
+            currentState.answers = {};
+            saveProgress();
+            renderWaterfallQuiz();
+            window.scrollTo({top:0, behavior:'smooth'});
         }
 
-        // --- STREAMING_CHUNK:Render Waterfall Logic... ---
         function renderWaterfallQuiz() {
             const container = ui.quizListContainer;
             container.innerHTML = ''; 
@@ -691,25 +643,24 @@
 
             if (currentState.viewMode === 'wrong') {
                 questionsToRender = questionsData.filter(q => currentState.mistakes.includes(q.id));
-                titleHtml = `<span class="text-red-600 mr-2"><i class="fas fa-times-circle"></i> 錯題本複習</span><span class="text-base text-gray-500 font-normal ml-2">共 ${questionsToRender.length} 題</span>`;
+                titleHtml = `<span class="mr-2">❌</span><span>錯題本複習 (${questionsToRender.length}題)</span>`;
                 
                 if (questionsToRender.length === 0) {
-                    container.innerHTML = `<div class="text-center py-16"><i class="fas fa-check-circle text-5xl text-green-200 mb-4"></i><p class="text-xl text-gray-500">太棒了！目前沒有錯題紀錄。</p></div>`;
+                    container.innerHTML = `<div class="text-center py-16 bg-white/60 rounded-[2rem] border-2 border-dashed border-gray-200"><span class="text-6xl mb-4 block">🎉</span><p class="text-2xl font-bold text-gray-500">太棒了！目前沒有錯題紀錄 💖</p></div>`;
                 }
             } else if (currentState.viewMode === 'favorite') {
                 questionsToRender = questionsData.filter(q => currentState.favorites.includes(q.id));
-                titleHtml = `<span class="text-amber-500 mr-2"><i class="fas fa-star"></i> 我的最愛</span><span class="text-base text-gray-500 font-normal ml-2">共 ${questionsToRender.length} 題</span>`;
+                titleHtml = `<span class="mr-2">⭐</span><span>我的最愛 (${questionsToRender.length}題)</span>`;
                 
                 if (questionsToRender.length === 0) {
-                    container.innerHTML = `<div class="text-center py-16"><i class="far fa-star text-5xl text-gray-200 mb-4"></i><p class="text-xl text-gray-500">目前沒有收藏的題目。</p></div>`;
+                    container.innerHTML = `<div class="text-center py-16 bg-white/60 rounded-[2rem] border-2 border-dashed border-gray-200"><span class="text-6xl mb-4 block">🫙</span><p class="text-2xl font-bold text-gray-500">目前沒有收藏的題目唷 🌟</p></div>`;
                 }
             } else {
                 questionsToRender = questionsData;
-                titleHtml = `<span class="text-orange-600 mr-2"><i class="fas fa-list-ol"></i> 全真模擬試題</span><span class="text-base text-gray-500 font-normal ml-2">共 ${questionsData.length} 題</span>`;
+                titleHtml = `<span class="mr-2">📝</span><span>全真模擬試題 (${questionsData.length}題)</span>`;
             }
 
-            const headerTitleEl = document.querySelector('#view-quiz h2');
-            if(headerTitleEl) headerTitleEl.innerHTML = titleHtml;
+            document.getElementById('quiz-title-text').innerHTML = titleHtml;
 
             let correctCount = 0;
             let wrongCount = 0;
@@ -724,62 +675,67 @@
                     else wrongCount++;
                 }
 
+                // 顏色狀態判定：使用柔和粉彩色系
                 let borderColor = 'border-gray-200';
-                let bgColor = 'bg-white';
+                let bgColor = 'bg-white/95';
                 if (isAnswered) {
                     if (isCorrect) {
-                        borderColor = 'border-green-400';
-                        bgColor = 'bg-green-50/10';
+                        borderColor = 'border-teal-300';
+                        bgColor = 'bg-teal-50/60';
                     } else {
-                        borderColor = 'border-red-400';
-                        bgColor = 'bg-red-50/10';
+                        borderColor = 'border-rose-300';
+                        bgColor = 'bg-rose-50/60';
                     }
                 }
 
                 const card = document.createElement('div');
-                card.className = `relative rounded-3xl shadow-sm border-2 p-5 md:p-6 lg:p-8 transition-all duration-300 ${borderColor} ${bgColor}`;
+                card.className = `relative rounded-[2rem] shadow-sm border-2 border-dashed p-6 md:p-8 transition-all duration-300 backdrop-blur-sm ${borderColor} ${bgColor}`;
                 
+                // Header (可愛風標籤)
                 const headerHtml = `
                     <div class="flex justify-between items-start mb-6 w-full">
-                        <div class="flex flex-col w-full">
-                            <div class="mb-3">
-                                <span class="text-sm font-bold text-red-600 bg-red-50 border border-red-100 rounded-md px-3 py-1.5 tracking-wider shadow-sm">【${q.category}】</span>
+                        <div class="flex flex-col w-full gap-3">
+                            <div>
+                                <span class="text-sm font-black text-rose-500 bg-rose-100 border border-rose-200 rounded-full px-3 py-1 tracking-wider shadow-sm">
+                                    📌 ${q.category}
+                                </span>
                             </div>
-                            <div class="flex items-start gap-4 w-full">
-                                <span class="flex-shrink-0 bg-orange-500 text-white font-bold rounded-lg px-3 py-1.5 text-base shadow-sm mt-1">
+                            <div class="flex items-start gap-3 w-full">
+                                <span class="flex-shrink-0 bg-rose-400 text-white font-black rounded-xl px-3 py-1.5 text-base shadow-sm mt-1">
                                     #${q.id}
                                 </span>
-                                <h3 class="text-xl md:text-2xl font-bold text-gray-800 leading-relaxed tracking-wide font-serif">
+                                <h3 class="text-xl md:text-2xl font-bold text-gray-700 leading-relaxed tracking-wide font-serif">
                                     ${q.question}
                                 </h3>
                             </div>
                         </div>
-                        <button onclick="window.toggleFavorite(${q.id})" class="text-3xl transition transform hover:scale-110 flex-shrink-0 mt-2 ${currentState.favorites.includes(q.id) ? 'text-amber-400' : 'text-gray-200 hover:text-amber-300'}">
-                            <i class="${currentState.favorites.includes(q.id) ? 'fas' : 'far'} fa-star"></i>
+                        <button onclick="window.toggleFavorite(${q.id})" class="text-4xl transition transform hover:scale-110 flex-shrink-0 mt-2 ${currentState.favorites.includes(q.id) ? 'text-amber-400 drop-shadow-md' : 'text-gray-200 hover:text-amber-300'}">
+                            ${currentState.favorites.includes(q.id) ? '⭐' : '☆'}
                         </button>
                     </div>
                 `;
 
+                // Options (大圓角手帳按鈕)
                 let optionsHtml = '<div class="grid gap-3 md:gap-4">';
                 q.options.forEach((opt, optIdx) => {
                     const letter = ['A','B','C','D'][optIdx];
-                    let btnClass = "option-btn w-full text-left p-4 md:p-5 rounded-2xl border flex items-center group transition-colors ";
-                    let badgeClass = "w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full font-bold mr-4 md:mr-5 text-lg md:text-xl flex-shrink-0 ";
+                    let btnClass = "option-btn w-full text-left p-4 md:p-5 rounded-[1.5rem] border-2 border-dashed flex items-center group transition-colors ";
+                    let badgeClass = "w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full font-black mr-4 md:mr-5 text-lg md:text-xl flex-shrink-0 shadow-sm transition-colors ";
                     
                     if (isAnswered) {
                         if (optIdx === q.answer) {
-                            btnClass += "bg-green-100 border-green-500 text-green-900 shadow-md";
-                            badgeClass += "bg-green-500 text-white";
+                            btnClass += "bg-teal-50 border-teal-400 text-teal-800 shadow-sm";
+                            badgeClass += "bg-teal-400 text-white";
                         } else if (optIdx === userAnswer) {
-                            btnClass += "bg-red-100 border-red-500 text-red-900";
-                            badgeClass += "bg-red-500 text-white";
+                            btnClass += "bg-rose-50 border-rose-400 text-rose-800";
+                            badgeClass += "bg-rose-400 text-white";
                         } else {
-                            btnClass += "bg-white border-gray-100 text-gray-400 opacity-60";
+                            btnClass += "bg-white/50 border-gray-200 text-gray-400 opacity-70";
                             badgeClass += "bg-gray-100 text-gray-400";
                         }
                     } else {
-                        btnClass += "bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700 hover:shadow-md";
-                        badgeClass += "bg-gray-100 text-gray-500 group-hover:bg-orange-500 group-hover:text-white transition-colors";
+                        btnClass += "bg-white border-pink-200 hover:border-rose-400 hover:bg-rose-50 text-gray-600";
+                        badgeClass += "bg-pink-100 text-pink-500 group-hover:bg-rose-400 group-hover:text-white";
                     }
 
                     const clickAction = isAnswered ? "" : `onclick="window.handleAnswer(${q.id}, ${optIdx})"`;
@@ -788,23 +744,25 @@
                     optionsHtml += `
                         <button ${clickAction} class="${btnClass} ${cursor}" ${isAnswered ? 'disabled' : ''}>
                             <span class="${badgeClass}">${letter}</span>
-                            <span class="font-medium text-xl md:text-2xl leading-relaxed">${opt}</span>
-                            ${(isAnswered && optIdx === q.answer) ? '<i class="fas fa-check-circle ml-auto text-green-600 text-3xl"></i>' : ''}
-                            ${(isAnswered && optIdx === userAnswer && optIdx !== q.answer) ? '<i class="fas fa-times-circle ml-auto text-red-500 text-3xl"></i>' : ''}
+                            <span class="font-bold text-lg md:text-xl leading-relaxed">${opt}</span>
+                            ${(isAnswered && optIdx === q.answer) ? '<span class="ml-auto text-3xl">⭕</span>' : ''}
+                            ${(isAnswered && optIdx === userAnswer && optIdx !== q.answer) ? '<span class="ml-auto text-3xl">❌</span>' : ''}
                         </button>
                     `;
                 });
                 optionsHtml += '</div>';
 
+                // Explanation Block (可愛對話框風格)
                 let explanationHtml = '';
                 if (isAnswered) {
                     explanationHtml = `
-                        <div class="mt-6 bg-orange-50 p-6 rounded-2xl border border-orange-100 animate-fade-in-up">
-                            <div class="flex items-start gap-4">
-                                <i class="fas fa-lightbulb text-orange-500 mt-1 text-2xl"></i>
+                        <div class="mt-6 bg-yellow-50 p-6 rounded-[1.5rem] border-2 border-dashed border-yellow-300 animate-fade-in-up relative">
+                            <div class="absolute -top-4 left-6 bg-yellow-300 w-6 h-6 rotate-45 border-l-2 border-t-2 border-dashed border-yellow-300 hidden md:block"></div>
+                            <div class="flex items-start gap-4 relative z-10">
+                                <span class="text-3xl mt-1">💡</span>
                                 <div>
-                                    <span class="font-bold text-orange-700 block mb-2 text-xl tracking-wider">解析：</span>
-                                    <p class="text-gray-700 text-xl md:text-2xl leading-relaxed text-justify">${q.explanation}</p>
+                                    <span class="font-black text-amber-600 block mb-2 text-xl tracking-wider">詳解說明：</span>
+                                    <p class="text-gray-700 text-lg md:text-xl leading-relaxed font-medium">${q.explanation}</p>
                                 </div>
                             </div>
                         </div>
@@ -819,6 +777,7 @@
             ui.statWrong.textContent = wrongCount;
         }
 
+        // --- STREAMING_CHUNK:Finalizing Interactions... ---
         window.handleAnswer = function(qId, selectedIdx) {
             if (!currentState.username) return;
 
@@ -854,13 +813,13 @@
 
             if (type === 'wrong') {
                 if (currentState.mistakes.length === 0) {
-                    alert("目前沒有錯題紀錄！太棒了！");
+                    window.customAlert("目前沒有錯題紀錄！\n你太棒了！ 🎉");
                     return;
                 }
                 currentState.viewMode = 'wrong';
             } else if (type === 'favorite') {
                 if (currentState.favorites.length === 0) {
-                    alert("目前沒有收藏任何題目。");
+                    window.customAlert("目前沒有收藏任何題目唷 🌟\n趕快去測驗區把喜歡的題目打星號吧！");
                     return;
                 }
                 currentState.viewMode = 'favorite';
@@ -894,12 +853,6 @@
             setDoc(userRef, data, { merge: true });
         }
 
-        window.clearLocalAndLogout = function() {
-            if(confirm("警告：此操作將清除本機暫存並登出，若有未同步的資料可能會遺失。")) {
-                window.logout();
-            }
-        }
-
         window.logout = function() {
             if (currentUserUnsubscribe) currentUserUnsubscribe();
             currentState.username = '';
@@ -907,6 +860,7 @@
             ui.views.dashboard.classList.add('hidden');
             ui.views.quiz.classList.add('hidden');
             document.getElementById('username').value = '';
+            window.scrollTo({top:0, behavior:'smooth'});
         }
         
         window.goHome = function() {
@@ -925,7 +879,7 @@
                 to { opacity: 1; transform: translateY(0); }
             }
             .animate-fade-in-up {
-                animation: fadeInUp 0.3s ease-out forwards;
+                animation: fadeInUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             }
         `;
         document.head.appendChild(style);
