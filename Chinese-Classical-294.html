@@ -22,6 +22,10 @@
             font-family: 'Noto Serif TC', serif;
         }
 
+        .biaukai {
+            font-family: 'BiauKai', 'DFKai-SB', '標楷體', serif;
+        }
+
         .fade-in {
             animation: fadeIn 0.4s ease-out;
         }
@@ -194,7 +198,7 @@
                             <h2 class="text-2xl font-black text-amber-800">古文全文</h2>
                         </div>
                         <!-- 古文內容 -->
-                        <div class="serif text-[2rem] leading-[2.2] tracking-wider text-gray-800 font-medium text-justify">
+                        <div class="biaukai text-[2rem] leading-[2.2] tracking-wider text-gray-800 font-medium text-justify">
                             太公望初娶馬氏，讀書不事產，馬求去。太公封齊，馬求再合，太公取水一盆，傾於地，令婦收水，惟得其泥；太公曰：『若能離更合，覆水定難收！』
                         </div>
                     </div>
@@ -273,12 +277,14 @@
             openModal();
         };
 
+        window._currentConfirmCallback = null;
         window.customConfirm = function(msg, onYes) {
+            window._currentConfirmCallback = onYes;
             modalIcon.textContent = '🤔';
             modalText.innerHTML = msg.replace(/\n/g, '<br>');
             modalButtons.innerHTML = `
                 <button onclick="window._closeModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 border-4 border-solid border-gray-400 font-bold py-2 px-6 rounded-full shadow-[0_4px_0_#9ca3af] active:translate-y-1 active:shadow-none transition-all">再想想</button>
-                <button onclick="window._closeModal(); setTimeout(${onYes}, 200);" class="bg-rose-300 hover:bg-rose-400 text-rose-900 border-4 border-solid border-rose-500 font-bold py-2 px-6 rounded-full shadow-[0_4px_0_#be123c] active:translate-y-1 active:shadow-none transition-all">確定執行</button>
+                <button onclick="window._closeModal(); setTimeout(window._currentConfirmCallback, 200);" class="bg-rose-300 hover:bg-rose-400 text-rose-900 border-4 border-solid border-rose-500 font-bold py-2 px-6 rounded-full shadow-[0_4px_0_#be123c] active:translate-y-1 active:shadow-none transition-all">確定執行</button>
             `;
             openModal();
         };
